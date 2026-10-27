@@ -1,0 +1,41 @@
+{
+  "sunburst2_miel_lettering": {
+    "name": "sunburst2_miel_lettering",
+    "mapTo": "sunburst2_miel_lettering",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorMap": "/vehicles/sunburst2/lettering/miel_lettering_b.color.dds",
+        "clearCoatRoughnessFactor": 0,
+        "metallicFactor": 1,
+        "metallicMap": "/vehicles/sunburst2/lettering/miel_lettering_m.data.dds",
+        "normalMap": "/vehicles/sunburst2/lettering/miel_lettering_nm.normal.dds",
+        "opacityMap": "/vehicles/sunburst2/lettering/miel_lettering_op.data.dds",
+        "pixelSpecular": true,
+        "roughnessMap": "/vehicles/sunburst2/lettering/miel_lettering_r.data.dds"
+      },
+      {
+        "clearCoatRoughnessFactor": null,
+        "metallicFactor": null,
+        "pixelSpecular": null
+      },
+      {
+        "clearCoatRoughnessFactor": null,
+        "metallicFactor": null,
+        "pixelSpecular": null
+      },
+      {
+        "clearCoatRoughnessFactor": null,
+        "metallicFactor": null,
+        "pixelSpecular": null
+      }
+    ],
+    "alphaRef": 60,
+    "alphaTest": true,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentRecvShadows": true,
+    "version": 1.5
+  }
+}

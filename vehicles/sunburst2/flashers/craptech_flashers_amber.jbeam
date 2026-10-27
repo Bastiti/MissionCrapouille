@@ -1,0 +1,118 @@
+{
+"sunburst2_flashers_miel_amber": {
+    "information":{
+        "authors":"Crapouille Technologies",
+        "name":"Crapouille Amber Flashers",
+        "value":400
+    },
+    "slotType" : "sunburst2_flashers",
+    "slots2": [
+        ["name", "allowTypes", "denyTypes", "default", "description"],
+        //electrics keep the vanilla red_4/blue_4 names (left/right channel), only the bulbs and glow materials are amber
+        ["flasher_bulb_FL_miel",["us_lightbar_led_o_4W_x4"],[],"us_lightbar_led_o_4W_x4","Front Left Flasher LED Unit",{"coreSlot":true,"variables":{
+          "$electric":"red_4", "$nodeRef":"fb3ll","$nodeX":"fb3l","$nodeY":"fb2ll","$deformGroup":"foglight_L_break","$posX":"$=$components.flasherpos_FL.x","$posY":"$=$components.flasherpos_FL.y","$posZ":"$=$components.flasherpos_FL.z","$rotX":0,"$rotY":0,"$rotZ":"$=180-$components.flasherrot_F","$shadowEnable":0,"$disable":0
+        }}],
+        ["flasher_bulb_FR_miel",["us_lightbar_led_o_4W_x4"],[],"us_lightbar_led_o_4W_x4","Front Right Flasher LED Unit",{"coreSlot":true,"variables":{
+          "$electric":"blue_4","$nodeRef":"fb3rr","$nodeX":"fb3r","$nodeY":"fb2rr","$deformGroup":"foglight_R_break","$posX":"$=$components.flasherpos_FR.x","$posY":"$=$components.flasherpos_FR.y","$posZ":"$=$components.flasherpos_FR.z","$rotX":0,"$rotY":0,"$rotZ":"$=180+$components.flasherrot_F","$shadowEnable":0,"$disable":0
+        }}],
+        ["flasher_bulb_RL_miel",["us_lightbar_led_o_4W_x4"],[],"us_lightbar_led_o_4W_x4","Rear Left Flasher LED Unit",{"coreSlot":true,"variables":{
+          "$electric":"red_4", "$nodeRef":"t4l",  "$nodeX":"t3l", "$nodeY":"t4",   "$deformGroup":"platelight_break","$posX": 0.259,"$posY":2.12,"$posZ":0.71,"$rotX":0,"$rotY":0,"$rotZ":0,"$shadowEnable":0,"$disable":0
+        }}],
+        ["flasher_bulb_RR_miel",["us_lightbar_led_o_4W_x4"],[],"us_lightbar_led_o_4W_x4","Rear Right Flasher LED Unit",{"coreSlot":true,"variables":{
+          "$electric":"blue_4","$nodeRef":"t4r",  "$nodeX":"t3r", "$nodeY":"t4",   "$deformGroup":"platelight_break","$posX":-0.259,"$posY":2.12,"$posZ":0.71,"$rotX":0,"$rotY":0,"$rotZ":0,"$shadowEnable":0,"$disable":0
+        }}],
+    ],
+    "controller": [
+        ["fileName"],
+        ["lightbar", {
+          "name":"flashers",
+          "defaultModeIndex": 1,
+          "modes": [
+              ["name", "config"],
+              ["Chase", [
+                  ["electric", "value", "duration"],
+                    ["blue_4", 1, 0.2],
+                    ["blue_4", 0, 0.1],
+                    ["blue_4", 1, 0.05],
+                    ["blue_4", 0, 0.1],
+                    ["blue_4", 1, 0.05],
+                    ["blue_4", 0, 0.2],
+
+                    ["red_4", 0, 0.1],
+                    ["red_4", 1, 0.1],
+                    ["red_4", 0, 0.1],
+                    ["red_4", 1, 0.3],
+                  ]
+              ],
+              ["Scene", [
+                  ["electric", "value", "duration"],
+                    ["blue_4", 1, 0.3],
+                    ["blue_4", 0, 0.3],
+                    ["blue_4", 1, 0.3],
+                    ["blue_4", 0, 0.3],
+
+                    ["red_4", 0, 0.3],
+                    ["red_4", 1, 0.3],
+                    ["red_4", 0, 0.3],
+                    ["red_4", 1, 0.3],
+                  ]
+              ],
+              ["Left Signal", [
+                  ["electric", "value", "duration"],
+                    ["red_4", 1, 0.2],
+                    ["blue_4", 0, 0.2],
+                    ["red_4", 0, 0.2],
+                    ["blue_4", 1, 0.2],
+                  ]
+              ],
+              ["Right Signal", [
+                  ["electric", "value", "duration"],
+                    ["red_4", 1, 0.2],
+                    ["blue_4", 0, 0.2],
+                    ["red_4", 0, 0.2],
+                    ["blue_4", 1, 0.2],
+                  ]
+              ]
+          ]
+        }],
+        //  doors open and the housings slide out one after another when the lightbar comes on
+        ["craptechFlasherHatch", {"name":"hatchAmber",
+                                  "units":["craptech_hatch_FL", "craptech_hatch_FR", "craptech_hatch_RL", "craptech_hatch_RR"],
+                                  "stagger":0.12, "doorTime":0.28, "slideTime":0.32}],
+    ],
+    "glowMap":{
+          "generic_flasher_led_L":                   {"simpleFunction":"red_4", "off":"policeparts_lights_orange", "on":"policeparts_lights_orange_on"},
+          "generic_flasher_led_R":                   {"simpleFunction":"blue_4", "off":"policeparts_lights_orange", "on":"policeparts_lights_orange_on"},
+    },
+    //  Hidden flashers: each LED housing sits 3.5 cm inside the body behind a little door
+    //  (hatches/craptech_hatches.dae). craptechFlasherHatch.lua drives, per unit,
+    //  craptech_hatch_*_door (0 shut .. 1 open: the door turns about its top edge) and
+    //  craptech_hatch_*_in (1 = housing inside .. 0 = out in its working place). Door meshes are
+    //  built in the housing's own frame, so they share its baseRotationGlobal; hinge points and
+    //  slide directions are worked out for the custom front bumper (flasher at x 0.72, 42 deg).
+    //  The trunk-lid doors carry the lid's own paint mapping and open 85 deg (lip above them).
+    "props": [
+        ["func", "mesh", "idRef:", "idX:", "idY:", "baseRotation", "rotation", "translation", "min", "max", "offset", "multiplier"],
+        ["craptech_hatch_FL_in", "generic_flasher_led_L", "fb3ll", "fb3l", "fb2ll", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0.72, "y":-1.845, "z":0.38}, "baseRotationGlobal":{"x":0, "y":0, "z":42}, "translationGlobal":{"x":-0.0234, "y":0.026, "z":0}, "deformGroup":"foglight_L_break"}],
+        ["craptech_hatch_FL_door", "craptech_hatch_door_black", "fb3ll", "fb3l", "fb2ll", {"x":0, "y":0, "z":0}, {"x":-100, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0.7264, "y":-1.8521, "z":0.404}, "baseRotationGlobal":{"x":0, "y":0, "z":42}, "translationGlobal":{"x":0, "y":0, "z":0}, "deformGroup":"foglight_L_break"}],
+        ["craptech_hatch_FR_in", "generic_flasher_led_R", "fb3rr", "fb3r", "fb2rr", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.72, "y":-1.845, "z":0.38}, "baseRotationGlobal":{"x":0, "y":0, "z":-42}, "translationGlobal":{"x":0.0234, "y":0.026, "z":0}, "deformGroup":"foglight_R_break"}],
+        ["craptech_hatch_FR_door", "craptech_hatch_door_black", "fb3rr", "fb3r", "fb2rr", {"x":0, "y":0, "z":0}, {"x":-100, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.7264, "y":-1.8521, "z":0.404}, "baseRotationGlobal":{"x":0, "y":0, "z":-42}, "translationGlobal":{"x":0, "y":0, "z":0}, "deformGroup":"foglight_R_break"}],
+        ["craptech_hatch_RL_in", "generic_flasher_led_L", "t4l", "t4", "t3l", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0.259, "y":2.12, "z":0.71}, "baseRotationGlobal":{"x":0, "y":0, "z":180}, "translationGlobal":{"x":0, "y":-0.035, "z":0}, "deformGroup":"platelight_break"}],
+        ["craptech_hatch_RL_door", "craptech_hatch_door_rl", "t4l", "t4", "t3l", {"x":0, "y":0, "z":0}, {"x":-85, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0.259, "y":2.117, "z":0.734}, "baseRotationGlobal":{"x":0, "y":0, "z":180}, "translationGlobal":{"x":0, "y":0, "z":0}, "deformGroup":"platelight_break"}],
+        ["craptech_static", "craptech_hatch_aperture", "t4l", "t4", "t3l", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0.259, "y":2.116, "z":0.71}, "baseRotationGlobal":{"x":0, "y":0, "z":180}, "translationGlobal":{"x":0, "y":0, "z":0}, "deformGroup":"platelight_break"}],
+        ["craptech_hatch_RR_in", "generic_flasher_led_R", "t4r", "t4", "t3r", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.259, "y":2.12, "z":0.71}, "baseRotationGlobal":{"x":0, "y":0, "z":180}, "translationGlobal":{"x":0, "y":-0.035, "z":0}, "deformGroup":"platelight_break"}],
+        ["craptech_hatch_RR_door", "craptech_hatch_door_rr", "t4r", "t4", "t3r", {"x":0, "y":0, "z":0}, {"x":-85, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.259, "y":2.117, "z":0.734}, "baseRotationGlobal":{"x":0, "y":0, "z":180}, "translationGlobal":{"x":0, "y":0, "z":0}, "deformGroup":"platelight_break"}],
+        ["craptech_static", "craptech_hatch_aperture", "t4r", "t4", "t3r", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.259, "y":2.116, "z":0.71}, "baseRotationGlobal":{"x":0, "y":0, "z":180}, "translationGlobal":{"x":0, "y":0, "z":0}, "deformGroup":"platelight_break"}],
+    ],
+},
+}

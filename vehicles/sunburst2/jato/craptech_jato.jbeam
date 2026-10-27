@@ -1,0 +1,122 @@
+{
+"craptech_jato_bumper": {
+    "information":{
+        "authors":"Crapouille Technologies",
+        "name":"Crapouille Twin Bumper JATO",
+        "value":24000,
+    },
+    //  Two solid-fuel boosters hidden in the rear bumper, one each side of the number plate.
+    //  Deploying and firing are separate:
+    //    Deploy / retract ("Crapouille JATO: deploy"): the painted panels part (upper half up, lower half
+    //      down) and slide behind the bumper skin, then the rockets come out 17 cm on their rails (or the reverse).
+    //    Fire / stop ("Crapouille JATO: fire", or the stock JATO key / app button): only once
+    //      deployed. 2 x 6 kN, 8 s of burn in total, in as many bursts as you like. While they burn
+    //      the rear wing goes flat. Fuel refills on vehicle reset.
+    //  Logic: lua/controller/craptechJato.lua. Meshes: hatches/craptech_hatches.dae (doors follow
+    //  the bumper skin and carry its paint mapping; rockets; flames).
+    "slotType" : "craptech_jato",
+    "controller": [
+        ["fileName"],
+        ["craptechJato", {"fuel":8, "thrustRampTime":0.15, "doorTime":0.5, "slideTime":3,
+                          "nozzles":[["cj_al", "cj_bl"], ["cj_ar", "cj_br"]]}],
+    ],
+    //  every option inline: sections of all parts are merged, modifier rows would leak
+    "nodes": [
+        ["id", "posX", "posY", "posZ"],
+        //  per side: nozzle exit with the rocket out, a point down the exhaust, a side reference
+        ["cj_al", 0.340, 2.367, 0.452, {"nodeWeight":2.0, "collision":false, "selfCollision":false, "group":"", "nodeMaterial":"|NM_METAL", "frictionCoef":0.5}],
+        ["cj_bl", 0.340, 2.667, 0.452, {"nodeWeight":2.0, "collision":false, "selfCollision":false, "group":"", "nodeMaterial":"|NM_METAL", "frictionCoef":0.5}],
+        ["cj_cl", 0.260, 2.367, 0.452, {"nodeWeight":2.0, "collision":false, "selfCollision":false, "group":"", "nodeMaterial":"|NM_METAL", "frictionCoef":0.5}],
+        ["cj_ar", -0.340, 2.367, 0.452, {"nodeWeight":2.0, "collision":false, "selfCollision":false, "group":"", "nodeMaterial":"|NM_METAL", "frictionCoef":0.5}],
+        ["cj_br", -0.340, 2.667, 0.452, {"nodeWeight":2.0, "collision":false, "selfCollision":false, "group":"", "nodeMaterial":"|NM_METAL", "frictionCoef":0.5}],
+        ["cj_cr", -0.260, 2.367, 0.452, {"nodeWeight":2.0, "collision":false, "selfCollision":false, "group":"", "nodeMaterial":"|NM_METAL", "frictionCoef":0.5}],
+    ],
+    "beams": [
+        ["id1:", "id2:"],
+        //  tied to the rear panel and floor; each side breaks off on its own in a crash
+        ["cj_al", "cj_bl", {"beamSpring":400000, "beamDamp":40, "beamDeform":"FLT_MAX", "beamStrength":"FLT_MAX", "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"", "deformGroup":""}],
+        ["cj_al", "cj_cl", {"beamSpring":400000, "beamDamp":40, "beamDeform":"FLT_MAX", "beamStrength":"FLT_MAX", "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"", "deformGroup":""}],
+        ["cj_bl", "cj_cl", {"beamSpring":400000, "beamDamp":40, "beamDeform":"FLT_MAX", "beamStrength":"FLT_MAX", "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"", "deformGroup":""}],
+        ["cj_al", "r3ll", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_al", "r6ll", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_al", "r3", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_al", "r6", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_al", "r5ll", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_al", "r2ll", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_bl", "r3ll", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_bl", "r6ll", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_bl", "r3", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_bl", "r6", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_bl", "r5ll", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_bl", "r2ll", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_cl", "r3ll", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_cl", "r6ll", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_cl", "r3", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_cl", "r6", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_cl", "r5ll", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_cl", "r2ll", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_l", "deformGroup":""}],
+        ["cj_ar", "cj_br", {"beamSpring":400000, "beamDamp":40, "beamDeform":"FLT_MAX", "beamStrength":"FLT_MAX", "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"", "deformGroup":""}],
+        ["cj_ar", "cj_cr", {"beamSpring":400000, "beamDamp":40, "beamDeform":"FLT_MAX", "beamStrength":"FLT_MAX", "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"", "deformGroup":""}],
+        ["cj_br", "cj_cr", {"beamSpring":400000, "beamDamp":40, "beamDeform":"FLT_MAX", "beamStrength":"FLT_MAX", "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"", "deformGroup":""}],
+        ["cj_ar", "r3rr", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_ar", "r6rr", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_ar", "r3", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_ar", "r6", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_ar", "r5rr", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_ar", "r2rr", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_br", "r3rr", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_br", "r6rr", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_br", "r3", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_br", "r6", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_br", "r5rr", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_br", "r2rr", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_cr", "r3rr", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_cr", "r6rr", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_cr", "r3", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_cr", "r6", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_cr", "r5rr", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+        ["cj_cr", "r2rr", {"beamSpring":400000, "beamDamp":40, "beamDeform":60000, "beamStrength":150000, "beamPrecompression":1, "beamType":"|NORMAL", "breakGroup":"craptech_jato_r", "deformGroup":""}],
+    ],
+    //  each exhaust pushes back along cj_a -> cj_b, so the car is pushed forward (as stock JATO)
+    "thrusters": [
+        ["id1:", "id2:", "factor", "thrustLimit", "control"],
+        ["cj_al", "cj_bl", 6000, 6000, "craptech_jato_thrust"],
+        ["cj_ar", "cj_br", 6000, 6000, "craptech_jato_thrust"],
+    ],
+    "glowMap":{
+        "shockdiamonds":       {"simpleFunction":"craptech_jato_flame", "off":"invis", "on":"craptech_jato_flame_glow"},
+        "craptech_jato_core":  {"simpleFunction":"craptech_jato_flame", "off":"invis", "on":"craptech_jato_core_on"},
+        "craptech_jato_plume": {"simpleFunction":"craptech_jato_flame", "off":"invis", "on":"craptech_jato_plume_on"},
+    },
+    //  craptech_jato_door 0 shut .. 1 open: each door is two halves that part like lift doors,
+    //  the upper one up (and 3.5 cm in, following the skin), the lower one down behind the lip,
+    //  so neither leaves the painted area. craptech_jato_out 0 in .. 1 out: rocket and flames 17 cm straight back.
+    "props": [
+        ["func", "mesh", "idRef:", "idX:", "idY:", "baseRotation", "rotation", "translation", "min", "max", "offset", "multiplier"],
+        ["craptech_jato_door", "craptech_jato_door_top_l", "r6ll", "r6", "r3ll", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0.3400, "y":2.2092, "z":0.4745}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":0, "y":-0.035, "z":0.046}, "breakGroup":"craptech_jato_l"}],
+        ["craptech_jato_door", "craptech_jato_door_bot_l", "r6ll", "r6", "r3ll", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0.3400, "y":2.2140, "z":0.4295}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":0, "y":-0.010, "z":-0.046}, "breakGroup":"craptech_jato_l"}],
+        ["craptech_static", "craptech_jato_aperture_l", "r6ll", "r6", "r3ll", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0.3400, "y":2.2123, "z":0.4520}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":0, "y":0, "z":0}, "breakGroup":"craptech_jato_l"}],
+        ["craptech_jato_out", "craptech_jato_rocket", "r6ll", "r6", "r3ll", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0.3400, "y":2.1973, "z":0.4520}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":0, "y":0.17, "z":0}, "breakGroup":"craptech_jato_l"}],
+        ["craptech_jato_out", "craptech_jato_fire", "r6ll", "r6", "r3ll", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0.3400, "y":2.1973, "z":0.4520}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":0, "y":0.17, "z":0}, "breakGroup":"craptech_jato_l"}],
+        ["craptech_jato_out", "craptech_jato_flame", "r6ll", "r6", "r3ll", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0.3400, "y":2.1973, "z":0.4520}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":0, "y":0.17, "z":0}, "breakGroup":"craptech_jato_l"}],
+        ["craptech_jato_door", "craptech_jato_door_top_r", "r6rr", "r6", "r3rr", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.3400, "y":2.2092, "z":0.4745}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":0, "y":-0.035, "z":0.046}, "breakGroup":"craptech_jato_r"}],
+        ["craptech_jato_door", "craptech_jato_door_bot_r", "r6rr", "r6", "r3rr", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.3400, "y":2.2140, "z":0.4295}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":0, "y":-0.010, "z":-0.046}, "breakGroup":"craptech_jato_r"}],
+        ["craptech_static", "craptech_jato_aperture_r", "r6rr", "r6", "r3rr", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.3400, "y":2.2123, "z":0.4520}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":0, "y":0, "z":0}, "breakGroup":"craptech_jato_r"}],
+        ["craptech_jato_out", "craptech_jato_rocket", "r6rr", "r6", "r3rr", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.3400, "y":2.1973, "z":0.4520}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":0, "y":0.17, "z":0}, "breakGroup":"craptech_jato_r"}],
+        ["craptech_jato_out", "craptech_jato_fire", "r6rr", "r6", "r3rr", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.3400, "y":2.1973, "z":0.4520}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":0, "y":0.17, "z":0}, "breakGroup":"craptech_jato_r"}],
+        ["craptech_jato_out", "craptech_jato_flame", "r6rr", "r6", "r3rr", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.3400, "y":2.1973, "z":0.4520}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":0, "y":0.17, "z":0}, "breakGroup":"craptech_jato_r"}],
+    ],
+},
+}

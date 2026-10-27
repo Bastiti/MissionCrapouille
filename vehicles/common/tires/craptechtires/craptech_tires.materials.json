@@ -1,0 +1,25 @@
+{
+  "craptech_tire_cgrip": {
+    "name": "craptech_tire_cgrip",
+    "mapTo": "craptech_tire_cgrip",
+    "class": "Material",
+    "Stages": [
+      {
+        "ambientOcclusionMap": "/vehicles/common/tires/craptechtires/cgrip/craptech_tire_cgrip_ao.data.png",
+        "baseColorMap": "/vehicles/common/tires/craptechtires/cgrip/craptech_tire_cgrip_b.color.png",
+        "normalMap": "/vehicles/common/tires/craptechtires/cgrip/craptech_tire_cgrip_n.normal.png",
+        "roughnessMap": "/vehicles/common/tires/craptechtires/cgrip/craptech_tire_cgrip_r.data.png"
+      },
+      {},
+      {},
+      {}
+    ],
+    "doubleSided": true,
+    "dynamicCubemap": true,
+    "invertBackFaceNormals": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "materialTag2": "car_killer",
+    "version": 1.5
+  }
+}

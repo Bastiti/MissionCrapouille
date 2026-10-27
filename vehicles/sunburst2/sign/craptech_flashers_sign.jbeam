@@ -1,0 +1,208 @@
+{
+"sunburst2_flashers_alt_miel": {
+    "information":{
+        "authors":"Crapouille Technologies",
+        "name":"Crapouille Concealed Flashers + LED Sign",
+        "value":350,
+    },
+    //  Same slot and same meshes as the stock "Concealed Flashers" (sunburst2_flashers_alt),
+    //  but every LED is amber and the rear-window POLICE/STOP board is driven by our own
+    //  HTML page (sign/craptech_sign_screen.html) instead of the stock texture atlas.
+    "slotType" : "sunburst2_lightbar",
+    "slots2": [
+        ["name",               "allowTypes",           "denyTypes", "default",                       "description"],
+        ["sunburst2_flashers", ["sunburst2_flashers"], [],          "sunburst2_flashers_miel_amber", "Concealed Flashers"],
+        ["soundscape_siren",   ["soundscape_siren"],   [],          "soundscape_siren_21",           "Siren Audio"],
+        ["flasher_bulb_FL4_miel",["us_lightbar_led_o_4W_x4"],[],"us_lightbar_led_o_4W_x4","Front Left Flasher LED Unit 2",{"coreSlot":true,"variables":{
+          "$electric":"blue_1","$nodeRef":"h5", "$nodeX":"h5l", "$nodeY":"h4", "$deformGroup":"flashersfront_break","$posX": 0.10, "$posY":-2.095,"$posZ":0.603,"$rotX":-20,"$rotY":0,"$rotZ":176,"$shadowEnable":0,"$disable":0
+        }}],
+        ["flasher_bulb_FR4_miel",["us_lightbar_led_o_4W_x4"],[],"us_lightbar_led_o_4W_x4","Front Right Flasher LED Unit 2",{"coreSlot":true,"variables":{
+          "$electric":"red_1", "$nodeRef":"h5", "$nodeX":"h5r", "$nodeY":"h4", "$deformGroup":"flashersfront_break","$posX":-0.10, "$posY":-2.095,"$posZ":0.603,"$rotX":-20,"$rotY":0,"$rotZ":184,"$shadowEnable":0,"$disable":0
+        }}],
+        //rear-window units sit on the ends of the fold-down board and fold away with it
+        ["flasher_bulb_RL4_miel",["us_lightbar_led_o_4W_x4"],[],"us_lightbar_led_o_4W_x4","Rear Left Flasher LED Unit 2",{"coreSlot":true,"variables":{
+          "$electric":"blue_1","$nodeRef":"sgn_tl","$nodeX":"sgn_tml","$nodeY":"sgn_bl","$deformGroup":"backlight_break",    "$posX": 0.394,"$posY": 1.05, "$posZ":1.28, "$rotX":0,  "$rotY":0,"$rotZ":0,  "$shadowEnable":0,"$disable":0
+        }}],
+        ["flasher_bulb_RR4_miel",["us_lightbar_led_o_4W_x4"],[],"us_lightbar_led_o_4W_x4","Rear Right Flasher LED Unit 2",{"coreSlot":true,"variables":{
+          "$electric":"red_1", "$nodeRef":"sgn_tr","$nodeX":"sgn_tmr","$nodeY":"sgn_br","$deformGroup":"backlight_break",    "$posX":-0.394,"$posY": 1.05, "$posZ":1.28, "$rotX":0,  "$rotY":0,"$rotZ":0,  "$shadowEnable":0,"$disable":0
+        }}],
+    ],
+    "soundscape": [
+        ["name", "src"],
+        //affects siren location because siren soundscape part is loaded after
+        {"node:":"f15"},
+    ],
+    "components":{
+      "lightbar2modes":true,
+    },
+    "controller": [
+        ["fileName"],
+        ["beaconSpin"],
+        ["lightbar", {
+            "name":"flashers2",
+            "defaultModeIndex": 1,
+            "modes": [
+                ["name", "config"],
+                ["Chase", [
+                    ["electric", "value", "duration"],
+                        ["blue_1", 1, 0.15],
+                        ["blue_1", 0, 0.15],
+                        ["blue_1", 1, 0.15],
+                        ["blue_1", 0, 0.60],
+
+                        ["red_1", 0, 0.60],
+                        ["red_1", 1, 0.15],
+                        ["red_1", 0, 0.15],
+                        ["red_1", 1, 0.15],
+                    ],
+                ],
+                ["Scene", [
+                    ["electric", "value", "duration"],
+                        ["blue_1", 1, 0.3],
+                        ["blue_1", 0, 0.3],
+
+                        ["red_1", 0, 0.3],
+                        ["red_1", 1, 0.3],
+                    ],
+                ],
+            ],
+        }],
+        //  Renders sign/craptech_sign_screen.html into "@craptech_sign" and streams it
+        //  the lightbar / ignition / turn-signal electrics. See lua/controller/craptechSign.lua.
+        ["craptechSign", {"materialName":"@craptech_sign",
+                          "htmlFilePath":"local://local/vehicles/sunburst2/sign/craptech_sign_screen.html",
+                          "textureWidth":1024,
+                          "textureHeight":1024,
+                          "textureFPS":20}],
+        //  grille flashers come out right after the bumper / plate ones (hatchAmber, 4 units)
+        ["craptechFlasherHatch", {"name":"hatchHood", "units":["craptech_hatch_HL", "craptech_hatch_HR"],
+                                  "stagger":0.12, "doorTime":0.28, "slideTime":0.32, "startDelay":0.48}],
+    ],
+    "glowMap":{
+            //  The board face mesh carries the material "display_american_police"; its UVs sample
+            //  u 0.0164..0.4864, v 0.8392..0.9024 of a 1024x1024 texture, and the HTML page draws
+            //  the LED matrix into exactly that rectangle.
+            "display_american_police": {"simpleFunction":{"ignitionLevel":0.5}, "off":"craptech_sign_off", "on":"craptech_sign_on"},
+            "generic_flasher_led_L_b": {"simpleFunction":"red_1",  "off":"policeparts_lights_orange", "on":"policeparts_lights_orange_on"},
+            "generic_flasher_led_R_b": {"simpleFunction":"blue_1", "off":"policeparts_lights_orange", "on":"policeparts_lights_orange_on"},
+    },
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        //  (hood flashers are props now, see "props" below)
+        {"nodeMove":{"x":0, "y":0, "z":0}},
+        //  rear-window units ride on the board nodes, so they fold away with the sign
+        {"deformGroup":"backlight_break", "deformMaterialBase":"policeparts_lights_white", "deformMaterialDamaged":"policeparts_lights_white"},
+        ["generic_flasher_led_L_b", ["craptech_sign"], [], {"pos":{"x":-0.394, "y":1.05, "z":1.28}, "rot":{"x":0, "y":0, "z":180}, "scale":{"x":1.5, "y":1.5, "z":1.5}}],
+        ["generic_flasher_led_R_b", ["craptech_sign"], [], {"pos":{"x": 0.394, "y":1.05, "z":1.28}, "rot":{"x":0, "y":0, "z":180}, "scale":{"x":1.5, "y":1.5, "z":1.5}}],
+        //  The board rides on its own hinged nodes (see "nodes" below) so it can fold away.
+        //  Only the "police" face is kept (it becomes our screen); the stock "stop" and "off"
+        //  overlays sit on the same quad and are dropped so nothing z-fights with it.
+        {"deformGroup":"backlight_break", "deformMaterialBase":"craptech_sign_off", "deformMaterialDamaged":"invis"},
+        ["police_display_american_police", ["craptech_sign"], [], {"pos":{"x": 0.0, "y":1.06, "z":1.27}, "rot":{"x":0, "y":0, "z":0}, "scale":{"x":1.5, "y":1.5, "z":1.5}}],
+        {"deformGroup":"", "deformationTriggerRatio":"", "deformMaterialBase":"", "deformMaterialDamaged":""},
+        ["police_display", ["craptech_sign"], [], {"pos":{"x": 0.0, "y":1.06, "z":1.27}, "rot":{"x":0, "y":0, "z":0}, "scale":{"x":1.5, "y":1.5, "z":1.5}}],
+        {"deformGroup":"", "deformationTriggerRatio":"", "deformMaterialBase":"", "deformMaterialDamaged":""},
+    ],
+    //  Grille flashers hide 3.5 cm back behind little black doors, like the bumper and plate
+    //  ones (craptechFlasherHatch.lua: craptech_hatch_H*_door 0 shut .. 1 open,
+    //  craptech_hatch_H*_in 1 = inside .. 0 = out). Door meshes share the housing's frame.
+    "props": [
+        ["func",                  "mesh",                      "idRef:", "idX:", "idY:", "baseRotation",        "rotation",               "translation",       "min", "max", "offset", "multiplier"],
+        ["craptech_hatch_HL_in",  "generic_flasher_led_L_b",   "h5",     "h5r",  "h4",   {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0},    {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.1, "y":-2.095, "z":0.603}, "baseRotationGlobal":{"x":-20, "y":0, "z":-4}, "translationGlobal":{"x":0.0023, "y":0.0328, "z":-0.012}, "deformGroup":"flashersfront_break"}],
+        ["craptech_hatch_HL_door", "craptech_hatch_door_black", "h5",     "h5r",  "h4",   {"x":0, "y":0, "z":0}, {"x":-100, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.1, "y":-2.0957, "z":0.6288}, "baseRotationGlobal":{"x":-20, "y":0, "z":-4}, "deformGroup":"flashersfront_break"}],
+        ["craptech_hatch_HR_in",  "generic_flasher_led_R_b",   "h5",     "h5l",  "h4",   {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0},    {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x": 0.1, "y":-2.095, "z":0.603}, "baseRotationGlobal":{"x":-20, "y":0, "z": 4}, "translationGlobal":{"x":-0.0023, "y":0.0328, "z":-0.012}, "deformGroup":"flashersfront_break"}],
+        ["craptech_hatch_HR_door", "craptech_hatch_door_black", "h5",     "h5l",  "h4",   {"x":0, "y":0, "z":0}, {"x":-100, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x": 0.1, "y":-2.0957, "z":0.6288}, "baseRotationGlobal":{"x":-20, "y":0, "z": 4}, "deformGroup":"flashersfront_break"}],
+    ],
+    //  Fold-down board. It hangs from a hinge along its top edge just under the headliner
+    //  (sgn_hl/sgn_hr, clamped to the roof nodes) and two hydros from rf3 pull its bottom
+    //  edge forward. craptech_sign_deploy (set by craptechSign.lua when the lightbar is on):
+    //      0 -> folded ~75 deg forward, flat under the headliner   1 -> hanging upright
+    //  Hydro ratio 0.815 = folded, worked out from the hinge geometry (built upright = 1.0).
+    //  Every row carries its own options: jbeam modifier rows would carry over into the
+    //  next part's rows (e.g. the steering hydros), so none are used here.
+    "nodes": [
+        ["id", "posX", "posY", "posZ"],
+        ["sgn_tl", 0.300, 1.060, 1.318, {"nodeWeight":0.4,"collision":false,"selfCollision":false,"group":"craptech_sign","nodeMaterial":"|NM_PLASTIC","frictionCoef":0.5}],
+        ["sgn_bl", 0.300, 1.060, 1.215, {"nodeWeight":0.4,"collision":false,"selfCollision":false,"group":"craptech_sign","nodeMaterial":"|NM_PLASTIC","frictionCoef":0.5}],
+        ["sgn_tml", 0.150, 1.060, 1.318, {"nodeWeight":0.4,"collision":false,"selfCollision":false,"group":"craptech_sign","nodeMaterial":"|NM_PLASTIC","frictionCoef":0.5}],
+        ["sgn_bml", 0.150, 1.060, 1.215, {"nodeWeight":0.4,"collision":false,"selfCollision":false,"group":"craptech_sign","nodeMaterial":"|NM_PLASTIC","frictionCoef":0.5}],
+        ["sgn_tm", 0.000, 1.060, 1.318, {"nodeWeight":0.4,"collision":false,"selfCollision":false,"group":"craptech_sign","nodeMaterial":"|NM_PLASTIC","frictionCoef":0.5}],
+        ["sgn_bm", 0.000, 1.060, 1.215, {"nodeWeight":0.4,"collision":false,"selfCollision":false,"group":"craptech_sign","nodeMaterial":"|NM_PLASTIC","frictionCoef":0.5}],
+        ["sgn_tmr", -0.150, 1.060, 1.318, {"nodeWeight":0.4,"collision":false,"selfCollision":false,"group":"craptech_sign","nodeMaterial":"|NM_PLASTIC","frictionCoef":0.5}],
+        ["sgn_bmr", -0.150, 1.060, 1.215, {"nodeWeight":0.4,"collision":false,"selfCollision":false,"group":"craptech_sign","nodeMaterial":"|NM_PLASTIC","frictionCoef":0.5}],
+        ["sgn_tr", -0.300, 1.060, 1.318, {"nodeWeight":0.4,"collision":false,"selfCollision":false,"group":"craptech_sign","nodeMaterial":"|NM_PLASTIC","frictionCoef":0.5}],
+        ["sgn_br", -0.300, 1.060, 1.215, {"nodeWeight":0.4,"collision":false,"selfCollision":false,"group":"craptech_sign","nodeMaterial":"|NM_PLASTIC","frictionCoef":0.5}],
+        ["sgn_kl", 0.250, 1.100, 1.265, {"nodeWeight":0.4,"collision":false,"selfCollision":false,"group":"craptech_sign","nodeMaterial":"|NM_PLASTIC","frictionCoef":0.5}],
+        ["sgn_km", 0.000, 1.100, 1.265, {"nodeWeight":0.4,"collision":false,"selfCollision":false,"group":"craptech_sign","nodeMaterial":"|NM_PLASTIC","frictionCoef":0.5}],
+        ["sgn_kr", -0.250, 1.100, 1.265, {"nodeWeight":0.4,"collision":false,"selfCollision":false,"group":"craptech_sign","nodeMaterial":"|NM_PLASTIC","frictionCoef":0.5}],
+    ],
+    "beams": [
+        ["id1:", "id2:"],
+        ["sgn_tl", "rf4", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tl", "rf4l", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tl", "rf3", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tl", "rf3l", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tl", "p10ll", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tl", "p9l", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tl", "rfrg1", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tr", "rf4", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tr", "rf4r", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tr", "rf3", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tr", "rf3r", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tr", "p10rr", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tr", "p9r", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tr", "rfrg1", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tl", "sgn_bl", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tl", "sgn_tml", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_bl", "sgn_bml", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tl", "sgn_bml", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_bl", "sgn_tml", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tml", "sgn_bml", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tml", "sgn_tm", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_bml", "sgn_bm", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tml", "sgn_bm", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_bml", "sgn_tm", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tm", "sgn_bm", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tm", "sgn_tmr", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_bm", "sgn_bmr", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tm", "sgn_bmr", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_bm", "sgn_tmr", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tmr", "sgn_bmr", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tmr", "sgn_tr", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_bmr", "sgn_br", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tmr", "sgn_br", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_bmr", "sgn_tr", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_tr", "sgn_br", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_kl", "sgn_tl", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_kl", "sgn_bl", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_kl", "sgn_tml", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_kl", "sgn_bml", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_km", "sgn_tml", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_km", "sgn_bml", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_km", "sgn_tm", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_km", "sgn_bm", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_km", "sgn_tmr", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_km", "sgn_bmr", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_kr", "sgn_tmr", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_kr", "sgn_bmr", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_kr", "sgn_tr", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_kr", "sgn_br", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_kl", "sgn_km", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["sgn_km", "sgn_kr", {"beamSpring":401000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["rf3", "sgn_bl", {"beamSpring":0,"beamDamp":150,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["rf3", "sgn_bm", {"beamSpring":0,"beamDamp":150,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["rf3", "sgn_br", {"beamSpring":0,"beamDamp":150,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["rf4", "sgn_bl", {"beamSpring":0,"beamDamp":150,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+        ["rf4", "sgn_br", {"beamSpring":0,"beamDamp":150,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+    ],
+    "hydros": [
+        ["id1:", "id2:"],
+        ["rf3", "sgn_bl", {"beamSpring":401000,"beamDamp":200,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"breakGroup":"","deformGroup":"","factor":"","extentFactor":"","inputSource":"craptech_sign_deploy","inputFactor":1,"inputCenter":1,"inputInLimit":0,"inputOutLimit":1.0001,"outLimit":1.0,"inRate":0.25,"outRate":0.25,"autoCenterRate":0.25,"inLimit":0.8151}],
+        ["rf3", "sgn_br", {"beamSpring":401000,"beamDamp":200,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"breakGroup":"","deformGroup":"","factor":"","extentFactor":"","inputSource":"craptech_sign_deploy","inputFactor":1,"inputCenter":1,"inputInLimit":0,"inputOutLimit":1.0001,"outLimit":1.0,"inRate":0.25,"outRate":0.25,"autoCenterRate":0.25,"inLimit":0.8151}],
+    ],
+},
+}

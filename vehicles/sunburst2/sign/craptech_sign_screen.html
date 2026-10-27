@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Crapouille LED Sign</title>
+<!--
+  Crapouille Technologies rear-window LED board.
+
+  The board mesh only samples a strip of the 1024x1024 texture (u 0.0164..0.4864,
+  v 0.8392..0.9024), i.e. page pixels x 16.8..498.1, y 99.9..164.7. That strip is a
+  144 x 20 LED matrix; every scene sets LEDs directly, with a built-in 5x7 LED font
+  (drawn at 1x for two lines of text, 2x for one big line) and a pixel-art cat emblem.
+
+  Fed by lua/controller/craptechSign.lua at 10 Hz:
+      updateData({lightbar, ignitionLevel, signal_left_input, signal_right_input, hazard_enabled,
+                  airspeed, gearIndex, brake, craptech_jato_out, craptech_jato_burning, jatofuel,
+                  craptech_airjacks})
+
+  The board only folds down while the lightbar is on. What it shows, highest priority first:
+      hazards on            -> ATTENTION, blinking
+      turn signal on        -> arrows running toward the turn
+      bumper JATO burning   -> BOOST in flames / flashing STAND CLEAR
+      bumper JATO deployed  -> JATO READY + fuel / KEEP CLEAR OF EXHAUST / DANGER scroller
+      air jacks up          -> LIFT / VEHICLE RAISED / CAUTION scroller
+      otherwise             -> the PLAYLIST below (emblem, name, scroller, live speed, scanner)
+
+  Preview in a browser: open the file (demo loop), or add ?preview=<scene>&t=1.2 for one still
+  frame, scene = intro | twoline | scroll | speed | scanner | left | right | hazard | ready |
+  boost | lift.
+-->
+<style>
+  html, body { margin: 0; padding: 0; width: 1024px; height: 1024px; overflow: hidden; background: #000; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1024" height="1024"></canvas>
+<script>
+"use strict";
+
+// ---- what plays while the lightbar is on (edit freely) -------------------------------
+var PLAYLIST = [
+  {type: "intro",   dur: 4.5},
+  {type: "twoline", dur: 3.5, top: "CRAPOUILLE", bottom: "TECHNOLOGIES"},
+  {type: "scroll",  text: "MIEL CRAPOUILLE  *  SUNBURST SPORT RS AWD  *  CRAPOUILLE TECHNOLOGIES  *  "},
+  {type: "speed",   dur: 4.0},
+  {type: "twoline", dur: 3.0, top: "SUNBURST", bottom: "SPORT RS AWD"},
+  {type: "scanner", dur: 3.0},
+];
+
+// ---- board ----------------------------------------------------------------------------
+var RX = 16.8, RY = 99.9, RW = 481.3, RH = 64.8;   // board rectangle in page pixels
+var COLS = 144, ROWS = 20;
+
+var AMBER = [255, 140, 20], GOLD = [255, 200, 70], WARM = [255, 236, 205];
+var RED = [255, 45, 20], ORANGE = [255, 95, 10], GREEN = [90, 255, 90];
+var UNLIT = "rgb(7,5,4)";
+
+var out = document.getElementById("c").getContext("2d");
+var led = new Float32Array(COLS * ROWS * 3);       // one RGB value (0..255) per LED
+
+function clear() { led.fill(0); }
+function set(x, y, c, a) {
+  x = Math.round(x); y = Math.round(y);
+  if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return;
+  var i = (y * COLS + x) * 3, k = a === undefined ? 1 : a;
+  led[i] = Math.max(led[i], c[0] * k);
+  led[i + 1] = Math.max(led[i + 1], c[1] * k);
+  led[i + 2] = Math.max(led[i + 2], c[2] * k);
+}
+function mix(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+
+// ---- 5x7 LED font ---------------------------------------------------------------------
+var FONT = {
+  "A": [".###.", "#...#", "#...#", "#####", "#...#", "#...#", "#...#"],
+  "B": ["####.", "#...#", "#...#", "####.", "#...#", "#...#", "####."],
+  "C": [".###.", "#...#", "#....", "#....", "#....", "#...#", ".###."],
+  "D": ["####.", "#...#", "#...#", "#...#", "#...#", "#...#", "####."],
+  "E": ["#####", "#....", "#....", "####.", "#....", "#....", "#####"],
+  "F": ["#####", "#....", "#....", "####.", "#....", "#....", "#...."],
+  "G": [".###.", "#...#", "#....", "#.###", "#...#", "#...#", ".####"],
+  "H": ["#...#", "#...#", "#...#", "#####", "#...#", "#...#", "#...#"],
+  "I": [".###.", "..#..", "..#..", "..#..", "..#..", "..#..", ".###."],
+  "J": ["..###", "...#.", "...#.", "...#.", "...#.", "#..#.", ".##.."],
+  "K": ["#...#", "#..#.", "#.#..", "##...", "#.#..", "#..#.", "#...#"],
+  "L": ["#....", "#....", "#....", "#....", "#....", "#....", "#####"],
+  "M": ["#...#", "##.##", "#.#.#", "#.#.#", "#...#", "#...#", "#...#"],
+  "N": ["#...#", "#...#", "##..#", "#.#.#", "#..##", "#...#", "#...#"],
+  "O": [".###.", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."],
+  "P": ["####.", "#...#", "#...#", "####.", "#....", "#....", "#...."],
+  "Q": [".###.", "#...#", "#...#", "#...#", "#.#.#", "#..#.", ".##.#"],
+  "R": ["####.", "#...#", "#...#", "####.", "#.#..", "#..#.", "#...#"],
+  "S": [".####", "#....", "#....", ".###.", "....#", "....#", "####."],
+  "T": ["#####", "..#..", "..#..", "..#..", "..#..", "..#..", "..#.."],
+  "U": ["#...#", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."],
+  "V": ["#...#", "#...#", "#...#", "#...#", "#...#", ".#.#.", "..#.."],
+  "W": ["#...#", "#...#", "#...#", "#.#.#", "#.#.#", "#.#.#", ".#.#."],
+  "X": ["#...#", "#...#", ".#.#.", "..#..", ".#.#.", "#...#", "#...#"],
+  "Y": ["#...#", "#...#", ".#.#.", "..#..", "..#..", "..#..", "..#.."],
+  "Z": ["#####", "....#", "...#.", "..#..", ".#...", "#....", "#####"],
+  "0": [".###.", "#...#", "#..##", "#.#.#", "##..#", "#...#", ".###."],
+  "1": ["..#..", ".##..", "..#..", "..#..", "..#..", "..#..", ".###."],
+  "2": [".###.", "#...#", "....#", "...#.", "..#..", ".#...", "#####"],
+  "3": ["####.", "....#", "....#", ".###.", "....#", "....#", "####."],
+  "4": ["...#.", "..##.", ".#.#.", "#..#.", "#####", "...#.", "...#."],
+  "5": ["#####", "#....", "####.", "....#", "....#", "#...#", ".###."],
+  "6": [".###.", "#....", "#....", "####.", "#...#", "#...#", ".###."],
+  "7": ["#####", "....#", "...#.", "..#..", ".#...", ".#...", ".#..."],
+  "8": [".###.", "#...#", "#...#", ".###.", "#...#", "#...#", ".###."],
+  "9": [".###.", "#...#", "#...#", ".####", "....#", "....#", ".###."],
+  " ": [".....", ".....", ".....", ".....", ".....", ".....", "....."],
+  ".": [".....", ".....", ".....", ".....", ".....", ".##..", ".##.."],
+  "-": [".....", ".....", ".....", ".###.", ".....", ".....", "....."],
+  "/": ["....#", "...#.", "...#.", "..#..", ".#...", ".#...", "#...."],
+  ":": [".....", ".##..", ".##..", ".....", ".##..", ".##..", "....."],
+  "!": ["..#..", "..#..", "..#..", "..#..", "..#..", ".....", "..#.."],
+  "*": [".....", ".....", "..#..", ".###.", "..#..", ".....", "....."],
+  "%": ["##..#", "##..#", "...#.", "..#..", ".#...", "#..##", "#..##"],
+};
+
+function textWidth(text, s) { return text.length ? text.length * 6 * s - s : 0; }
+
+// draws text with its top-left at (x, y); colour may be a function (column, row) -> rgb
+function drawText(text, x, y, s, color) {
+  for (var n = 0; n < text.length; n++) {
+    var g = FONT[text[n]] || FONT[" "];
+    var gx = x + n * 6 * s;
+    if (gx > COLS || gx + 5 * s < 0) continue;
+    for (var r = 0; r < 7; r++) {
+      for (var c = 0; c < 5; c++) {
+        if (g[r][c] !== "#") continue;
+        for (var dy = 0; dy < s; dy++) {
+          for (var dx = 0; dx < s; dx++) {
+            var px = gx + c * s + dx, py = y + r * s + dy;
+            set(px, py, typeof color === "function" ? color(px, py) : color);
+          }
+        }
+      }
+    }
+  }
+}
+function centerX(text, s) { return Math.round((COLS - textWidth(text, s)) / 2); }
+
+// ---- the cat emblem (the Crapouille cat), 13 x 13 -----------------------------------
+var CAT = [
+  "#...........#",
+  "##.........##",
+  "###.......###",
+  "#############",
+  "#############",
+  "##o.#####.o##",
+  "##o.#####.o##",
+  "#############",
+  "######.######",
+  ".####...####.",
+  ".###########.",
+  "..#########..",
+  "...#######...",
+];
+function drawCat(x, y, body, eyes) {
+  for (var r = 0; r < CAT.length; r++) {
+    for (var c = 0; c < CAT[r].length; c++) {
+      var ch = CAT[r][c];
+      if (ch === "#") set(x + c, y + r, body);
+      else if (ch === "o") set(x + c, y + r, eyes);
+    }
+  }
+}
+
+// warning triangle with an exclamation mark, 15 x 13
+var TRI = [
+  ".......#.......",
+  "......###......",
+  "......#.#......",
+  ".....##.##.....",
+  ".....#.#.#.....",
+  "....##.#.##....",
+  "....#..#..#....",
+  "...##.....##...",
+  "...#...#...#...",
+  "..##.......##..",
+  "..###########..",
+  ".#############.",
+  "...............",
+];
+function drawTriangle(x, y, c) {
+  for (var r = 0; r < TRI.length; r++) for (var col = 0; col < TRI[r].length; col++)
+    if (TRI[r][col] === "#") set(x + col, y + r, c);
+}
+
+// plays sub-scenes one after another, looping: steps = [[durationOrFn, drawFn], ...]
+function sequence(t, steps) {
+  var durs = steps.map(function (s) { return typeof s[0] === "function" ? s[0]() : s[0]; });
+  var total = durs.reduce(function (a, b) { return a + b; }, 0);
+  var tt = t % total;
+  for (var i = 0; i < steps.length; i++) {
+    if (tt < durs[i]) return steps[i][1](tt, durs[i]);
+    tt -= durs[i];
+  }
+}
+
+// a warning line between two triangles, the text flashing between two colours
+function warningCard(t, text, c1, c2) {
+  var on = Math.floor(t * 3) % 2 === 0;
+  drawTriangle(2, 3, on ? c1 : c2);
+  drawTriangle(COLS - 17, 3, on ? c1 : c2);
+  var lines = text.split("|");              // "|" splits into two lines
+  var y0 = lines.length > 1 ? 2 : 7;
+  for (var i = 0; i < lines.length; i++) drawText(lines[i], centerX(lines[i], 1), y0 + i * 9, 1, on ? c2 : c1);
+}
+
+// a scrolling message in big letters, warning colours
+function warningScroll(t, text, c1, c2) {
+  var x = COLS - t * SCROLL_SPEED;
+  drawText(text, x, 3, 2, function (px) { return Math.floor(px / 6) % 2 ? c1 : c2; });
+}
+
+// a white light sweeping across amber text
+function sweep(t, speed) {
+  return function (x) {
+    var p = ((t * speed) % 1.6 - 0.3) * COLS;
+    var d = Math.abs(x - p) / 10;
+    return d < 1 ? mix(WARM, AMBER, d) : AMBER;
+  };
+}
+
+// ---- scenes (t = seconds since the scene started) ---------------------------------------
+
+// emblem slides in, CRAPOUILLE types out next to it, then a light sweep
+function sceneIntro(t, dur) {
+  var catX = Math.min(3, -14 + t * 40);
+  drawCat(catX, 3, AMBER, WARM);
+  var text = "CRAPOUILLE";
+  var shown = Math.max(0, Math.min(text.length, Math.floor((t - 0.5) * 12)));
+  drawText(text.slice(0, shown), 21, 3, 2, t > 1.6 ? sweep(t - 1.6, 0.8) : AMBER);
+  if (shown > 0 && shown < text.length && Math.floor(t * 8) % 2 === 0) {     // cursor
+    for (var y = 3; y < 17; y++) set(21 + shown * 12, y, WARM);
+  }
+  fadeOut(t, dur);
+}
+
+function sceneTwoLine(t, dur, top, bottom) {
+  var k = Math.min(1, t / 0.4);
+  var drop = Math.round((1 - k) * -9);
+  drawText(top, centerX(top, 1), 2 + drop, 1, sweep(t, 0.7));
+  drawText(bottom, centerX(bottom, 1), 11 - drop, 1, GOLD);
+  fadeOut(t, dur);
+}
+
+var SCROLL_SPEED = 38;     // LEDs per second
+function scrollDuration(text) { return (COLS + textWidth(text, 2)) / SCROLL_SPEED; }
+function sceneScroll(t, text) {
+  var x = COLS - t * SCROLL_SPEED;
+  drawText(text, x, 3, 2, function (px) {
+    var h = (Math.sin(px * 0.05 + t * 1.5) + 1) / 2;
+    return mix(ORANGE, GOLD, h);
+  });
+}
+
+// live speed: big number, unit, and a bar graph along the bottom row
+function sceneSpeed(t, dur) {
+  var kmh = Math.round(Math.abs(state.airspeed) * 3.6);
+  var txt = String(kmh);
+  var col = kmh > 130 ? RED : kmh > 90 ? ORANGE : AMBER;
+  drawText(txt, 92 - textWidth(txt, 2), 2, 2, col);
+  drawText("KM/H", 98, 2, 1, GOLD);
+  var gear = state.gearIndex < 0 ? "R" : state.gearIndex === 0 ? "N" : String(Math.round(state.gearIndex));
+  drawText("GEAR " + gear, 98, 10, 1, WARM);
+  drawCat(3, 3, AMBER, WARM);
+  var fill = Math.min(1, kmh / 200) * COLS;
+  for (var x = 0; x < COLS; x++) set(x, 19, x < fill ? mix(GREEN, RED, x / COLS) : [40, 20, 5]);
+  fadeOut(t, dur);
+}
+
+// scanner: a bright head with a fading tail, bouncing across the board, emblem in the middle
+function sceneScanner(t) {
+  var period = 1.5, ph = (t % period) / period;
+  var lin = ph < 0.5 ? ph * 2 : 2 - ph * 2;
+  var pos = (0.5 - 0.5 * Math.cos(lin * Math.PI)) * (COLS - 1);
+  var dir = ph < 0.5 ? 1 : -1;
+  for (var x = 0; x < COLS; x++) {
+    var d = (pos - x) * dir;                      // >0 behind the head
+    var a = d < 0 ? Math.max(0, 1 + d / 2) : Math.max(0, 1 - d / 40);
+    if (a <= 0) continue;
+    var c = d < 2 ? WARM : ORANGE;
+    for (var y = 7; y < 13; y++) set(x, y, c, a * (y === 7 || y === 12 ? 0.5 : 1));
+  }
+  drawCat(65, 3, [60, 30, 5], AMBER);
+}
+
+function sceneArrows(t, dir) {
+  var period = 18, shift = (t * 60) % period;
+  for (var x = -period; x < COLS + period; x += period) {
+    var bx = dir > 0 ? x + shift : x - shift;
+    for (var r = 0; r < 8; r++) {
+      var off = dir > 0 ? r : -r;
+      for (var w = 0; w < 4; w++) {
+        set(bx + off + w * dir * -1, 2 + r, AMBER);
+        set(bx + off + w * dir * -1, 17 - r, AMBER);
+      }
+    }
+  }
+}
+
+function sceneHazard(t) {
+  if (Math.floor(t * 2.5) % 2 === 1) return;
+  drawText("ATTENTION", centerX("ATTENTION", 2), 3, 2, AMBER);
+  for (var x = 0; x < COLS; x += 2) { set(x, 0, AMBER); set(x + 1, 19, AMBER); }
+}
+
+// JATO deployed: armed and waiting, with safety warnings in between
+var READY_SCROLL = "DANGER  *  ROCKET BOOSTERS ARMED  *  STAND CLEAR BEHIND VEHICLE  *  ";
+function sceneReady(t) {
+  sequence(t, [
+    [3.0, readyCard],
+    [3.0, function (tt) { warningCard(tt, "KEEP CLEAR|OF EXHAUST", RED, GOLD); fuelBar(); }],
+    [function () { return scrollDuration(READY_SCROLL); }, function (tt) { warningScroll(tt, READY_SCROLL, RED, AMBER); }],
+  ]);
+}
+function readyCard(t) {
+  var on = Math.floor(t * 2) % 2 === 0;
+  drawText("JATO", 4, 3, 2, on ? RED : [120, 20, 10]);
+  drawText("READY", 58, 2, 1, WARM);
+  drawText("FUEL " + Math.round(state.jatofuel * 100) + "%", 58, 11, 1, GOLD);
+  fuelBar();
+}
+
+// JATO burning: BOOST in the flames, alternating with a flashing STAND CLEAR
+function sceneBoost(t) {
+  sequence(t, [
+    [2.0, boostFlames],
+    [1.2, function (tt) {
+      var on = Math.floor(tt * 6) % 2 === 0;
+      if (on) for (var i = 0; i < led.length; i += 3) { led[i] = 90; led[i + 1] = 8; led[i + 2] = 0; }
+      drawText("STAND CLEAR", centerX("STAND CLEAR", 2) < 0 ? 0 : centerX("STAND CLEAR", 2), 3, 2, on ? WARM : RED);
+    }],
+  ]);
+}
+function boostFlames(t) {
+  for (var x = 0; x < COLS; x++) {
+    var n = Math.sin(x * 0.37 + t * 23) + Math.sin(x * 0.13 - t * 17) + Math.sin(x * 0.71 + t * 31);
+    var h = 6 + 3 * n;                           // flame height around the middle
+    for (var y = 0; y < ROWS; y++) {
+      var d = Math.abs(y - 9.5);
+      if (d > h) continue;
+      var k = d / Math.max(h, 1);
+      var c = k < 0.5 ? mix(WARM, GOLD, k * 2) : mix(GOLD, RED, (k - 0.5) * 2);
+      set(x, y, c, 0.35 + 0.65 * (1 - k));
+    }
+  }
+  clearBox(40, 1, 64, 18);
+  drawText("BOOST", centerX("BOOST", 2), 3, 2, Math.floor(t * 8) % 2 ? WARM : GOLD);
+}
+
+// air jacks up: LIFT, then warnings
+var LIFT_SCROLL = "CAUTION  *  VEHICLE ON AIR JACKS  *  KEEP HANDS AND FEET CLEAR  *  ";
+function sceneLift(t) {
+  sequence(t, [
+    [2.5, liftCard],
+    [2.5, function (tt) { warningCard(tt, "VEHICLE|RAISED", GOLD, AMBER); }],
+    [function () { return scrollDuration(LIFT_SCROLL); }, function (tt) { warningScroll(tt, LIFT_SCROLL, GOLD, AMBER); }],
+  ]);
+}
+function liftCard(t) {
+  drawText("LIFT", centerX("LIFT", 2), 3, 2, AMBER);
+  var rise = (t * 12) % 8;
+  [[8, 1], [24, 1], [112, 1], [128, 1]].forEach(function (a) {
+    for (var r = 0; r < 4; r++) {
+      for (var c = -r; c <= r; c++) set(a[0] + c, 12 - rise + r, GOLD);
+    }
+    for (var y = 16 - rise; y < 20; y++) set(a[0], y, GOLD, 0.6);
+  });
+}
+
+function fuelBar() {
+  var fill = state.jatofuel * COLS;
+  for (var x = 0; x < COLS; x++) set(x, 19, x < fill ? RED : [40, 10, 5]);
+}
+function clearBox(x0, y0, w, h) {
+  for (var y = y0; y < y0 + h; y++) for (var x = x0; x < x0 + w; x++) {
+    var i = (y * COLS + x) * 3;
+    if (i >= 0 && i < led.length) { led[i] = 0; led[i + 1] = 0; led[i + 2] = 0; }
+  }
+}
+function fadeOut(t, dur) {
+  var k = (t - (dur - 0.3)) / 0.3;
+  if (k <= 0) return;
+  for (var i = 0; i < led.length; i++) led[i] *= Math.max(0, 1 - k);
+}
+
+// ---- playlist -----------------------------------------------------------------------------
+function entryDuration(e) { return e.type === "scroll" ? scrollDuration(e.text) : e.dur; }
+
+function renderPlaylist(t) {
+  var total = 0, i;
+  for (i = 0; i < PLAYLIST.length; i++) total += entryDuration(PLAYLIST[i]);
+  var tt = t % total;
+  for (i = 0; i < PLAYLIST.length; i++) {
+    var d = entryDuration(PLAYLIST[i]);
+    if (tt < d) break;
+    tt -= d;
+  }
+  renderScene(PLAYLIST[i], tt);
+}
+
+function renderScene(e, t) {
+  if (e.type === "intro") sceneIntro(t, e.dur || 4.5);
+  else if (e.type === "twoline") sceneTwoLine(t, e.dur || 3.5, e.top || "CRAPOUILLE", e.bottom || "TECHNOLOGIES");
+  else if (e.type === "scroll") sceneScroll(t, e.text || "CRAPOUILLE TECHNOLOGIES  *  ");
+  else if (e.type === "speed") sceneSpeed(t, e.dur || 4);
+  else if (e.type === "scanner") sceneScanner(t);
+  else if (e.type === "left") sceneArrows(t, -1);
+  else if (e.type === "right") sceneArrows(t, 1);
+  else if (e.type === "hazard") sceneHazard(t);
+  else if (e.type === "ready") sceneReady(t);
+  else if (e.type === "boost") sceneBoost(t);
+  else if (e.type === "lift") sceneLift(t);
+}
+
+// ---- LED output -----------------------------------------------------------------------------
+function paint(blank) {
+  out.fillStyle = "#000";
+  out.fillRect(0, 0, 1024, 1024);
+  var px = RW / COLS, py = RH / ROWS, rad = Math.min(px, py) * 0.48;
+  out.fillStyle = UNLIT;
+  out.beginPath();
+  for (var y = 0; y < ROWS; y++) {
+    for (var x = 0; x < COLS; x++) {
+      var cx = RX + (x + 0.5) * px, cy = RY + (y + 0.5) * py;
+      out.moveTo(cx + rad, cy); out.arc(cx, cy, rad, 0, 6.2832);
+    }
+  }
+  out.fill();
+  if (blank) return;
+  for (y = 0; y < ROWS; y++) {
+    for (x = 0; x < COLS; x++) {
+      var i = (y * COLS + x) * 3;
+      var r = led[i], g = led[i + 1], b = led[i + 2];
+      var lum = Math.max(r, g, b);
+      if (lum < 10) continue;
+      cx = RX + (x + 0.5) * px; cy = RY + (y + 0.5) * py;
+      // full brightness: scale the colour so its brightest channel is 255
+      var k = 255 / lum * Math.pow(lum / 255, 0.6);
+      var cr = Math.min(255, r * k) | 0, cg = Math.min(255, g * k) | 0, cb = Math.min(255, b * k) | 0;
+      // soft halo around each lit LED, then the LED itself
+      out.fillStyle = "rgba(" + cr + "," + cg + "," + cb + ",0.35)";
+      out.beginPath(); out.arc(cx, cy, rad * 1.45, 0, 6.2832); out.fill();
+      out.fillStyle = "rgb(" + cr + "," + cg + "," + cb + ")";
+      out.beginPath(); out.arc(cx, cy, rad, 0, 6.2832); out.fill();
+    }
+  }
+}
+
+// ---- state and main loop ----------------------------------------------------------------------
+var state = {lightbar: 0, ignitionLevel: 0, signal_left_input: 0, signal_right_input: 0, hazard_enabled: 0,
+             airspeed: 0, gearIndex: 0, brake: 0, craptech_jato_out: 0, craptech_jato_burning: 0, jatofuel: 1,
+             craptech_airjacks: 0};
+var gotData = false;
+var mode = "", modeStart = 0;
+
+function currentMode() {
+  if (state.ignitionLevel < 1) return "off";
+  if (state.lightbar <= 0.5) return "idle";        // board folded away under the headliner
+  if (state.hazard_enabled > 0.5) return "hazard";
+  if (state.signal_left_input > 0.5) return "left";
+  if (state.signal_right_input > 0.5) return "right";
+  if (state.craptech_jato_burning > 0.5) return "boost";
+  if (state.craptech_jato_out > 0.5) return "ready";
+  if (state.craptech_airjacks > 0.05) return "lift";
+  return "playlist";
+}
+
+function renderFrame(m, t) {
+  clear();
+  if (m === "playlist") renderPlaylist(t);
+  else if (m !== "off" && m !== "idle") renderScene({type: m}, t);
+  paint(m === "off" || m === "idle");
+}
+
+function tick() {
+  var now = performance.now() / 1000;
+  var m = currentMode();
+  if (m !== mode) { mode = m; modeStart = now; }
+  renderFrame(m, now - modeStart);
+}
+
+// called by craptechSign.lua
+function updateData(data) {
+  gotData = true;
+  for (var k in state) if (data[k] !== undefined) state[k] = data[k];
+}
+
+// ---- browser preview ------------------------------------------------------------------------
+function demo() {
+  if (gotData) return;
+  var steps = [
+    {ignitionLevel: 2, lightbar: 1, airspeed: 23},
+    {ignitionLevel: 2, lightbar: 1, craptech_jato_out: 1, jatofuel: 0.8},
+    {ignitionLevel: 2, lightbar: 1, craptech_jato_out: 1, craptech_jato_burning: 1, jatofuel: 0.6},
+    {ignitionLevel: 2, lightbar: 1, signal_left_input: 1},
+    {ignitionLevel: 2, lightbar: 1, hazard_enabled: 1},
+  ];
+  var i = 0;
+  function next() {
+    if (gotData) return;
+    for (var k in state) state[k] = k === "jatofuel" ? 1 : 0;
+    var s = steps[i++ % steps.length];
+    for (k in s) state[k] = s[k];
+  }
+  next();
+  setInterval(next, 8000);
+}
+
+var q = /[?&]preview=(\w+)/.exec(location.search);
+if (q) {
+  var at = parseFloat((/[?&]t=([\d.]+)/.exec(location.search) || [0, "1.2"])[1]);
+  state.airspeed = 31; state.gearIndex = 4; state.jatofuel = 0.7;
+  var entry = PLAYLIST.filter(function (p) { return p.type === q[1]; })[0] || {type: q[1]};
+  clear(); renderScene(entry, at); paint(false);
+} else {
+  setInterval(tick, 50);
+  setTimeout(demo, 1500);
+  tick();
+}
+</script>
+</body>
+</html>

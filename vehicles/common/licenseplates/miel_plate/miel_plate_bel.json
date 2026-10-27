@@ -1,0 +1,33 @@
+{
+  "name" : "SwitcherNova LicensePlate",
+  "version": 2,
+  "data": {
+    "gen":{
+      "pattern" : [" "],
+      "patternData":{ "":[]}
+    },
+    "format": {
+      "52-11": { //EU
+        "size": {
+          "x": 1024,
+          "y": 196
+        },
+        "text": {
+          "x": 0.54,
+          "y": 0.45,
+          "scale": 1.7,
+          "color": "rgb(134,26,34)",
+          "limit": 9
+        },
+        "diffuse": {
+          "backgroundImg" : "vehicles/common/licenseplates/miel_plate/miel_plate_background.png",
+          "fillStyle": "white"
+        },
+        "specular": {
+          "spriteImg": "vehicles/common/licenseplates/default/platefont_s.png",
+          "fillStyle": "rgb(233,233,233)"
+        }
+      }
+    }
+  }
+}

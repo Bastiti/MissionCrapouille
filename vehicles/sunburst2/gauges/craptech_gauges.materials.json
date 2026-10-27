@@ -1,0 +1,62 @@
+{
+    "sunburst2_gauges_KMH_miel": {
+    "name": "sunburst2_gauges_KMH_miel",
+    "mapTo": "sunburst2_gauges_KMH_miel",
+    "class": "Material",
+    "persistentId": "",
+    "Stages": [
+      {
+        "ambientOcclusionMap": "/vehicles/sunburst2/sunburst2_gauges_ao.data.png",
+        "baseColorMap": "vehicles/sunburst2/gauges/sunburst2_gauges_kmh_color_miel.png",
+        "clearCoatRoughnessFactor": 0,
+        "metallicFactor": 1,
+        "metallicMap": "vehicles/sunburst2/sunburst2_gauges_m.data.png",
+        "normalMap": "vehicles/sunburst2/sunburst2_gauges_nm.normal.png",
+        "opacityFactor": 0,
+        "pixelSpecular": true,
+        "roughnessMap": "vehicles/sunburst2/sunburst2_gauges_KMH_r.data.png",
+        "useAnisotropic": true
+      },
+      {},
+      {},
+      {}
+    ],
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "order_simset": 0,
+    "version": 1.5
+  },
+  "sunburst2_gauges_KMH_on_miel": {
+    "name": "sunburst2_gauges_KMH_on_miel",
+    "mapTo": "sunburst2_gauges_KMH_on_miel",
+    "class": "Material",
+    "persistentId": "s132b99a-689c-43fe-88a5-583e2e2406c5",
+    "Stages": [
+      {
+        "ambientOcclusionMap": "/vehicles/sunburst2/sunburst2_gauges_ao.data.png",
+        "baseColorMap": "vehicles/sunburst2/gauges/sunburst2_gauges_kmh_color_miel.png",
+        "clearCoatRoughnessFactor": 0,
+        "emissiveFactor": [
+          1,
+          0.999989986,
+          0.999989986
+        ],
+        "emissiveMap": "/vehicles/sunburst2/sunburst2_gauges_KMH_g.color.png",
+        "metallicFactor": 1,
+        "metallicMap": "vehicles/sunburst2/sunburst2_gauges_m.data.png",
+        "normalMap": "vehicles/sunburst2/sunburst2_gauges_nm.normal.png",
+        "pixelSpecular": true,
+        "roughnessMap": "vehicles/sunburst2/sunburst2_gauges_KMH_r.data.png"
+      },
+      {},
+      {},
+      {}
+    ],
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  }
+}

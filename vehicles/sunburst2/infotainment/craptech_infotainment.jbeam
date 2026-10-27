@@ -1,0 +1,59 @@
+{
+"craptech_infotainment": {
+    "information":{
+        "authors":"Crapouille Technologies",
+        "name":"Crapouille Technologies Infotainment",
+        "value":300,
+    },
+    "slotType" : "sunburst2_radio",
+    //  Crapouille accessories hang off the head unit, which this car always has fitted.
+    "slots2": [
+        ["name",              "allowTypes",          "denyTypes", "default",           "description"],
+        ["craptech_airjacks", ["craptech_airjacks"], [],          "craptech_airjacks", "Air Jacks"],
+        ["craptech_jato",     ["craptech_jato"],     [],          "craptech_jato_bumper", "Twin Bumper JATO"],
+        ["craptech_seqsignals", ["craptech_seqsignals"], [],      "craptech_seqsignals_led", "Sequential LED Indicators"],
+        ["craptech_transform", ["craptech_transform"], [],        "craptech_transform_kit", "Race Kit Out With the Wide Track"],
+    ],
+    //  Stock parts of this car (doors, hood, interior) declare "actionsEnabled", and then the
+    //  game disables every vehicle action that no part lists. So our keys must be listed here,
+    //  or Controls shows them as unusable and pressing them does nothing.
+    "actionsEnabled": [
+        ["id"],
+        ["craptech_toggle_airjacks"],
+        ["craptech_toggle_track"],
+        ["craptech_jato_deploy"],
+        ["craptech_jato_fire"],
+        ["jato"],
+    ],
+    //  Drop-in replacement for the stock "sunburst2_nav" head unit: same mesh, same
+    //  place in the centre stack, same damage behaviour - only the screen content and
+    //  the material it is drawn into are ours.
+    "flexbodies": [
+         ["mesh", "[group]:", "nonFlexMaterials"],
+         {"deformGroup":"nav_damage", "deformMaterialBase":"sunburst2_display_nav", "deformMaterialDamaged":"screen_off"},
+         ["sunburst2_nav", ["sunburst2_dash"]],
+         {"deformGroup":"", "deformMaterialBase":"", "deformMaterialDamaged":""},
+    ],
+    //  The display face of the sunburst2_nav mesh carries the material "sunburst2_display_nav".
+    //  jbeam has no per-flexbody material remap, so the glowMap is what swaps in our screen:
+    //  the stock "@sunburst2_naviscreen_on" texture is left completely alone.
+    "glowMap":{
+        "sunburst2_display_nav":{"simpleFunction":{"ignitionLevel":0.1, "lowhighbeam":1}, "off":"screen_off", "on":"craptech_info_screen", "on_intense":"craptech_info_screen_dim"},
+    },
+    //  768x432 = 16:9, the true aspect of the display face measured off
+    //  sunburst2.dae: 129.8 mm wide x 73.0 mm tall, UV island covering 0.006..0.994
+    //  on both axes (full bleed). Stock leaves this at the controller default of
+    //  256x128, i.e. 2:1, so the stock map is slightly stretched horizontally.
+    //  The extra pixels over 512x288 buy legibility for a multi-panel launcher;
+    //  15 fps still matches the rate beamNavigator actually pushes data at.
+    "controller": [
+        ["fileName"],
+        ["beamNavigator", {"name":"craptech_navi",
+                           "screenMaterialName": "@craptech_info",
+                           "htmlFilePath": "local://local/vehicles/sunburst2/infotainment/craptech_infotainment_screen.html",
+                           "textureWidth": 768,
+                           "textureHeight": 432,
+                           "textureFPS": 15}],
+    ],
+},
+}

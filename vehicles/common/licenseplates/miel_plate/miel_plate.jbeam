@@ -1,0 +1,12 @@
+{
+	"Miel Crapouille Plate Design": {
+    "information":{
+        "authors":"SwitcherNova",
+        "name":"Miel Crapouille Plate Design",
+        "value":50
+    },
+    "slotType" : "licenseplate_design_2_1",
+    "licenseplate_path" : "vehicles/common/licenseplates/miel_plate/miel_plate_bel.json"
+	}
+}
+

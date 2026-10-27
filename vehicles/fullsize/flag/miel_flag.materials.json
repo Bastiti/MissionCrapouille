@@ -1,0 +1,22 @@
+{
+    "fullsize_flag_miel": {
+    "name": "fullsize_flag_miel",
+    "mapTo": "fullsize_flag_miel",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorMap": "/vehicles/fullsize/flag/miel_flag_b.color.png",
+        "diffuseMapUseUV": 1,
+        "normalMap": "/vehicles/common/jato/citybus_cape_n.normal.png",
+        "roughnessFactor": 0.8
+      },
+      {},
+      {},
+      {}
+    ],
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "version": 1.5
+  }
+}

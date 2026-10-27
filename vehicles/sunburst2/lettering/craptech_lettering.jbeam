@@ -1,0 +1,75 @@
+{
+"sunburst2_emblem_F_miel": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Hope Emblem",
+        "value":50,
+    },
+    "slotType" : "sunburst2_emblem_F",
+    "flexbodies": [
+         ["mesh", "[group]:", "nonFlexMaterials"],
+         ["sunburst2_logo_hood_miel", ["sunburst2_hood"]],
+    ],
+},
+"sunburst2_emblem_R_miel": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Trunk Hope Emblem",
+        "value":50,
+    },
+    "slotType" : "sunburst2_emblem_R",
+    "flexbodies": [
+         ["mesh", "[group]:", "nonFlexMaterials"],
+         ["sunburst2_logo_trunk_miel", ["sunburst2_trunk"]],
+    ],
+},
+"sunburst2_lettering_R_miel": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Crapouille Tech Lettering",
+        "value":50,
+    },
+    "slotType" : "sunburst2_lettering_R",
+    "flexbodies": [
+         ["mesh", "[group]:", "nonFlexMaterials"],
+         ["sunburst2_lettering_trunk_miel", ["sunburst2_trunk"]],
+    ],
+},
+"sunburst2_lettering_R_displacement_2.5_miel": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Miel 2.5 Trunk Lettering",
+        "value":50,
+    },
+    "slotType" : "sunburst2_lettering_R_displacement",
+    "flexbodies": [
+         ["mesh", "[group]:", "nonFlexMaterials"],
+         ["sunburst2_lettering_25_miel", ["sunburst2_trunk"]],
+    ],
+},
+"sunburst2_lettering_R_sport_RS_miel": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Miel Sport RS Trunk Lettering",
+        "value":50,
+    },
+    "slotType" : "sunburst2_lettering_R_sport",
+    "flexbodies": [
+         ["mesh", "[group]:", "nonFlexMaterials"],
+         ["sunburst2_lettering_sp_miel", ["sunburst2_trunk"]],
+         ["sunburst2_lettering_RS_miel", ["sunburst2_trunk"]],
+    ],
+},
+"sunburst2_lettering_R_awd_miel": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Miel AWD Trunk Lettering",
+        "value":50,
+    },
+    "slotType" : "sunburst2_lettering_R_awd",
+    "flexbodies": [
+         ["mesh", "[group]:", "nonFlexMaterials"],
+         ["sunburst2_lettering_AWD_miel", ["sunburst2_trunk"]],
+    ],
+},
+}

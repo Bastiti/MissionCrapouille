@@ -1,0 +1,24 @@
+{
+    "soundscape_horn_miel Horn": {
+        "information": {
+            "authors": "ON4BCY",
+            "name": "Klaxon Mielleuse"
+        },
+        "slotType": "soundscape_horn",
+        "soundscape": [
+            ["name", "src"],
+            ["horn", "art/sound/miel_horn"]
+        ]
+    },
+    "soundscape_siren_miel Rumbler": {
+        "information": {
+            "authors": "ON4BCY",
+            "name": "Miel Siren"
+        },
+        "slotType": "soundscape_siren",
+        "soundscape": [
+            ["name", "src"],
+            ["siren", "art/sound/miel_siren"]
+        ]
+    }
+}

@@ -1,0 +1,48 @@
+{
+  "craptech_sign_on": {
+    "name": "craptech_sign_on",
+    "mapTo": "craptech_sign_on",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [0.02, 0.02, 0.02, 1],
+        "emissive": true,
+        "emissiveFactor": [1, 1, 1],
+        "emissiveIntensityNits": 12000,
+        "emissiveMap": "@craptech_sign",
+        "metallicFactor": 0,
+        "roughnessFactor": 0.4
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_sign_off": {
+    "name": "craptech_sign_off",
+    "mapTo": "craptech_sign_off",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [0.03, 0.03, 0.03, 1],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.4
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  }
+}

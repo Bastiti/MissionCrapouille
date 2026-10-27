@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Crapouille OS</title>
+<!--
+  Crapouille OS - the Miel Crapouille infotainment launcher.
+
+  Feature-equivalent to a phone-projection car UI (persistent status bar, app
+  rail, live map with the vehicle tracked heading-up, and a now-playing card),
+  but drawn from scratch in the mod's own orange identity - nothing here is
+  copied from any existing product's look.
+
+  Palette lifted from vehicles/sunburst2/gauges/craptech_gauges_screen.html so the head
+  unit and the instrument cluster read as one system:
+      #F08B4D primary orange   #FFD3A8 highlight   #B85E24 deep orange
+      #06080b ground           #131a22 / #1b2129 panels
+  Identity pulled from the rest of the mod: "Miel Crapouille" (plate design),
+  "Crapouille Technologies" (gauges, lettering, this head unit), "MielPops DEV"
+  (the config name), and the config thumbnail as the now-playing artwork.
+
+  Driven by the stock beamNavigator controller through three entry points:
+      map.setData(t)     once - level road graph {nodes:{k:{pos:[x,y],links:{}}}}, time
+      map.updateData(d)  15 Hz - {x, y, rotation, speed, zoom, ignitionLevel}
+      map.setBootscreenImage({url})
+
+  Cheap to rasterise on purpose: no keyframes, transitions, CSS filters, blurs or
+  soft shadows. Every DOM write is change-gated, the road network is built once
+  per neighbourhood rather than per frame, and the map moves by mutating a single
+  transform on one <g>.
+-->
+<style>
+  :root {
+    --orange:   #F08B4D;
+    --hi:       #FFD3A8;
+    --deep:     #B85E24;
+    --ground:   #06080b;
+    --panel:    #131a22;
+    --panel2:   #1b2129;
+    --line:     #2c261f;
+    --muted:    #97826F;
+    --text:     #E9C6A6;
+  }
+
+  html, body {
+    margin: 0; padding: 0; width: 768px; height: 432px; overflow: hidden;
+    background: var(--ground); color: var(--text);
+    font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- status bar ---------- */
+  #status {
+    height: 40px; box-sizing: border-box;
+    background: var(--panel); border-bottom: 2px solid var(--orange);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 18px;
+  }
+  .sysname { font-size: 17px; letter-spacing: 4px; color: var(--muted); }
+  .sysname b { color: var(--orange); font-weight: 700; }
+  .statusRight { display: flex; align-items: center; }
+  .chip {
+    font-size: 11px; letter-spacing: 2px; color: var(--hi);
+    border: 1px solid var(--deep); padding: 3px 9px; margin-right: 12px;
+  }
+  #device { font-size: 12px; letter-spacing: 2px; color: var(--muted); margin-right: 14px; }
+  #clock { font-size: 19px; color: var(--hi); font-variant-numeric: tabular-nums; }
+
+  /* ---------- body ---------- */
+  #body { height: 390px; display: flex; }
+
+  /* app rail - the launcher */
+  #rail {
+    width: 78px; box-sizing: border-box;
+    background: var(--panel); border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; align-items: center;
+    padding-top: 14px;
+  }
+  .app {
+    width: 56px; height: 56px; margin-bottom: 12px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border: 1px solid transparent;
+  }
+  .app.on { background: var(--panel2); border-color: var(--deep); }
+  .app svg { width: 22px; height: 22px; display: block; }
+  .app .cap { font-size: 8px; letter-spacing: 1px; color: var(--muted); margin-top: 4px; }
+  .app.on .cap { color: var(--orange); }
+
+  /* map */
+  #mapWrap { width: 430px; position: relative; background: #0a0f14; overflow: hidden; }
+  #map { position: absolute; top: 0; left: 0; width: 430px; height: 390px; display: block; }
+  /* non-scaling-stroke keeps road width in screen pixels, so it stays constant
+     as the map zooms with speed instead of shrinking to hairlines. */
+  .roadCase  { stroke: #2b3947; stroke-width: 9; fill: none; stroke-linecap: round;
+               stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .roadFill  { stroke: #5a6d7d; stroke-width: 5; fill: none; stroke-linecap: round;
+               stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .roadMinor { stroke: #3a4854; stroke-width: 3; fill: none; stroke-linecap: round;
+               vector-effect: non-scaling-stroke; }
+
+  #mapMsg {
+    position: absolute; top: 0; left: 0; width: 430px; height: 390px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; letter-spacing: 4px; color: #3c4a56;
+  }
+
+  /* readout strip over the map */
+  #readout {
+    position: absolute; left: 14px; bottom: 14px;
+    background: rgba(6, 8, 11, 0.86); border-left: 3px solid var(--orange);
+    padding: 8px 16px 10px 12px;
+  }
+  #speed { font-size: 44px; line-height: 44px; font-weight: 600; color: #fff;
+           letter-spacing: -2px; font-variant-numeric: tabular-nums; }
+  #speedUnit { font-size: 11px; letter-spacing: 4px; color: var(--muted); }
+  #heading { font-size: 13px; letter-spacing: 3px; color: var(--orange); margin-top: 4px; }
+
+  #dest {
+    position: absolute; left: 14px; top: 14px; right: 14px;
+    background: rgba(6, 8, 11, 0.86); border-left: 3px solid var(--deep);
+    padding: 7px 12px;
+  }
+  #destLbl { font-size: 9px; letter-spacing: 3px; color: var(--muted); }
+  #destName { font-size: 14px; letter-spacing: 1px; color: var(--hi); margin-top: 2px; }
+
+  /* now playing */
+  #media {
+    width: 260px; box-sizing: border-box;
+    background: var(--panel); border-left: 1px solid var(--line);
+    padding: 16px 18px; display: flex; flex-direction: column;
+  }
+  .sectionLbl { font-size: 10px; letter-spacing: 4px; color: var(--muted); }
+  #art {
+    width: 100%; height: 132px; margin-top: 12px; object-fit: cover;
+    border: 1px solid var(--line); background: var(--panel2); display: block;
+  }
+  #track { font-size: 20px; color: var(--hi); margin-top: 14px; letter-spacing: 0.5px; font-weight: 600; }
+  #artist { font-size: 13px; color: var(--orange); margin-top: 5px; letter-spacing: 1px; }
+  #album { font-size: 11px; color: var(--muted); margin-top: 3px; letter-spacing: 2px; }
+
+  #barOuter { height: 4px; background: var(--panel2); margin-top: 14px; }
+  #barFill { height: 4px; width: 0; background: var(--orange); }
+  .times { display: flex; justify-content: space-between; margin-top: 6px;
+           font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  #transport { display: flex; align-items: center; justify-content: center; margin-top: 14px; }
+  #transport svg { width: 18px; height: 18px; margin: 0 14px; }
+  #transport .main svg { width: 26px; height: 26px; }
+
+  /* standby */
+  #standby {
+    position: absolute; top: 0; left: 0; width: 768px; height: 432px;
+    background: var(--ground);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  #standby .mark { font-size: 40px; letter-spacing: 12px; color: var(--orange); font-weight: 700; }
+  #standby .sub { font-size: 13px; letter-spacing: 6px; color: #4d565f; margin-top: 16px; }
+</style>
+</head>
+
+<body>
+
+<div id="status">
+  <div class="sysname"><b>CRAPOUILLE</b> OS</div>
+  <div class="statusRight">
+    <span class="chip">BE</span>
+    <span class="chip" id="ignChip">IGN OFF</span>
+    <span id="device">MIELPOPS DEV</span>
+    <span id="clock">--:--</span>
+  </div>
+</div>
+
+<div id="body">
+
+  <div id="rail">
+    <div class="app on" id="appNav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#F08B4D" stroke-width="2">
+        <path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/>
+        <circle cx="12" cy="10" r="2.6"/>
+      </svg>
+      <div class="cap">NAV</div>
+    </div>
+    <div class="app" id="appMedia">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#97826F" stroke-width="2">
+        <path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.6"/><circle cx="16.5" cy="16" r="2.6"/>
+      </svg>
+      <div class="cap">MEDIA</div>
+    </div>
+    <div class="app" id="appPhone">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#97826F" stroke-width="2">
+        <path d="M5 3h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2z"/>
+      </svg>
+      <div class="cap">PHONE</div>
+    </div>
+    <div class="app" id="appCar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#97826F" stroke-width="2">
+        <path d="M3 13l2-5h14l2 5v5h-3v-2H6v2H3z"/><circle cx="7.5" cy="15.5" r="1.4"/><circle cx="16.5" cy="15.5" r="1.4"/>
+      </svg>
+      <div class="cap">CAR</div>
+    </div>
+  </div>
+
+  <div id="mapWrap">
+    <svg id="map" viewBox="0 0 430 390">
+      <g id="mapRoot">
+        <path id="roadsCase" class="roadCase"  d=""/>
+        <path id="roadsFill" class="roadFill"  d=""/>
+        <path id="roadsMinor" class="roadMinor" d=""/>
+      </g>
+      <!-- vehicle marker: fixed at the pivot, the world moves underneath -->
+      <g id="marker" transform="translate(215,238)">
+        <path d="M0,-15 L10,12 L0,6 L-10,12 Z" fill="#F08B4D" stroke="#06080b" stroke-width="1.5"/>
+      </g>
+    </svg>
+
+    <div id="mapMsg">MAP DATA PENDING</div>
+
+    <div id="dest">
+      <div id="destLbl">DESTINATION</div>
+      <div id="destName">Chez Miel Crapouille</div>
+    </div>
+
+    <div id="readout">
+      <div id="speed">0</div>
+      <div id="speedUnit">KM/H</div>
+      <div id="heading">---&deg; --</div>
+    </div>
+  </div>
+
+  <div id="media">
+    <div class="sectionLbl">NOW PLAYING</div>
+    <img id="art" src="../mielpopsdev377631.jpg" alt=""/>
+    <div id="track">Happy Birthday Miel</div>
+    <div id="artist">Crapouille Technologies</div>
+    <div id="album">KLAXON MIELLEUSE EP</div>
+
+    <div id="barOuter"><div id="barFill"></div></div>
+    <div class="times"><span id="tNow">0:00</span><span id="tEnd">3:12</span></div>
+
+    <div id="transport">
+      <span><svg viewBox="0 0 24 24" fill="#97826F"><path d="M18 5v14L7 12z"/><rect x="4" y="5" width="2.4" height="14"/></svg></span>
+      <span class="main"><svg viewBox="0 0 24 24" fill="#F08B4D"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></span>
+      <span><svg viewBox="0 0 24 24" fill="#97826F"><path d="M6 5v14l11-7z"/><rect x="17.6" y="5" width="2.4" height="14"/></svg></span>
+    </div>
+  </div>
+
+</div>
+
+<div id="standby">
+  <div class="mark">CRAPOUILLE</div>
+  <div class="sub">SYSTEM STANDBY</div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // Azimuth is derived from movement, not from d.rotation.
+  //
+  // beamNavigator sends rotation = math.deg(obj:getDirection()) + 180, and
+  // obj:getDirection() is called nowhere else in the entire game - so neither its
+  // zero reference nor its handedness can be established from the source, and any
+  // sign chosen for it is a guess. Course over ground has no such ambiguity: it is
+  // computed from the same world (x, y) the road graph is drawn in, so the map and
+  // the car are guaranteed to agree even if the cardinal labels were mislabelled.
+  //
+  // This is also how a real GPS head unit behaves - no compass, azimuth from
+  // motion, and the last bearing held while stopped.
+  var COURSE_MIN_MOVE = 0.35;  // metres between samples before a bearing is trusted
+  var COURSE_SMOOTH = 0.25;    // 0..1, higher snaps to a new bearing faster
+
+  // Map pivot inside the 430x390 viewBox - low, so most of the panel shows what
+  // is ahead of the car rather than behind it.
+  var PIVOT_X = 215, PIVOT_Y = 238;
+
+  // Metres of world per SVG unit at rest, and how far the view pulls back with speed.
+  var BASE_SCALE = 1.35, MIN_SCALE = 0.75;
+
+  // Only the neighbourhood is drawn. Rebuilt when the car leaves the middle of it,
+  // so a large level never puts its whole road graph into one path.
+  var NEIGHBOURHOOD = 900, REBUILD_AFTER = 300;
+
+  var TRACK_SECONDS = 192; // 3:12
+
+  function $(id) { return document.getElementById(id); }
+
+  var el = {
+    clock: $("clock"), ignChip: $("ignChip"),
+    speed: $("speed"), heading: $("heading"),
+    mapRoot: $("mapRoot"), mapMsg: $("mapMsg"),
+    roadsCase: $("roadsCase"), roadsFill: $("roadsFill"), roadsMinor: $("roadsMinor"),
+    barFill: $("barFill"), tNow: $("tNow"),
+    standby: $("standby")
+  };
+
+  var CARDINAL = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+                  "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+  var IGNITION = ["OFF", "ACC", "ON", "START"];
+
+  var last = {};
+  function set(node, key, text) {
+    if (last[key] === text) { return; }
+    last[key] = text;
+    node.textContent = text;
+  }
+
+  var standbyVisible = null;
+  function showStandby(on) {
+    if (standbyVisible === on) { return; }
+    standbyVisible = on;
+    el.standby.style.display = on ? "flex" : "none";
+  }
+
+  // ------------------------------------------------------------- course ----
+  var course = 0, haveCourse = false;
+  var fromX = null, fromY = null;
+
+  function updateCourse(x, y) {
+    if (fromX === null) { fromX = x; fromY = y; return; }
+
+    var dx = x - fromX, dy = y - fromY;
+    if (dx * dx + dy * dy < COURSE_MIN_MOVE * COURSE_MIN_MOVE) { return; }
+    fromX = x; fromY = y;
+
+    // World is +x east, +y north, so the azimuth clockwise from north is
+    // atan2(east, north). Same frame the roads are drawn in.
+    var bearing = Math.atan2(dx, dy) * 180 / Math.PI;
+    if (bearing < 0) { bearing += 360; }
+
+    if (!haveCourse) { course = bearing; haveCourse = true; return; }
+
+    // Blend the short way round so 359 -> 1 does not spin the map backwards.
+    var delta = ((bearing - course + 540) % 360) - 180;
+    course = (course + delta * COURSE_SMOOTH + 360) % 360;
+  }
+
+  // ---------------------------------------------------------------- map ----
+  var graph = null;          // {k: {pos:[x,y], links:{k2:{drivability}}}}
+  var builtAt = null;        // centre the current paths were built around
+  var haveRoads = false;
+
+  function buildRoads(cx, cy) {
+    if (!graph) { return; }
+
+    var major = [], minor = [], seen = {}, total = 0;
+    var r2 = NEIGHBOURHOOD * NEIGHBOURHOOD;
+
+    function near(p) {
+      var dx = p[0] - cx, dy = p[1] - cy;
+      return dx * dx + dy * dy <= r2;
+    }
+
+    for (var k in graph) {
+      var n = graph[k];
+      if (!n || !n.pos || !n.links) { continue; }
+
+      for (var j in n.links) {
+        var m = graph[j];
+        if (!m || !m.pos) { continue; }
+        total++;
+
+        // BeamNG does not store every edge on both of its endpoints, so the
+        // obvious "only keep it when j > k" dedupe silently threw away most of
+        // the network. Dedupe on the unordered pair instead.
+        var pair = k < j ? k + "|" + j : j + "|" + k;
+        if (seen[pair]) { continue; }
+        seen[pair] = 1;
+
+        // Keep an edge if EITHER end is nearby. Testing only the owning node
+        // made roads leading into the neighbourhood disappear.
+        if (!near(n.pos) && !near(m.pos)) { continue; }
+
+        var seg = "M" + n.pos[0].toFixed(1) + " " + n.pos[1].toFixed(1) +
+                  "L" + m.pos[0].toFixed(1) + " " + m.pos[1].toFixed(1);
+        var drivability = n.links[j] && n.links[j].drivability;
+        if (drivability !== undefined && drivability !== null && drivability < 0.5) {
+          minor.push(seg);
+        } else {
+          major.push(seg);
+        }
+      }
+    }
+
+    var majorD = major.join("");
+    el.roadsCase.setAttribute("d", majorD);
+    el.roadsFill.setAttribute("d", majorD);
+    el.roadsMinor.setAttribute("d", minor.join(""));
+
+    builtAt = [cx, cy];
+    haveRoads = major.length > 0 || minor.length > 0;
+    el.mapMsg.style.display = haveRoads ? "none" : "flex";
+    console.log("[crapouille-os] roads rebuilt: " + major.length + " major, " +
+                minor.length + " minor (from " + total + " link entries) around " +
+                cx.toFixed(0) + "," + cy.toFixed(0));
+  }
+
+  var lastTransform = "";
+  function placeMap(x, y, hdg, speed) {
+    if (!graph) { return; }
+
+    if (!builtAt ||
+        Math.abs(x - builtAt[0]) > REBUILD_AFTER ||
+        Math.abs(y - builtAt[1]) > REBUILD_AFTER) {
+      buildRoads(x, y);
+    }
+
+    // Pull back as speed rises so there is always roughly the same look-ahead time.
+    var scale = Math.max(MIN_SCALE, BASE_SCALE - speed * 0.004);
+
+    // Read right to left: centre on the car, flip world-Y so north is up on a
+    // y-down screen, turn the world until the course points up, then move the
+    // pivot into place. In this north-up frame a course of theta lands at screen
+    // angle theta clockwise from up, so rotating by -theta brings it upright -
+    // which is why the marker can stay a fixed arrow pointing straight up.
+    var t = "translate(" + PIVOT_X + "," + PIVOT_Y + ") " +
+            "rotate(" + (-hdg).toFixed(1) + ") " +
+            "scale(" + scale.toFixed(3) + "," + (-scale).toFixed(3) + ") " +
+            "translate(" + (-x).toFixed(1) + "," + (-y).toFixed(1) + ")";
+    if (t === lastTransform) { return; }
+    lastTransform = t;
+    el.mapRoot.setAttribute("transform", t);
+  }
+
+  // ------------------------------------------------------------- media ----
+  function mmss(total) {
+    var m = Math.floor(total / 60), s = Math.floor(total % 60);
+    return m + ":" + (s < 10 ? "0" : "") + s;
+  }
+
+  var elapsed = 0, lastStamp = null;
+  function advanceTrack(now) {
+    if (lastStamp !== null) {
+      var dt = (now - lastStamp) / 1000;
+      if (dt > 0 && dt < 1) { elapsed = (elapsed + dt) % TRACK_SECONDS; }
+    }
+    lastStamp = now;
+    set(el.tNow, "tNow", mmss(elapsed));
+    var pct = Math.round((elapsed / TRACK_SECONDS) * 100);
+    if (last.pct !== pct) {
+      last.pct = pct;
+      el.barFill.style.width = pct + "%";
+    }
+  }
+
+  // ---------------------------------------------------------- controller ---
+  window.map = {
+    setData: function (t) {
+      if (!t) { return; }
+      if (t.time) { set(el.clock, "clock", t.time); }
+      if (t.nodes) {
+        graph = t.nodes;
+        var count = 0;
+        for (var k in graph) { count++; }
+        console.log("[crapouille-os] road graph: " + count + " nodes");
+        builtAt = null; // force a build on the next position we get
+      }
+    },
+
+    updateData: function (d) {
+      if (!d) { return; }
+
+      var ign = Math.round(d.ignitionLevel || 0);
+      set(el.ignChip, "ign", "IGN " + (IGNITION[ign] || "OFF"));
+      if (ign < 2) { showStandby(true); return; }
+      showStandby(false);
+
+      var speed = d.speed || 0;
+      var x = d.x || 0, y = d.y || 0;
+
+      updateCourse(x, y);
+      var hdg = course;
+
+      set(el.speed, "speed", String(Math.round(speed)));
+      set(el.heading, "heading", haveCourse
+            ? Math.round(hdg) + "° " + CARDINAL[Math.round(hdg / 22.5) % 16]
+            : "---° --");
+
+      placeMap(x, y, hdg, speed);
+      advanceTrack((window.performance && performance.now) ? performance.now() : Date.now());
+    },
+
+    setBootscreenImage: function () {}
+  };
+
+  showStandby(true);
+  console.log("[crapouille-os] ready");
+})();
+</script>
+</html>

@@ -1,0 +1,6 @@
+{
+"craptech_toggle_airjacks":{"order": 1, "onDown":"local c = controller.getController('craptechAirJacks') if c then c.toggle() end", "title": "Toggle air jacks", "desc": "Crapouille air jacks: lift the car on its jacks, or drop it back down" },
+"craptech_toggle_track":{"order": 2, "onDown":"local c = controller.getController('craptechAirJacks') if c then c.toggleTrack() end", "title": "Toggle wide / narrow track", "desc": "Crapouille air jacks lift the car, the wheels move a few cm out (or back in), then the car drops. The race kit and the rear wing come out with the wide track and tuck away with the narrow one" },
+"craptech_jato_deploy":{"order": 3, "onDown":"local c = controller.getController('craptechJato') if c then c.toggleDeploy() end", "title": "Crapouille JATO: deploy / retract", "desc": "Bumper panels slide down and the two rockets come out (or go back in)" },
+"craptech_jato_fire":{"order": 4, "onDown":"local c = controller.getController('craptechJato') if c then c.toggleFire() end", "title": "Crapouille JATO: fire / stop", "desc": "Light or stop the two bumper rockets (they must be deployed)" }
+}

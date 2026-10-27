@@ -1,0 +1,395 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script>
+    if(typeof beamng !== 'undefined') {
+      String.prototype.replaceAll = function(str1, str2, ignore)
+      {
+          return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
+      }
+      function bng_err_log(){
+        var strtmp="";
+        for (var i = 0; i < arguments.length; i++) {
+          if(arguments[i] !== null && arguments[i] !== undefined)
+            strtmp += arguments[i].toString() + " ";
+        }
+        strtmp = strtmp.replaceAll("\'","\\'");
+        beamng.sendEngineLua("log('E','htmlTexture.sunburst2."+document.title+"','"+strtmp+"')")
+      }
+      window.onerror = bng_err_log;
+    }
+  </script>
+  <style>
+
+/*
+  This page is rasterized into a vehicle texture by CEF every frame, on the CPU,
+  next to the physics. Anything that damages the surface continuously (looping
+  animations, SVG filters, CSS filter/blur, big soft shadows) starves the display
+  while driving. Stock BeamNG screens use none of them - neither does this one.
+  Glows here are plain static gradients; nothing repaints until the gear changes.
+*/
+
+:root{
+  --bg:        #06080b;
+  --accent:    #F08B4D;                    /* Miel Crapouille */
+  --accent-hi: #FFD3A8;
+  --accent-lo: #B85E24;
+  --tick-off:  #3a2a1e;
+  --halo:      rgba(240, 139, 77, 0.16);
+  --halo-mid:  rgba(240, 139, 77, 0.05);
+}
+
+*{ box-sizing: border-box; }
+
+html, body{
+  margin: 0;
+  width: 256px; height: 256px;
+  overflow: hidden;
+  background: var(--bg);
+}
+body{
+  position: absolute;
+  top: 0; left: 0;
+  font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* backdrop: two static gradients, repainted only when the theme changes */
+.bg{
+  position: absolute;
+  top: 0; left: 0;
+  width: 256px; height: 256px;
+  background:
+    radial-gradient(circle at 50% 50%, var(--halo) 0%, var(--halo-mid) 38%, rgba(0,0,0,0) 66%),
+    radial-gradient(circle at 50% 26%, #131a22 0%, #06080b 74%);
+}
+
+/* ring */
+svg.ring{
+  position: absolute;
+  top: 0; left: 0;
+  width: 256px; height: 256px;
+}
+.s-hi  { stop-color: var(--accent-hi); }
+.s-mid { stop-color: var(--accent); }
+.s-lo  { stop-color: var(--accent-lo); }
+
+.track{
+  fill: none;
+  stroke: #1b2129;
+  stroke-width: 5;
+}
+/* wide, low-opacity companion stroke: a halo without a blur filter */
+.arc-wide{
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 13;
+  stroke-linecap: round;
+  opacity: .13;
+}
+.arc{
+  fill: none;
+  stroke: url(#arcGrad);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.arc, .arc-wide{ stroke-dasharray: 100; }
+
+.tick{
+  stroke: var(--tick-off);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.tick.on   { stroke: var(--accent); }
+.tick.head { stroke: var(--accent-hi); stroke-width: 3; }
+
+/* gear glyph */
+.stage{
+  position: absolute;
+  top: 0; left: 0;
+  width: 256px; height: 256px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gear{
+  font-size: 122px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -4px;
+  background-image: linear-gradient(178deg, var(--accent-hi) 0%, var(--accent) 52%, var(--accent-lo) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* drive-mode shades of the Miel accent */
+body.rev{
+  --accent: #F05A3A; --accent-hi: #FFB49E; --accent-lo: #A8341A; --tick-off: #3d1f16;
+  --halo: rgba(240, 90, 58, 0.17); --halo-mid: rgba(240, 90, 58, 0.05);
+}
+body.neut{
+  --accent: #C89065; --accent-hi: #E9C6A6; --accent-lo: #8A5B33; --tick-off: #332619;
+  --halo: rgba(200, 144, 101, 0.12); --halo-mid: rgba(200, 144, 101, 0.04);
+}
+body.park{
+  --accent: #97826F; --accent-hi: #C9B7A6; --accent-lo: #5F5044; --tick-off: #2c261f;
+  --halo: rgba(151, 130, 111, 0.10); --halo-mid: rgba(151, 130, 111, 0.03);
+}
+
+/* ================= accessory (key at ACC) standby screen =================
+  Everything below is scoped to html.acc. With that class absent the panel is
+  display:none, which is also what keeps miel_loading.gif from ticking - an
+  image that is not rendered is not animated - so the page stays exactly as
+  static as before while the engine is running and the car is being driven.
+  The loop is 12 frames over 0.8s (~15fps) and only ever plays with the key
+  at ACC, i.e. parked with the engine off.
+  ======================================================================== */
+
+.accpanel{
+  display: none;
+  position: absolute;
+  top: 0; left: 0;
+  width: 256px; height: 256px;
+  overflow: hidden;
+}
+
+html.acc .accpanel{ display: block; }
+html.acc .stage{ display: none; }                  /* gear glyph is meaningless at ACC */
+html.acc .ring{ display: none; }                   /* the artwork is the whole screen */
+/* .bg is left in place underneath as the backdrop if the gif ever fails to load */
+
+/* standby wears the full Miel accent, not the dimmed park/neutral shade */
+html.acc body{
+  --accent: #F08B4D; --accent-hi: #FFD3A8; --accent-lo: #B85E24;
+}
+
+.acc-art{
+  position: absolute;
+  top: 0; left: 0;
+  width: 256px; height: 256px;
+  display: block;
+}
+
+/* static caption over a static scrim: costs nothing per frame */
+.acc-cap{
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 28px 0 9px;
+  text-align: center;
+  text-indent: 4px;                                /* offset the trailing letter-space */
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  color: var(--accent-hi);
+  background: linear-gradient(to top,
+              rgba(4,6,9,.88) 0%, rgba(4,6,9,.60) 46%, rgba(4,6,9,0) 100%);
+}
+
+  </style>
+</head>
+
+<body>
+
+  <div class="bg"></div>
+
+  <svg class="ring" viewBox="0 0 256 256">
+    <defs>
+      <linearGradient id="arcGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop class="s-hi"  offset="0%"/>
+        <stop class="s-mid" offset="60%"/>
+        <stop class="s-lo"  offset="100%"/>
+      </linearGradient>
+    </defs>
+
+    <g id="ticks"></g>
+
+    <circle class="track" cx="128" cy="128" r="96" pathLength="100"/>
+    <circle class="arc-wide" id="arcWide" cx="128" cy="128" r="96" pathLength="100"
+            stroke-dashoffset="100" transform="rotate(-90 128 128)"/>
+    <circle class="arc" id="arc" cx="128" cy="128" r="96" pathLength="100"
+            stroke-dashoffset="100" transform="rotate(-90 128 128)"/>
+  </svg>
+
+  <div class="stage">
+    <div id="gear" class="gear">N</div>
+  </div>
+
+  <div class="accpanel">
+    <img class="acc-art" src="miel_loading.gif" alt="">
+    <div class="acc-cap">ACC &middot; ENGINE OFF</div>
+  </div>
+
+<script>
+ if(typeof beamng === 'undefined' && window.location.protocol === "file:") {
+  alert("doesn't work, use nodejs `http-server` and serve from root of game")
+ }
+
+var SVGNS = "http://www.w3.org/2000/svg";
+var TICK_COUNT = 44;                 // ticks around the dial
+var TICK_R0 = 104, TICK_R1 = 114;    // tick inner / outer radius
+
+var gear_el, arc_el, arcWide_el, ticks_el;
+var tickNodes = [];
+var ready = false;
+var lastGlyph = null;
+var lastMode = null;
+var lastLit = -1;
+var lastAcc = null;
+var maxGear = 6;                     // grows if the box has more gears than expected
+
+function buildTicks(){
+  for(var i = 0; i < TICK_COUNT; i++){
+    var a  = (i / TICK_COUNT) * Math.PI * 2 - Math.PI / 2;
+    var ln = document.createElementNS(SVGNS, "line");
+    ln.setAttribute("x1", (128 + Math.cos(a) * TICK_R0).toFixed(2));
+    ln.setAttribute("y1", (128 + Math.sin(a) * TICK_R0).toFixed(2));
+    ln.setAttribute("x2", (128 + Math.cos(a) * TICK_R1).toFixed(2));
+    ln.setAttribute("y2", (128 + Math.sin(a) * TICK_R1).toFixed(2));
+    ln.setAttribute("class", "tick");
+    ticks_el.appendChild(ln);
+    tickNodes.push(ln);
+  }
+}
+
+function setup(data){
+  gear_el    = document.getElementById("gear");
+  arc_el     = document.getElementById("arc");
+  arcWide_el = document.getElementById("arcWide");
+  ticks_el   = document.getElementById("ticks");
+  buildTicks();
+  ready = true;
+}
+
+// electrics.gear is a plain number for manual/sequential boxes (gearbox.gearIndex)
+// and a string for automatic/DCT/CVT boxes ("P","R","N","D","S","M3"). It can also
+// arrive as 0 before the powertrain is up, or "" from the dummy shift logic.
+// -> {glyph, mode, fill}, fill being 0..1 of the ring
+function parseGear(raw){
+  if(raw === undefined || raw === null || raw === "")
+    return {glyph:"N", mode:"neutral", fill:0};
+
+  if(isNaN(raw)){ // automatic / DCT / CVT
+    var s = raw.toString();
+    if(s.charAt(0) === "M" || s.charAt(0) === "S"){
+      var m = parseInt(s.substring(1), 10);
+      if(!isNaN(m) && m > 0){
+        if(m > maxGear) maxGear = m;
+        return {glyph: m.toString(), mode:"manual", fill: m / maxGear};
+      }
+      return {glyph: s.charAt(0), mode:"drive", fill:1};
+    }
+    switch(s.charAt(0)){
+      case "P": return {glyph:"P", mode:"park",    fill:0};
+      case "R": return {glyph:"R", mode:"reverse", fill:1};
+      case "N": return {glyph:"N", mode:"neutral", fill:0};
+      case "D": return {glyph:"D", mode:"drive",   fill:1};
+      default:  return {glyph:s.charAt(0), mode:"drive", fill:1};
+    }
+  }
+
+  // manual / sequential gearbox: plain gear index
+  var n = parseInt(raw, 10);
+  if(isNaN(n))    return {glyph:"N", mode:"neutral", fill:0};
+  if(n < 0)       return {glyph:"R", mode:"reverse", fill:1};
+  if(n === 0)     return {glyph:"N", mode:"neutral", fill:0};
+  if(n > maxGear) maxGear = n;
+  return {glyph: n.toString(), mode:"manual", fill: n / maxGear};
+}
+
+function setArc(fill){
+  var f   = Math.max(0, Math.min(1, fill));
+  var lit = Math.round(f * TICK_COUNT);
+  if(lit === lastLit) return;                 // nothing moved, nothing to repaint
+
+  var off = (100 - f * 100).toFixed(1);
+  arc_el.setAttribute("stroke-dashoffset", off);
+  arcWide_el.setAttribute("stroke-dashoffset", off);
+  // an empty ring would still show its round line cap as a stray dot
+  arc_el.style.display     = (f <= 0.001) ? "none" : "";
+  arcWide_el.style.display = (f <= 0.001) ? "none" : "";
+
+  for(var i = 0; i < TICK_COUNT; i++){
+    var cls = "tick";
+    if(i < lit) cls += (i === lit - 1) ? " on head" : " on";
+    if(tickNodes[i].getAttribute("class") !== cls)
+      tickNodes[i].setAttribute("class", cls);
+  }
+  lastLit = lit;
+}
+
+function setTheme(mode){
+  if(mode === lastMode) return;               // nothing moved, nothing to repaint
+  var cls = "";
+  if(mode === "reverse") cls = "rev";
+  else if(mode === "neutral") cls = "neut";
+  else if(mode === "park") cls = "park";
+  document.body.className = cls;
+  lastMode = mode;
+}
+
+// electrics.ignitionLevel: 0 = off, 1 = accessory, 2 = on, 3 = starter.
+// The key sitting at ACC (engine off) is the only state that gets the animated
+// standby screen; every other state is left to the gear display below.
+function isAccessory(e){
+  if(!e) return false;
+  var ign = parseFloat(e.ignitionLevel);
+  if(isNaN(ign)) return false;
+  return ign > 0.5 && ign < 1.5 && !e.engineRunning;
+}
+
+// the standby screen is a pure CSS layer keyed off a class on <html>, so the
+// gear code path underneath runs unchanged whether it is showing or not
+function setAccessory(on){
+  if(on === lastAcc) return;                  // nothing moved, nothing to repaint
+  document.documentElement.className = on ? "acc" : "";
+  lastAcc = on;
+}
+
+// called every frame by genericGauges: touch the DOM only when a value actually moved
+function updateData(data){
+  if(!data || !ready) return;
+
+  setAccessory(isAccessory(data.electrics));
+
+  var g = parseGear(data.electrics ? data.electrics.gear : undefined);
+
+  if(g.glyph !== lastGlyph){
+    gear_el.innerHTML = g.glyph;
+    lastGlyph = g.glyph;
+  }
+  setTheme(g.mode);
+  setArc(g.fill);
+}
+
+// ---- demo mode (external browser only) ----
+var demoIdx = 0;
+function demo(){
+  var samples = [
+    {gear:"P",  ignitionLevel:1},                      // key at ACC -> standby screen
+    {gear:"P",  ignitionLevel:2, engineRunning:1},
+    {gear:"R",  ignitionLevel:2, engineRunning:1},
+    {gear:"N",  ignitionLevel:2, engineRunning:1},
+    {gear:"D",  ignitionLevel:2, engineRunning:1},
+    {gear:"M3", ignitionLevel:2, engineRunning:1},
+    {gear:5,    ignitionLevel:2, engineRunning:1}
+  ];
+  updateData({electrics: samples[demoIdx % samples.length]});
+  demoIdx++;
+  setTimeout(demo, 2200);
+}
+
+if(typeof beamng == 'undefined' || typeof beamng.sendActiveObjectLua == 'undefined'){ //demo only in external browser
+  console.log("Demo mode");
+  document.body.style.border = "red solid 4px";
+  setTimeout(function(){
+    setup({});
+    demo();
+  }, 400);
+}
+
+</script>
+</body>
+
+</html>

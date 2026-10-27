@@ -1,0 +1,33 @@
+{
+  "hope_wheel_03a": {
+    "name": "hope_wheel_03a",
+    "mapTo": "hope_wheel_03a",
+    "class": "Material",
+    "Stages": [
+      {
+        "ambientOcclusionMap": "/vehicles/common/wheels/hope_branded_sport/hope_wheel_03a_ao.data.dds",
+        "ambientOcclusionFactor": 0.6,
+        "baseColor": [1.0, 1.0, 1.0],
+        "baseColorMap": "/vehicles/common/wheels/hope_branded_sport/hope_wheel_03a_b.color.DDS",
+        "metallicFactor": 0.8,
+        "metallicMap": "/vehicles/common/wheels/hope_branded_sport/hope_wheel_03a_m.data.dds",
+        "normalMap": "/vehicles/common/wheels/hope_branded_sport/hope_wheel_03a_nm.normal.dds",
+        "roughnessFactor": 0.4,
+        "roughnessMap": "/vehicles/common/wheels/hope_branded_sport/hope_wheel_03a_r.data.dds"
+      },
+      {
+        "metallicFactor": null
+      },
+      {
+        "metallicFactor": null
+      },
+      {
+        "metallicFactor": null
+      }
+    ],
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "version": 1.5
+  }
+}

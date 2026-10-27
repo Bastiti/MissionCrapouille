@@ -1,0 +1,123 @@
+{
+  "craptech_jato_soot": {
+    "name": "craptech_jato_soot",
+    "mapTo": "craptech_jato_soot",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.03,
+          0.025,
+          0.022,
+          1
+        ],
+        "metallicFactor": 0.6,
+        "roughnessFactor": 0.75
+      },
+      {},
+      {},
+      {}
+    ],
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_jato_flame_glow": {
+    "name": "craptech_jato_flame_glow",
+    "mapTo": "craptech_jato_flame_glow",
+    "class": "Material",
+    "Stages": [
+      {
+        "animFlags": 16,
+        "baseColorMap": "vehicles/common/jato/shockdiamonds_b.color.png",
+        "emissiveFactor": [
+          1,
+          1,
+          1
+        ],
+        "emissiveIntensityNits": 60000,
+        "emissiveMap": "vehicles/common/jato/shockdiamonds_b.color.png",
+        "opacityMap": "/vehicles/common/jato/shockdiamonds_o.data.png",
+        "sequenceFramePerSec": 120,
+        "sequenceSegmentSize": 0.00999999978,
+        "vertColor": true,
+        "vertColorEmissive": true
+      },
+      {},
+      {},
+      {}
+    ],
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucent": true,
+    "translucentBlendOp": "AddAlpha",
+    "version": 1.5
+  },
+  "craptech_jato_core_on": {
+    "name": "craptech_jato_core_on",
+    "mapTo": "craptech_jato_core_on",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          1.0,
+          0.92,
+          0.7,
+          0.9
+        ],
+        "emissiveFactor": [
+          1.0,
+          0.92,
+          0.7
+        ],
+        "emissiveIntensityNits": 40000,
+        "opacityFactor": 0.9
+      },
+      {},
+      {},
+      {}
+    ],
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucent": true,
+    "translucentBlendOp": "AddAlpha",
+    "doubleSided": true,
+    "castShadows": false,
+    "version": 1.5
+  },
+  "craptech_jato_plume_on": {
+    "name": "craptech_jato_plume_on",
+    "mapTo": "craptech_jato_plume_on",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          1.0,
+          0.42,
+          0.08,
+          0.55
+        ],
+        "emissiveFactor": [
+          1.0,
+          0.42,
+          0.08
+        ],
+        "emissiveIntensityNits": 20000,
+        "opacityFactor": 0.55
+      },
+      {},
+      {},
+      {}
+    ],
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucent": true,
+    "translucentBlendOp": "AddAlpha",
+    "doubleSided": true,
+    "castShadows": false,
+    "version": 1.5
+  }
+}

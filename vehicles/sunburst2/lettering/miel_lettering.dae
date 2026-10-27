@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <asset>
+    <contributor>
+      <author>Blender User</author>
+      <authoring_tool>Blender 4.5.12 LTS commit date:2026-07-20, commit time:13:37, hash:84afd5f785f7</authoring_tool>
+    </contributor>
+    <created>2026-08-30T21:38:55</created>
+    <modified>2026-08-30T21:38:55</modified>
+    <unit name="meter" meter="1"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_cameras>
+    <camera id="Camera_001-camera" name="Camera.001">
+      <optics>
+        <technique_common>
+          <perspective>
+            <xfov sid="xfov">39.59775</xfov>
+            <aspect_ratio>1.777778</aspect_ratio>
+            <znear sid="znear">0.1</znear>
+            <zfar sid="zfar">100</zfar>
+          </perspective>
+        </technique_common>
+      </optics>
+      <extra>
+        <technique profile="blender">
+          <shiftx sid="shiftx" type="float">0</shiftx>
+          <shifty sid="shifty" type="float">0</shifty>
+          <dof_distance sid="dof_distance" type="float">10</dof_distance>
+        </technique>
+      </extra>
+    </camera>
+    <camera id="Camera-camera" name="Camera">
+      <optics>
+        <technique_common>
+          <perspective>
+            <xfov sid="xfov">39.59775</xfov>
+            <aspect_ratio>1.777778</aspect_ratio>
+            <znear sid="znear">0.1</znear>
+            <zfar sid="zfar">100</zfar>
+          </perspective>
+        </technique_common>
+      </optics>
+      <extra>
+        <technique profile="blender">
+          <shiftx sid="shiftx" type="float">0</shiftx>
+          <shifty sid="shifty" type="float">0</shifty>
+          <dof_distance sid="dof_distance" type="float">10</dof_distance>
+        </technique>
+      </extra>
+    </camera>
+  </library_cameras>
+  <library_lights>
+    <light id="Light-light" name="Light">
+      <technique_common>
+        <point>
+          <color sid="color">1000 1000 1000</color>
+          <constant_attenuation>1</constant_attenuation>
+          <linear_attenuation>0</linear_attenuation>
+          <quadratic_attenuation>0</quadratic_attenuation>
+        </point>
+      </technique_common>
+      <extra>
+        <technique profile="blender">
+          <type sid="type" type="int">0</type>
+          <flag sid="flag" type="int">0</flag>
+          <mode sid="mode" type="int">2097153</mode>
+          <red sid="red" type="float">1</red>
+          <green sid="green" type="float">1</green>
+          <blue sid="blue" type="float">1</blue>
+          <energy sid="blender_energy" type="float">1000</energy>
+          <spotsize sid="spotsize" type="float">75</spotsize>
+          <spotblend sid="spotblend" type="float">0.15</spotblend>
+          <clipsta sid="clipsta" type="float">0.04999995</clipsta>
+          <clipend sid="clipend" type="float">40</clipend>
+          <radius sid="radius" type="float">0.1</radius>
+          <area_shape sid="area_shape" type="int">1</area_shape>
+          <area_size sid="area_size" type="float">0.1</area_size>
+          <area_sizey sid="area_sizey" type="float">0.1</area_sizey>
+          <area_sizez sid="area_sizez" type="float">1</area_sizez>
+        </technique>
+      </extra>
+    </light>
+  </library_lights>
+  <library_effects>
+    <effect id="sunburst2_miel_lettering-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <diffuse>
+              <color sid="diffuse">0.8 0.8 0.8 1</color>
+            </diffuse>
+            <index_of_refraction>
+              <float sid="ior">1.5</float>
+            </index_of_refraction>
+          </lambert>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_images/>
+  <library_materials>
+    <material id="sunburst2_miel_lettering-material" name="sunburst2_miel_lettering">
+      <instance_effect url="#sunburst2_miel_lettering-effect"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="sunburst2_lettering_25_miel-mesh" name="sunburst2_lettering_25_miel">
+      <mesh>
+        <source id="sunburst2_lettering_25_miel-mesh-positions">
+          <float_array id="sunburst2_lettering_25_miel-mesh-positions-array" count="12">0.03004789 0.007580518 0.01823204 0.02507466 0.01678442 -0.01785832 -0.02973669 -0.007753372 -0.01836693 -0.02569746 -0.01643943 0.01812827</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_lettering_25_miel-mesh-positions-array" count="4" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="sunburst2_lettering_25_miel-mesh-normals">
+          <float_array id="sunburst2_lettering_25_miel-mesh-normals-array" count="18">-0.388907 0.8821309 0.2657001 -0.3889086 0.8821305 0.2656991 -0.3889075 0.8821308 0.2656997 -0.3889049 0.8821327 0.265697 -0.3889055 0.8821326 0.2656967 -0.3889246 0.8821124 0.2657358</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_lettering_25_miel-mesh-normals-array" count="6" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="sunburst2_lettering_25_miel-mesh-map-0">
+          <float_array id="sunburst2_lettering_25_miel-mesh-map-0-array" count="12">0.2716647 0.7572948 0.512746 0.5983179 0.5135509 0.7576302 0.2716647 0.7572948 0.2740797 0.5995925 0.512746 0.5983179</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_lettering_25_miel-mesh-map-0-array" count="6" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="sunburst2_lettering_25_miel-mesh-vertices">
+          <input semantic="POSITION" source="#sunburst2_lettering_25_miel-mesh-positions"/>
+        </vertices>
+        <triangles material="sunburst2_miel_lettering-material" count="2">
+          <input semantic="VERTEX" source="#sunburst2_lettering_25_miel-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#sunburst2_lettering_25_miel-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#sunburst2_lettering_25_miel-mesh-map-0" offset="2" set="0"/>
+          <p>0 0 0 2 1 1 3 2 2 0 3 3 1 4 4 2 5 5</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="sunburst2_lettering_sp_miel-mesh" name="sunburst2_lettering_sp_miel">
+      <mesh>
+        <source id="sunburst2_lettering_sp_miel-mesh-positions">
+          <float_array id="sunburst2_lettering_sp_miel-mesh-positions-array" count="12">-0.2699887 2.137805 0.7534114 -0.2699578 2.127404 0.7935193 -0.1577323 2.137802 0.792863 -0.1552917 2.147671 0.7532317</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_lettering_sp_miel-mesh-positions-array" count="4" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="sunburst2_lettering_sp_miel-mesh-normals">
+          <float_array id="sunburst2_lettering_sp_miel-mesh-normals-array" count="18">-0.08538562 0.966252 0.2430359 -0.08538633 0.966252 0.2430356 -0.08538711 0.966252 0.2430354 -0.08538997 0.9662492 0.2430453 -0.0853886 0.9662492 0.2430458 -0.08537459 0.9662616 0.2430016</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_lettering_sp_miel-mesh-normals-array" count="6" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="sunburst2_lettering_sp_miel-mesh-map-0">
+          <float_array id="sunburst2_lettering_sp_miel-mesh-map-0-array" count="12">0.9795904 0.6038523 0.5388824 0.7598106 0.5290891 0.6017058 0.9795904 0.6038523 0.9798587 0.7637012 0.5388824 0.7598106</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_lettering_sp_miel-mesh-map-0-array" count="6" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="sunburst2_lettering_sp_miel-mesh-vertices">
+          <input semantic="POSITION" source="#sunburst2_lettering_sp_miel-mesh-positions"/>
+        </vertices>
+        <triangles material="sunburst2_miel_lettering-material" count="2">
+          <input semantic="VERTEX" source="#sunburst2_lettering_sp_miel-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#sunburst2_lettering_sp_miel-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#sunburst2_lettering_sp_miel-mesh-map-0" offset="2" set="0"/>
+          <p>0 0 0 2 1 1 3 2 2 0 3 3 1 4 4 2 5 5</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="sunburst2_logo_trunk_miel-mesh" name="sunburst2_logo_trunk_miel">
+      <mesh>
+        <source id="sunburst2_logo_trunk_miel-mesh-positions">
+          <float_array id="sunburst2_logo_trunk_miel-mesh-positions-array" count="27">0.04566067 2.119869 0.8768327 0.04568845 2.137102 0.8164201 0 2.138794 0.815965 0 2.121219 0.876855 0.04569309 2.142329 0.7943171 0 2.143891 0.7942252 -0.04569083 2.137102 0.81642 -0.04566282 2.119869 0.8768327 -0.04570311 2.142329 0.7943171</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_logo_trunk_miel-mesh-positions-array" count="9" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="sunburst2_logo_trunk_miel-mesh-normals">
+          <float_array id="sunburst2_logo_trunk_miel-mesh-normals-array" count="27">0.03052908 0.9607263 0.2758132 1.76817e-6 0.9646303 0.2636068 -8.15089e-7 0.9612209 0.2757796 0.0331698 0.9728879 0.2288862 -2.88939e-7 0.9733758 0.2292153 -0.03025346 0.9606814 0.2759999 -0.03326046 0.9728436 0.2290613 0.03138649 0.9641601 0.2634584 -0.03138446 0.9641582 0.2634652</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_logo_trunk_miel-mesh-normals-array" count="9" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="sunburst2_logo_trunk_miel-mesh-map-0">
+          <float_array id="sunburst2_logo_trunk_miel-mesh-map-0-array" count="48">0.07342189 0.3136704 0.2337824 0.09256047 0.2337824 0.3135724 0.2337824 0.09256047 0.07342189 0.01193422 0.2337824 0.01105248 0.2337824 0.09256047 0.3941426 0.3136704 0.2337824 0.3135724 0.3942897 0.01193422 0.2337824 0.09256047 0.2337824 0.01105248 0.07342189 0.3136704 0.07342189 0.09461772 0.2337824 0.09256047 0.2337824 0.09256047 0.07342189 0.09461772 0.07342189 0.01193422 0.2337824 0.09256047 0.3941426 0.09461772 0.3941426 0.3136704 0.3942897 0.01193422 0.3941426 0.09461772 0.2337824 0.09256047</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_logo_trunk_miel-mesh-map-0-array" count="24" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="sunburst2_logo_trunk_miel-mesh-vertices">
+          <input semantic="POSITION" source="#sunburst2_logo_trunk_miel-mesh-positions"/>
+        </vertices>
+        <triangles material="sunburst2_miel_lettering-material" count="8">
+          <input semantic="VERTEX" source="#sunburst2_logo_trunk_miel-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#sunburst2_logo_trunk_miel-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#sunburst2_logo_trunk_miel-mesh-map-0" offset="2" set="0"/>
+          <p>0 0 0 2 1 1 3 2 2 2 1 3 4 3 4 5 4 5 2 1 6 7 5 7 3 2 8 8 6 9 2 1 10 5 4 11 0 0 12 1 7 13 2 1 14 2 1 15 1 7 16 4 3 17 2 1 18 6 8 19 7 5 20 8 6 21 6 8 22 2 1 23</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="sunburst2_logo_hood_miel-mesh" name="sunburst2_logo_hood_miel">
+      <mesh>
+        <source id="sunburst2_logo_hood_miel-mesh-positions">
+          <float_array id="sunburst2_logo_hood_miel-mesh-positions-array" count="27">-3.1e-6 -2.075772 0.6423063 -0.04471188 -2.075609 0.6423115 -0.04471063 -2.090152 0.6213213 -3.1e-6 -2.090973 0.6212552 0.0447092 -2.090152 0.6213213 0.04470789 -2.075609 0.6423115 -0.04470878 -2.107784 0.5875442 -3.1e-6 -2.108714 0.5874175 0.04471135 -2.107784 0.5875442</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_logo_hood_miel-mesh-positions-array" count="9" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="sunburst2_logo_hood_miel-mesh-normals">
+          <float_array id="sunburst2_logo_hood_miel-mesh-normals-array" count="27">-5.20048e-7 -0.8163455 0.577564 -0.01321983 -0.8597224 0.5105906 6.93477e-7 -0.8598068 0.5106196 0.01321917 -0.8597259 0.5105847 0.008529365 -0.816315 0.5775442 -0.01627326 -0.8859903 0.4634183 0.01627099 -0.8859912 0.4634165 -0.008535623 -0.8163131 0.5775467 -1.06269e-6 -0.8860571 0.4635762</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_logo_hood_miel-mesh-normals-array" count="9" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="sunburst2_logo_hood_miel-mesh-map-0">
+          <float_array id="sunburst2_logo_hood_miel-mesh-map-0-array" count="48">0.2337639 0.3135724 0.03293699 0.2086504 0.2337639 0.2082585 0.2337639 0.3135724 0.4347747 0.2086504 0.4344069 0.3136704 0.03312069 0.04328334 0.2337639 0.2082585 0.03293699 0.2086504 0.2337639 0.2082585 0.4345909 0.04328334 0.4347747 0.2086504 0.2337639 0.3135724 0.03312069 0.3136704 0.03293699 0.2086504 0.2337639 0.3135724 0.2337639 0.2082585 0.4347747 0.2086504 0.03312069 0.04328334 0.2337639 0.04249966 0.2337639 0.2082585 0.2337639 0.2082585 0.2337639 0.04249966 0.4345909 0.04328334</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_logo_hood_miel-mesh-map-0-array" count="24" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="sunburst2_logo_hood_miel-mesh-vertices">
+          <input semantic="POSITION" source="#sunburst2_logo_hood_miel-mesh-positions"/>
+        </vertices>
+        <triangles material="sunburst2_miel_lettering-material" count="8">
+          <input semantic="VERTEX" source="#sunburst2_logo_hood_miel-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#sunburst2_logo_hood_miel-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#sunburst2_logo_hood_miel-mesh-map-0" offset="2" set="0"/>
+          <p>0 0 0 2 1 1 3 2 2 0 0 3 4 3 4 5 4 5 6 5 6 3 2 7 2 1 8 3 2 9 8 6 10 4 3 11 0 0 12 1 7 13 2 1 14 0 0 15 3 2 16 4 3 17 6 5 18 7 8 19 3 2 20 3 2 21 7 8 22 8 6 23</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="sunburst2_lettering_trunk_miel-mesh" name="sunburst2_lettering_trunk_miel">
+      <mesh>
+        <source id="sunburst2_lettering_trunk_miel-mesh-positions">
+          <float_array id="sunburst2_lettering_trunk_miel-mesh-positions-array" count="18">0.3808506 2.082586 0.8779875 0.4958187 2.042051 0.8775005 0.5004779 2.053816 0.8352726 0.3895279 2.093498 0.8363733 0.570491 2.02242 0.839617 0.5690104 2.011829 0.877438</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_lettering_trunk_miel-mesh-positions-array" count="6" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="sunburst2_lettering_trunk_miel-mesh-normals">
+          <float_array id="sunburst2_lettering_trunk_miel-mesh-normals-array" count="18">0.321615 0.8998693 0.2946168 0.341311 0.8948792 0.2875727 0.3216025 0.8998899 0.2945679 0.3729115 0.8858717 0.2759861 0.3413113 0.8948781 0.2875757 0.3729264 0.8858525 0.2760278</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_lettering_trunk_miel-mesh-normals-array" count="6" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="sunburst2_lettering_trunk_miel-mesh-map-0">
+          <float_array id="sunburst2_lettering_trunk_miel-mesh-map-0-array" count="24">0.9464582 0.9838171 0.3927894 0.7988808 0.9427016 0.7991491 0.0559194 0.8217546 0.3863499 0.985427 0.03901559 0.986299 0.9464582 0.9838171 0.3863499 0.985427 0.3927894 0.7988808 0.0559194 0.8217546 0.3927894 0.7988808 0.3863499 0.985427</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_lettering_trunk_miel-mesh-map-0-array" count="12" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="sunburst2_lettering_trunk_miel-mesh-vertices">
+          <input semantic="POSITION" source="#sunburst2_lettering_trunk_miel-mesh-positions"/>
+        </vertices>
+        <triangles material="sunburst2_miel_lettering-material" count="4">
+          <input semantic="VERTEX" source="#sunburst2_lettering_trunk_miel-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#sunburst2_lettering_trunk_miel-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#sunburst2_lettering_trunk_miel-mesh-map-0" offset="2" set="0"/>
+          <p>0 0 0 2 1 1 3 2 2 4 3 3 1 4 4 5 5 5 0 0 6 1 4 7 2 1 8 4 3 9 2 1 10 1 4 11</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="sunburst2_lettering_RS_miel-mesh" name="sunburst2_lettering_RS_miel">
+      <mesh>
+        <source id="sunburst2_lettering_RS_miel-mesh-positions">
+          <float_array id="sunburst2_lettering_RS_miel-mesh-positions-array" count="12">-0.3334149 2.127967 0.7572203 -0.3328893 2.117801 0.7976178 -0.2699549 2.126403 0.7974131 -0.2699857 2.136742 0.7574747</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_lettering_RS_miel-mesh-positions-array" count="4" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="sunburst2_lettering_RS_miel-mesh-normals">
+          <float_array id="sunburst2_lettering_RS_miel-mesh-normals-array" count="18">-0.1321226 0.9602293 0.2459744 -0.1321721 0.9602026 0.246052 -0.1321223 0.9602293 0.2459745 -0.1321067 0.9602377 0.2459504 -0.1321317 0.9602243 0.245989 -0.1321817 0.9601976 0.2460663</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_lettering_RS_miel-mesh-normals-array" count="6" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="sunburst2_lettering_RS_miel-mesh-map-0">
+          <float_array id="sunburst2_lettering_RS_miel-mesh-map-0-array" count="12">0.3675677 0.331983 0.01956278 0.5534103 0.0192945 0.3315805 0.3675677 0.331983 0.3654212 0.5560935 0.01956278 0.5534103</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_lettering_RS_miel-mesh-map-0-array" count="6" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="sunburst2_lettering_RS_miel-mesh-vertices">
+          <input semantic="POSITION" source="#sunburst2_lettering_RS_miel-mesh-positions"/>
+        </vertices>
+        <triangles material="sunburst2_miel_lettering-material" count="2">
+          <input semantic="VERTEX" source="#sunburst2_lettering_RS_miel-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#sunburst2_lettering_RS_miel-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#sunburst2_lettering_RS_miel-mesh-map-0" offset="2" set="0"/>
+          <p>0 0 0 2 1 1 3 2 2 0 3 3 1 4 4 2 5 5</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="sunburst2_lettering_AWD_miel-mesh" name="sunburst2_lettering_AWD_miel">
+      <mesh>
+        <source id="sunburst2_lettering_AWD_miel-mesh-positions">
+          <float_array id="sunburst2_lettering_AWD_miel-mesh-positions-array" count="24">0.2699887 2.137805 0.7534114 0.2699578 2.127404 0.7935191 0.3320059 2.118271 0.7932167 0.3320605 2.128672 0.7530689 0.2313706 2.13098 0.7932937 0.2306233 2.141193 0.75335 0.2699578 2.127404 0.7935191 0.2699887 2.137805 0.7534114</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_lettering_AWD_miel-mesh-positions-array" count="8" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="sunburst2_lettering_AWD_miel-mesh-normals">
+          <float_array id="sunburst2_lettering_AWD_miel-mesh-normals-array" count="24">0.1423491 0.9581401 0.2484034 0.08521711 0.9650907 0.2476649 0.08538949 0.9650352 0.2478219 0.08528512 0.9650685 0.2477287 0.1422361 0.9581133 0.2485717 0.08522754 0.9650874 0.2476749 0.085262 0.9650762 0.2477063 0.08536553 0.9650429 0.2478004</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_lettering_AWD_miel-mesh-normals-array" count="8" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="sunburst2_lettering_AWD_miel-mesh-map-0">
+          <float_array id="sunburst2_lettering_AWD_miel-mesh-map-0-array" count="24">0.8043851 0.3746513 0.5324475 0.518938 0.5327159 0.3746513 0.8043851 0.3746513 0.9728872 0.5177305 0.8041169 0.518938 0.8043851 0.3746513 0.8041169 0.518938 0.5324475 0.518938 0.8043851 0.3746513 0.9765095 0.3739805 0.9728872 0.5177305</float_array>
+          <technique_common>
+            <accessor source="#sunburst2_lettering_AWD_miel-mesh-map-0-array" count="12" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="sunburst2_lettering_AWD_miel-mesh-vertices">
+          <input semantic="POSITION" source="#sunburst2_lettering_AWD_miel-mesh-positions"/>
+        </vertices>
+        <triangles material="sunburst2_miel_lettering-material" count="4">
+          <input semantic="VERTEX" source="#sunburst2_lettering_AWD_miel-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#sunburst2_lettering_AWD_miel-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#sunburst2_lettering_AWD_miel-mesh-map-0" offset="2" set="0"/>
+          <p>7 0 0 2 0 1 3 0 2 0 1 3 4 2 4 1 3 5 7 4 6 6 4 7 2 4 8 0 5 9 5 6 10 4 7 11</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Camera_001" name="Camera.001" type="NODE">
+        <matrix sid="transform">0.6859207 -0.3240135 0.6515582 7.358891 0.7276763 0.3054209 -0.6141704 -6.925791 -4.01133e-9 0.8953956 0.4452714 4.958309 0 0 0 1</matrix>
+        <instance_camera url="#Camera_001-camera"/>
+      </node>
+      <node id="sunburst2_lettering_25_miel" name="sunburst2_lettering_25_miel" type="NODE">
+        <matrix sid="transform">1.5 0 0 -0.5217145 0 1 0 2.03422 0 0 1 0.8590109 0 0 0 1</matrix>
+        <instance_geometry url="#sunburst2_lettering_25_miel-mesh" name="sunburst2_lettering_25_miel">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="sunburst2_miel_lettering-material" target="#sunburst2_miel_lettering-material">
+                <bind_vertex_input semantic="sunburst2_lettering_25_miel-mesh-map-0" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="sunburst2_lettering_sp_miel" name="sunburst2_lettering_sp_miel" type="NODE">
+        <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+        <instance_geometry url="#sunburst2_lettering_sp_miel-mesh" name="sunburst2_lettering_sp_miel">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="sunburst2_miel_lettering-material" target="#sunburst2_miel_lettering-material">
+                <bind_vertex_input semantic="sunburst2_lettering_sp_miel-mesh-map-0" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="sunburst2_logo_trunk_miel" name="sunburst2_logo_trunk_miel" type="NODE">
+        <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+        <instance_geometry url="#sunburst2_logo_trunk_miel-mesh" name="sunburst2_logo_trunk_miel">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="sunburst2_miel_lettering-material" target="#sunburst2_miel_lettering-material">
+                <bind_vertex_input semantic="sunburst2_logo_trunk_miel-mesh-map-0" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="sunburst2_logo_hood_miel" name="sunburst2_logo_hood_miel" type="NODE">
+        <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+        <instance_geometry url="#sunburst2_logo_hood_miel-mesh" name="sunburst2_logo_hood_miel">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="sunburst2_miel_lettering-material" target="#sunburst2_miel_lettering-material">
+                <bind_vertex_input semantic="sunburst2_logo_hood_miel-mesh-map-0" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="sunburst2_lettering_trunk_miel" name="sunburst2_lettering_trunk_miel" type="NODE">
+        <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+        <instance_geometry url="#sunburst2_lettering_trunk_miel-mesh" name="sunburst2_lettering_trunk_miel">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="sunburst2_miel_lettering-material" target="#sunburst2_miel_lettering-material">
+                <bind_vertex_input semantic="sunburst2_lettering_trunk_miel-mesh-map-0" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="sunburst2_lettering_RS_miel" name="sunburst2_lettering_RS_miel" type="NODE">
+        <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+        <instance_geometry url="#sunburst2_lettering_RS_miel-mesh" name="sunburst2_lettering_RS_miel">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="sunburst2_miel_lettering-material" target="#sunburst2_miel_lettering-material">
+                <bind_vertex_input semantic="sunburst2_lettering_RS_miel-mesh-map-0" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="sunburst2_lettering_AWD_miel" name="sunburst2_lettering_AWD_miel" type="NODE">
+        <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+        <instance_geometry url="#sunburst2_lettering_AWD_miel-mesh" name="sunburst2_lettering_AWD_miel">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="sunburst2_miel_lettering-material" target="#sunburst2_miel_lettering-material">
+                <bind_vertex_input semantic="sunburst2_lettering_AWD_miel-mesh-map-0" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Camera" name="Camera" type="NODE">
+        <matrix sid="transform">0.6859207 -0.3240135 0.6515582 7.358891 0.7276763 0.3054208 -0.6141704 -6.925791 0 0.8953956 0.4452714 4.958309 0 0 0 1</matrix>
+        <instance_camera url="#Camera-camera"/>
+      </node>
+      <node id="Light" name="Light" type="NODE">
+        <matrix sid="transform">-0.2908646 -0.7711008 0.5663932 4.076245 0.9551712 -0.1998834 0.2183912 1.005454 -0.05518906 0.6045247 0.7946723 5.903862 0 0 0 1</matrix>
+        <instance_light url="#Light-light"/>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>

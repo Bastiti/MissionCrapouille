@@ -1,0 +1,65 @@
+{
+"sunburst2_gauges_metric_miel": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Crapouille Technologies Orange Gauges",
+        "value":200,
+    },
+    "slotType" : "sunburst2_gauges",
+    "flexbodies": [
+         ["mesh", "[group]:", "nonFlexMaterials"],
+         ["sunburst2_gauges_KMH_miel", ["sunburst2_dash"]],
+         ["sunburst2_decals_gauges", ["sunburst2_dash"]],
+    ],
+    "glowMap":{
+        "sunburst2_gauges_display":{"simpleFunction":{"ignitionLevel":0.5}, "off":"screen_off", "on":"sunburst2_gauges_display", "on_intense":"sunburst2_gauges_display"},
+        "sunburst2_gauges_KMH_miel":      {"simpleFunction":"lowhighbeam",                           "off":"sunburst2_gauges_KMH_miel", "on":"sunburst2_gauges_KMH_on_miel"},
+
+    },
+    "controller": [
+        ["fileName"],
+        ["gauges/genericGauges", {"name":"gauge" }],
+        ["craptechTachSweep"],
+        //["gauges/customModules/environmentData"],
+        //["gauges/customModules/combustionEngineData"],
+    ],
+    "props": [
+        ["func",        "mesh",                   "idRef:","idX:","idY:", "baseRotation",              "rotation",               "translation",            "min", "max", "offset", "multiplier"],
+        //needles
+        ["wheelspeed",  "sunburst2_needle_speedo", "dsh2ll","dsh2l","dsh1l", {"x":90, "y":0, "z":0}, {"x":0, "y":0, "z":-0.93},    {"x":0, "y":0, "z":0},   0, 295, 64, 3.6],
+        ["rpm",         "sunburst2_needle_tacho",  "dsh2ll","dsh2l","dsh1l", {"x":90, "y":0, "z":0}, {"x":0, "y":0, "z":-0.0218}, {"x":0, "y":0, "z":0},   0, 8000, 2500, 1.0],
+        ["fuel",        "sunburst2_needle_fuel",   "dsh2ll","dsh2l","dsh1l", {"x":90, "y":0, "z":0}, {"x":0, "y":0, "z":100},     {"x":0, "y":0, "z":0},   0, 50, 0.4, 0.95],
+        ["watertemp",   "sunburst2_needle_temp",   "dsh2ll","dsh2l","dsh1l", {"x":-90, "y":0, "z":180}, {"x":0, "y":0, "z":-1.5},    {"x":0, "y":0, "z":0},   60, 120, 90, 1],
+    ],
+    "gauge": {
+        "configuration": {
+            "materialName": "@sunburst2_gauges_display"
+            "htmlPath": "local://local/vehicles/sunburst2/gauges/craptech_gauges_screen.html"
+            "displayWidth":256
+            "displayHeight":256
+            "jbeamUnitLength": "metric"
+        }
+        "displayData": {
+            "electrics": [
+                "gear",
+                "ignitionLevel",
+                "engineRunning"
+            ]
+            "powertrain": [
+                ["deviceName", "property"]
+                //["mainEngine", "outputTorque1"]
+                //["mainEngine", "outputAV1"]
+                //["gearbox", "outputAV1"]
+            ]
+            "customModules": [
+                ["moduleName", "property"]
+                // ["combustionEngineData", "fuelDisplay"]
+                // ["combustionEngineData", "fuelConsumption"]
+                // ["environmentData", "temperatureEnv"]
+                // ["environmentData", "time"]
+            ]
+        }
+    },
+
+}
+}

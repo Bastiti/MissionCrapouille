@@ -1,0 +1,288 @@
+{
+"fullsize_flag_R_limo_miel": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Miel Right Flag",
+        "value":50,
+    },
+    "slotType" : "fullsize_fender_accessory_FR",
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["fullsize_flagpole_R_miel", ["fullsize_flagpole_R"]],
+        ["fullsize_flag_R_miel", ["fullsize_flag_R"]],
+    ],
+    "nodes": [
+        ["id",    "posX",   "posY",  "posZ"],
+
+        //flagpole
+        {"collision":true},
+        {"frictionCoef":0.7},
+        {"nodeMaterial":"|NM_METAL"},
+        {"nodeWeight":0.185},
+        //base
+        {"group":"fullsize_flagpole_R"},
+        {"selfCollision":false},
+        ["flp1r",-0.834092,-1.52783, 0.8997],
+        //pole
+        {"group":["fullsize_flagpole_R","fullsize_flag_R"]},
+        {"selfCollision":true},
+        ["flp2r",-0.834092,-1.52783, 1.1474],
+        ["flp3r",-0.834092,-1.52783, 1.3506],
+        //rigidifiers and flexbody help
+        {"selfCollision":false},
+        {"collision":false},
+        {"group":"fullsize_flagpole_R"},
+        ["flp4r",-0.534092,-1.52783, 0.8997],
+        ["flp5r",-02,-1.22783, 0.8997],
+
+        //flag
+        {"selfCollision":true},
+        {"collision":true},
+        {"nodeMaterial":"|NM_CLOTH"},
+        {"nodeWeight":0.003},
+        {"group":"fullsize_flag_R"},
+        ["flg1r",-0.834092,-1.19290, 1.1474],
+        ["flg2r",-0.834092,-1.19290, 1.2490],
+        ["flg3r",-0.834092,-1.19290, 1.3506],
+        ["flg4r",-0.834092,-1.36054, 1.1474],
+        ["flg5r",-0.834092,-1.36054, 1.2490],
+        ["flg6r",-0.834092,-1.36054, 1.3506],
+        ["flg7r",-0.834092,-1.52783, 1.2490, {"nodeWeight":0.2}],
+    ],
+    "beams": [
+        ["id1:",  "id2:"],
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+
+        //flagpole main shape
+        {"beamSpring":201000,"beamDamp":60},
+        {"beamDeform":20000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":1.2},
+        ["flp1r", "flp2r"],
+        ["flp2r", "flp3r"],
+
+        //flagpole rigidifiers
+        {"beamSpring":201000,"beamDamp":60},
+        {"beamDeform":10000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":""},
+        ["flp1r", "flp3r"],
+        ["flp1r", "flp4r"],
+        ["flp1r", "flp5r"],
+        ["flp2r", "flp4r"],
+        ["flp2r", "flp5r"],
+        ["flp3r", "flp4r"],
+        ["flp3r", "flp5r"],
+        ["flp4r", "flp5r"],
+
+        //flag main shape
+        {"beamSpring":1000,"beamDamp":0.10},
+        {"beamDeform":1000,"beamStrength":1000},
+        {"deformLimitExpansion":1.1},
+        //vert
+        ["flg1r", "flg2r"],
+        ["flg2r", "flg3r"],
+        ["flg4r", "flg5r"],
+        ["flg5r", "flg6r"],
+        ["flp2r", "flg7r"],
+        ["flg7r", "flp3r"],
+        //length
+        ["flg1r", "flg4r"],
+        ["flg4r", "flp2r"],
+        ["flg2r", "flg5r"],
+        ["flg5r", "flg7r"],
+        ["flg3r", "flg6r"],
+        ["flg6r", "flp3r"],
+
+        //flag crossing
+        {"beamSpring":0.25,"beamDamp":0.05},
+        ["flg1r", "flg5r"],
+        ["flg2r", "flg4r"],
+        ["flg2r", "flg6r"],
+        ["flg3r", "flg5r"],
+        ["flg4r", "flg7r"],
+        ["flg5r", "flp2r"],
+        ["flg5r", "flp3r"],
+        ["flg6r", "flg7r"],
+
+        //flagpole attach
+        {"beamSpring":51000,"beamDamp":15},
+        {"beamDeform":2000,"beamStrength":2000},
+        {"breakGroup":"flag_R"},
+        ["flp1r", "fe4r"],
+        ["flp1r", "fe8r"],
+        ["flp1r", "fe3r"],
+        ["flp1r", "fe12r"],
+        ["flp2r", "fe4r"],
+        ["flp2r", "fe8r"],
+        ["flp2r", "fe3r"],
+        ["flp2r", "fe12r"],
+        ["flp4r", "fe4r"],
+        ["flp4r", "fe8r"],
+        ["flp4r", "fe3r"],
+        ["flp4r", "fe12r"],
+        ["flp5r", "fe4r"],
+        ["flp5r", "fe8r"],
+        ["flp5r", "fe3r"],
+        ["flp5r", "fe12r"],
+        {"breakGroup":""},
+        {"deformLimitExpansion":1.1},
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+    ],
+     "triangles": [
+        ["id1:",  "id2:",  "id3:"],
+        //flag
+        {"dragCoef":10},
+        ["flg1r", "flg4r", "flg2r"],
+        ["flg2r", "flg4r", "flg5r"],
+        ["flg2r", "flg5r", "flg3r"],
+        ["flg3r", "flg5r", "flg6r"],
+        ["flg4r", "flp2r", "flg5r"],
+        ["flg5r", "flp2r", "flg7r"],
+        ["flg5r", "flg7r", "flg6r"],
+        ["flg6r", "flg7r", "flp3r"],
+    ],
+},
+
+"fullsize_flag_L_limo_miel": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Miel Left Flag",
+        "value":50,
+    },
+    "slotType" : "fullsize_fender_accessory_FL",
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["fullsize_flagpole_L_miel", ["fullsize_flagpole_L"]],
+        ["fullsize_flag_L_miel", ["fullsize_flag_L"]],
+    ],
+    "nodes": [
+        ["id",    "posX",   "posY",  "posZ"],
+
+        //flagpole
+        {"collision":true},
+        {"frictionCoef":0.7},
+        {"nodeMaterial":"|NM_METAL"},
+        {"nodeWeight":0.185},
+        //base
+        {"group":"fullsize_flagpole_L"},
+        {"selfCollision":false},
+        ["flp1l", 0.834092,-1.52783, 0.8997],
+        //pole
+        {"group":["fullsize_flagpole_L","fullsize_flag_L"]},
+        {"selfCollision":true},
+        ["flp2l", 0.834092,-1.52783, 1.1474],
+        ["flp3l", 0.834092,-1.52783, 1.3506],
+        //rigidifiers and flexbody help
+        {"selfCollision":false},
+        {"collision":false},
+        {"group":"fullsize_flagpole_L"},
+        ["flp4l", 0.534092,-1.52783, 0.8997],
+        ["flp5l", 0.834092,-1.22783, 0.8997],
+
+        //flag
+        {"selfCollision":true},
+        {"collision":true},
+        {"nodeMaterial":"|NM_CLOTH"},
+        {"nodeWeight":0.003},
+        {"group":"fullsize_flag_L"},
+        ["flg1l", 0.834092,-1.19290, 1.1474],
+        ["flg2l", 0.834092,-1.19290, 1.2490],
+        ["flg3l", 0.834092,-1.19290, 1.3506],
+        ["flg4l", 0.834092,-1.36054, 1.1474],
+        ["flg5l", 0.834092,-1.36054, 1.2490],
+        ["flg6l", 0.834092,-1.36054, 1.3506],
+        ["flg7l", 0.834092,-1.52783, 1.2490, {"nodeWeight":0.2}],
+    ],
+    "beams": [
+        ["id1:",  "id2:"],
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+
+        //flagpole main shape
+        {"beamSpring":201000,"beamDamp":60},
+        {"beamDeform":20000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":1.2},
+        ["flp1l", "flp2l"],
+        ["flp2l", "flp3l"],
+
+        //flagpole rigidifiers
+        {"beamSpring":201000,"beamDamp":60},
+        {"beamDeform":10000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":""},
+        ["flp1l", "flp3l"],
+        ["flp1l", "flp4l"],
+        ["flp1l", "flp5l"],
+        ["flp2l", "flp4l"],
+        ["flp2l", "flp5l"],
+        ["flp3l", "flp4l"],
+        ["flp3l", "flp5l"],
+        ["flp4l", "flp5l"],
+
+        //flag main shape
+        {"beamSpring":1000,"beamDamp":0.10},
+        {"beamDeform":1000,"beamStrength":1000},
+        {"deformLimitExpansion":1.1},
+        //vert
+        ["flg1l", "flg2l"],
+        ["flg2l", "flg3l"],
+        ["flg4l", "flg5l"],
+        ["flg5l", "flg6l"],
+        ["flp2l", "flg7l"],
+        ["flg7l", "flp3l"],
+        //length
+        ["flg1l", "flg4l"],
+        ["flg4l", "flp2l"],
+        ["flg2l", "flg5l"],
+        ["flg5l", "flg7l"],
+        ["flg3l", "flg6l"],
+        ["flg6l", "flp3l"],
+
+        //flag crossing
+        {"beamSpring":0.25,"beamDamp":0.05},
+        ["flg1l", "flg5l"],
+        ["flg2l", "flg4l"],
+        ["flg2l", "flg6l"],
+        ["flg3l", "flg5l"],
+        ["flg4l", "flg7l"],
+        ["flg5l", "flp2l"],
+        ["flg5l", "flp3l"],
+        ["flg6l", "flg7l"],
+
+        //flagpole attach
+        {"beamSpring":51000,"beamDamp":15},
+        {"beamDeform":2000,"beamStrength":2000},
+        {"breakGroup":"flag_L"},
+        ["flp1l", "fe4l"],
+        ["flp1l", "fe8l"],
+        ["flp1l", "fe3l"],
+        ["flp1l", "fe12l"],
+        ["flp2l", "fe4l"],
+        ["flp2l", "fe8l"],
+        ["flp2l", "fe3l"],
+        ["flp2l", "fe12l"],
+        ["flp4l", "fe4l"],
+        ["flp4l", "fe8l"],
+        ["flp4l", "fe3l"],
+        ["flp4l", "fe12l"],
+        ["flp5l", "fe4l"],
+        ["flp5l", "fe8l"],
+        ["flp5l", "fe3l"],
+        ["flp5l", "fe12l"],
+        {"breakGroup":""},
+        {"deformLimitExpansion":1.1},
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+    ],
+     "triangles": [
+        ["id1:",  "id2:",  "id3:"],
+        //flag
+        {"dragCoef":10},
+        ["flg4l", "flg1l", "flg2l"],
+        ["flg4l", "flg2l", "flg5l"],
+        ["flg5l", "flg2l", "flg3l"],
+        ["flg5l", "flg3l", "flg6l"],
+        ["flp2l", "flg4l", "flg5l"],
+        ["flp2l", "flg5l", "flg7l"],
+        ["flg7l", "flg5l", "flg6l"],
+        ["flg7l", "flg6l", "flp3l"],
+    ],
+},
+
+}

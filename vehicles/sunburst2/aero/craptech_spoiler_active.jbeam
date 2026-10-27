@@ -1,0 +1,405 @@
+{
+"craptech_spoiler_sedan_rs_active": {
+    "information":{
+        "authors":"Crapouille Technologies",
+        "name":"Crapouille Sport RS Active Spoiler (Taxi Mode)",
+        "value":2400,
+    },
+    //  The stock Sport RS spoiler at its full stock width (1.38 m), telescoping: the stock wing
+    //  is 22 cm wider than the trunk opening, so for the trip in and out of the trunk the two end
+    //  plates (with the outer main-plane and blade sections, built as sleeves a few mm oversize)
+    //  slide 14 cm inward, Porsche-Panamera style, and the wing passes the opening at 1.10 m.
+    //  They slide while the wing hovers and the lid swings; on the lid the wing is stock width.
+    //
+    //  Two hydraulic struts, pivoting at the rear-glass / lid seam, hold the wing all the way
+    //  (barrel and rod are props on node triads: P = spsp_*, the wing end T = spst_*, so they
+    //  always aim at each other and telescope with the real wing position).
+    //
+    //  Physics are unchanged from the 80 % version: the sp* nodes below are the narrow wing,
+    //  with aero coefficients scaled by 1/0.8 so it makes the full-width wing's forces.
+    //
+    //  The blade (sp1*/sp2* nodes) is cut loose from the uprights everywhere except its two
+    //  outer leading-edge nodes sp1rr/sp1ll, which become the hinge. The trailing edge is held
+    //  by one hydro per side (sp2rr-sp4rr, sp2ll-sp4ll), so the hydro length sets the blade
+    //  angle. The lift triangles ride on those nodes, so the angle really changes the downforce
+    //  and drag: past ~17 deg (stallAngle 0.3) the blade stalls and acts as an airbrake.
+    //
+    //  craptech_aero_wing (set by lua/controller/craptechActiveAero.lua):
+    //      -1 -> -6 deg (stowed / low drag)   0 -> stock angle   +1 -> +25 deg (airbrake)
+    "slotType" : "sunburst2_spoiler_sedan",
+    "flexbodies": [
+         ["mesh", "[group]:", "nonFlexMaterials"],
+         //  Full-width stock mesh cut up (aero/craptech_spoiler.dae): the centre of the top blade
+         //  follows only the moving blade nodes; the centre of the main plane follows the fixed
+         //  nodes. The sliding outer parts are props (see "props").
+         ["craptech_spoiler_blade", ["craptech_spoiler_blade"]],
+         ["craptech_spoiler_fixed", ["sunburst2_spoiler"]],
+    ],
+    //  craptech_wing_narrow (craptechActiveAero.lua): 0 = stock width, 1 = narrow for the trunk.
+    //  End assemblies slide along the main plane's leading edge, tip sleeves along the blade's;
+    //  both directions were fitted on the mesh so the centre parts stay inside the sleeves.
+    "props": [
+        ["func", "mesh", "idRef:", "idX:", "idY:", "baseRotation", "rotation", "translation", "min", "max", "offset", "multiplier"],
+        ["craptech_wing_narrow", "craptech_spoiler_end_l", "sp3rr", "sp3ll", "sp4rr", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0, "y":0, "z":0}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":-0.14, "y":0.030, "z":-0.009}, "breakGroup":"spoiler_attach_l"}],
+        ["craptech_wing_narrow", "craptech_spoiler_end_r", "sp3rr", "sp3ll", "sp4rr", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0, "y":0, "z":0}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":0.14, "y":0.030, "z":-0.009}, "breakGroup":"spoiler_attach_r"}],
+        ["craptech_wing_narrow", "craptech_spoiler_tip_l", "sp1rr", "sp1ll", "sp2rr", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0, "y":0, "z":0}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":-0.14, "y":0.030, "z":0.004}, "breakGroup":"spoiler_attach_l"}],
+        ["craptech_wing_narrow", "craptech_spoiler_tip_r", "sp1rr", "sp1ll", "sp2rr", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0, "y":0, "z":0}, "baseRotationGlobal":{"x":0, "y":0, "z":0}, "translationGlobal":{"x":0.14, "y":0.030, "z":0.004}, "breakGroup":"spoiler_attach_r"}],
+        //  struts: barrel on (pivot, pivot+x, wing end), rod on (wing end, wing end+x, pivot)
+        ["craptech_static", "craptech_strut_barrel_l", "spsp_l", "spsq_l", "spst_l", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0.25, "y":1.600, "z":0.955}, "baseRotationGlobal":{"x":0, "y":0, "z":0}}],
+        ["craptech_static", "craptech_strut_rod_l", "spst_l", "spsx_l", "spsp_l", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0.25, "y":2.02, "z":0.99}, "baseRotationGlobal":{"x":0, "y":0, "z":0}}],
+        ["craptech_static", "craptech_strut_barrel_r", "spsp_r", "spsq_r", "spst_r", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.25, "y":1.600, "z":0.955}, "baseRotationGlobal":{"x":0, "y":0, "z":0}}],
+        ["craptech_static", "craptech_strut_rod_r", "spst_r", "spsx_r", "spsp_r", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.25, "y":2.02, "z":0.99}, "baseRotationGlobal":{"x":0, "y":0, "z":0}}],
+        ["craptech_static", "craptech_strut_mount_l", "spsp_l", "spsq_l", "tb2l", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0.25, "y":1.600, "z":0.955}, "baseRotationGlobal":{"x":0, "y":0, "z":0}}],
+        ["craptech_static", "craptech_strut_mount_r", "spsp_r", "spsq_r", "tb2r", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.25, "y":1.600, "z":0.955}, "baseRotationGlobal":{"x":0, "y":0, "z":0}}],
+        ["craptech_static", "craptech_strut_tab_l", "sp3rr", "sp3ll", "sp4rr", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":0.25, "y":2.02, "z":0.99}, "baseRotationGlobal":{"x":0, "y":0, "z":0}}],
+        ["craptech_static", "craptech_strut_tab_r", "sp3rr", "sp3ll", "sp4rr", {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, 0, 1, 0, 1,
+            {"baseTranslationGlobal":{"x":-0.25, "y":2.02, "z":0.99}, "baseRotationGlobal":{"x":0, "y":0, "z":0}}],
+    ],
+    "controller": [
+        ["fileName"],
+        ["craptechActiveAero", {"wingElectric": "craptech_aero_wing", "stowY": -0.1, "sinkDepth": 0.39, "hoverHeight": 0.45, "riseTime": 1.3, "landTime": 0.8, "liftHydros": [["craptech_lift_1", -0.712, 1.758, 0.905, -0.5104, 1.701, 0.99, 0.22609, 0.998, 2.62436], ["craptech_lift_2", -0.835, 1.4, 0.661, -0.5104, 1.701, 0.99, 0.55155, 0.69028, 1.57489], ["craptech_lift_3", 0.0, 2.098, 0.37, -0.5104, 1.701, 0.99, 0.895833, 0.83366, 1.43694], ["craptech_lift_4", -0.269, 1.266, 0.922, -0.5104, 1.701, 0.99, 0.502118, 0.82035, 1.32129], ["craptech_lift_5", -0.601, 1.98, 0.923, -0.4504, 1.987, 0.955, 0.154121, 0.998, 3.33362], ["craptech_lift_6", -0.835, 1.4, 0.661, -0.4504, 1.987, 0.955, 0.760869, 0.81359, 1.27531], ["craptech_lift_7", 0.0, 2.098, 0.37, -0.4504, 1.987, 0.955, 0.746596, 0.71356, 1.54006], ["craptech_lift_8", -0.252, 1.575, 0.981, -0.4504, 1.987, 0.955, 0.45802, 0.8053, 1.23026], ["craptech_lift_9", 0.713, 1.758, 0.905, 0.5104, 1.701, 0.99, 0.226982, 0.998, 2.61555], ["craptech_lift_10", 0.835, 1.4, 0.661, 0.5104, 1.701, 0.99, 0.55155, 0.69028, 1.57489], ["craptech_lift_11", 0.0, 2.098, 0.37, 0.5104, 1.701, 0.99, 0.895833, 0.83366, 1.43694], ["craptech_lift_12", 0.269, 1.266, 0.922, 0.5104, 1.701, 0.99, 0.502118, 0.82035, 1.32129], ["craptech_lift_13", 0.601, 1.98, 0.923, 0.4256, 1.987, 0.955, 0.178433, 0.998, 2.92346], ["craptech_lift_14", 0.835, 1.4, 0.661, 0.4256, 1.987, 0.955, 0.773701, 0.82031, 1.26726], ["craptech_lift_15", 0.0, 2.098, 0.37, 0.4256, 1.987, 0.955, 0.731903, 0.69959, 1.55795], ["craptech_lift_16", 0.252, 1.575, 0.981, 0.4256, 1.987, 0.955, 0.447836, 0.79532, 1.23975]]}],
+    ],
+    "nodes": [
+         ["id",    "posX", "posY", "posZ"],
+         {"nodeMaterial":"|NM_PLASTIC"},
+         {"frictionCoef":0.5},
+         {"collision":true},
+         //it travels in and out of the trunk, so it never collides with the car itself
+         //(its triangles are NONCOLLIDABLE as well, see "triangles")
+         {"selfCollision":false},
+
+         {"group":"sunburst2_spoiler"},
+         {"nodeWeight":0.45},
+         //hinge nodes sit on the pivot axis, so both meshes may use them
+         ["sp1rr",-0.4936,  1.851,  1.204, {"group":["sunburst2_spoiler","craptech_spoiler_blade"]}],
+         ["sp1r", -0.2840,  1.900,  1.164, {"group":"craptech_spoiler_blade"}],
+         ["sp1",   0.0000,  1.941,  1.174, {"group":"craptech_spoiler_blade"}],
+         ["sp1l",  0.2840,  1.900,  1.164, {"group":"craptech_spoiler_blade"}],
+         ["sp1ll", 0.4936,  1.851,  1.204, {"group":["sunburst2_spoiler","craptech_spoiler_blade"]}],
+
+         ["sp2rr",-0.4728,  2.045,  1.242, {"group":"craptech_spoiler_blade"}],
+         ["sp2r", -0.2840,  2.058,  1.202, {"group":"craptech_spoiler_blade"}],
+         ["sp2",   0.0000,  2.086,  1.216, {"group":"craptech_spoiler_blade"}],
+         ["sp2l",  0.2840,  2.058,  1.202, {"group":"craptech_spoiler_blade"}],
+         ["sp2ll", 0.4728,  2.045,  1.242, {"group":"craptech_spoiler_blade"}],
+
+         ["sp3rr",-0.5472,  1.701,  1.032],
+         ["sp3r", -0.1752,  1.830,  1.017],
+         ["sp3l",  0.1752,  1.830,  1.017],
+         ["sp3ll", 0.5472,  1.701,  1.032],
+
+         ["sp4rr",-0.5248,  1.957,  1.020],
+         ["sp4r", -0.1752,  2.054,  1.027],
+         ["sp4l",  0.1752,  2.054,  1.027]
+         ["sp4ll", 0.5000,  1.957,  1.020],
+
+         ["sp5rr",-0.5104,  1.701,  0.990],
+         ["sp5ll", 0.5104,  1.701,  0.990],
+
+         ["sp6rr",-0.4504,  1.987,  0.955],
+         ["sp6ll", 0.4256,  1.987,  0.955]
+
+         {"group":""},
+         ["sprg",  0.0000,  1.958,  0.800,  {"nodeWeight":0.9, "selfCollision":false, "collision":false}]
+         //blade stiffener: hangs under the blade and moves with it
+         ["spbrg", 0.0000,  1.985,  1.100,  {"nodeWeight":0.5, "selfCollision":false, "collision":false, "group":"craptech_spoiler_blade"}]
+         //strut ends on the wing (T) and their side references (T + 12 cm in x)
+         ["spst_l",  0.25, 2.02, 0.99, {"nodeWeight":1.0, "collision":false, "selfCollision":false, "group":"", "nodeMaterial":"|NM_METAL", "frictionCoef":0.5}],
+         ["spsx_l",  0.37, 2.02, 0.99, {"nodeWeight":1.0, "collision":false, "selfCollision":false, "group":"", "nodeMaterial":"|NM_METAL", "frictionCoef":0.5}],
+         ["spst_r", -0.25, 2.02, 0.99, {"nodeWeight":1.0, "collision":false, "selfCollision":false, "group":"", "nodeMaterial":"|NM_METAL", "frictionCoef":0.5}],
+         ["spsx_r", -0.13, 2.02, 0.99, {"nodeWeight":1.0, "collision":false, "selfCollision":false, "group":"", "nodeMaterial":"|NM_METAL", "frictionCoef":0.5}],
+         //strut pivots on the body (P, inside the trunk under the lid's front edge) and their side references
+         ["spsp_l",  0.25, 1.600, 0.955, {"nodeWeight":1.0, "collision":false, "selfCollision":false, "group":"", "nodeMaterial":"|NM_METAL", "frictionCoef":0.5}],
+         ["spsq_l",  0.37, 1.600, 0.955, {"nodeWeight":1.0, "collision":false, "selfCollision":false, "group":"", "nodeMaterial":"|NM_METAL", "frictionCoef":0.5}],
+         ["spsp_r", -0.25, 1.600, 0.955, {"nodeWeight":1.0, "collision":false, "selfCollision":false, "group":"", "nodeMaterial":"|NM_METAL", "frictionCoef":0.5}],
+         ["spsq_r", -0.13, 1.600, 0.955, {"nodeWeight":1.0, "collision":false, "selfCollision":false, "group":"", "nodeMaterial":"|NM_METAL", "frictionCoef":0.5}],
+    ],
+    "beams": [
+          ["id1:",  "id2:"],
+          {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+
+          //main shape
+          {"beamSpring":350000,"beamDamp":25},
+          {"beamDeform":35000,"beamStrength":160000},
+          {"deformLimitExpansion":1.1},
+          ["sp3rr", "sp1rr"],
+          ["sp1rr", "sp1r"],
+          ["sp1r",  "sp1"],
+          ["sp1",   "sp1l"],
+          ["sp1l",  "sp1ll"],
+          ["sp1ll", "sp3ll"],
+          ["sp2rr", "sp2r"],
+          ["sp2r",  "sp2"],
+          ["sp2",   "sp2l"],
+          ["sp2l",  "sp2ll"],
+          ["sp3rr", "sp4rr"],
+          ["sp1rr", "sp2rr"],
+          ["sp1r",  "sp2r"],
+          ["sp1",   "sp2"],
+          ["sp1l",  "sp2l"],
+          ["sp1ll", "sp2ll"],
+          ["sp3ll", "sp4ll"],
+          ["sp4ll", "sp4l"],
+          ["sp4l",  "sp4r"],
+          ["sp4r",  "sp4rr"],
+          ["sp3rr", "sp3r"],
+          ["sp3r",  "sp3l"],
+          ["sp3l",  "sp3ll"],
+          ["sp3l",  "sp4l"],
+          ["sp3r",  "sp4r"],
+          ["sp3ll", "sp5ll"],
+          ["sp4ll", "sp6ll"],
+          ["sp6ll", "sp5ll"],
+          ["sp3rr", "sp5rr"],
+          ["sp6rr", "sp4rr"],
+          ["sp6rr", "sp5rr"],
+
+          //crossing
+          {"beamDeform":15000,"beamStrength":160000},
+          {"deformLimitExpansion":""},
+          ["sp4rr", "sp1rr"],
+          ["sp1rr", "sp2r"],
+          ["sp2rr", "sp1r"],
+          ["sp1r",  "sp2"],
+          ["sp2r",  "sp1"],
+          ["sp1",   "sp2l"],
+          ["sp2",   "sp1l"],
+          ["sp1l",  "sp2ll"],
+          ["sp2l",  "sp1ll"],
+          ["sp1ll", "sp4ll"],
+          ["sp3ll", "sp4l"],
+          ["sp3l",  "sp4ll"],
+          ["sp3r",  "sp4rr"],
+          ["sp3rr", "sp4r"],
+          ["sp4r",  "sp3l"],
+          ["sp4l",  "sp3r"],
+          ["sp6rr", "sp3rr"],
+          ["sp4rr", "sp5rr"],
+          ["sp5ll", "sp4ll"],
+          ["sp6ll", "sp3ll"],
+
+          //rigids
+          ["sp1rr", "sp5rr"],
+          ["sp5ll", "sp1ll"],
+          {"beamDeform":9000,"beamStrength":160000},
+          ["sp5rr", "sp3r"],
+          ["sp6rr", "sp4r"],
+          ["sp5ll", "sp3l"],
+          ["sp6ll", "sp4l"],
+          ["sp1",   "sp1rr"],
+          ["sp1l",  "sp1r"],
+          ["sp1ll", "sp1"],
+          ["sp2",   "sp2rr"],
+          ["sp2l",  "sp2r"],
+          ["sp2ll", "sp2"],
+          ["sp3rr", "sp3l"],
+          ["sp3r",  "sp3ll"],
+          ["sp4rr", "sp4l"],
+          ["sp4r",  "sp4ll"],
+          ["sp3l",  "sp1ll"],
+          ["sp3r",  "sp1rr"],
+
+          //rigidifier (uprights and hinge nodes only - the blade has its own below)
+          ["sprg",  "sp3rr"],
+          ["sprg",  "sp1rr"],
+          ["sprg",  "sp1ll"],
+          ["sprg",  "sp3ll"],
+          ["sprg",  "sp4rr"],
+          ["sprg",  "sp4ll"],
+          ["sprg",  "sp3l"],
+          ["sprg",  "sp4l"],
+          ["sprg",  "sp3r"],
+          ["sprg",  "sp4r"],
+
+          //blade rigidifier
+          ["spbrg", "sp1rr"],
+          ["spbrg", "sp1r"],
+          ["spbrg", "sp1"],
+          ["spbrg", "sp1l"],
+          ["spbrg", "sp1ll"],
+          ["spbrg", "sp2rr"],
+          ["spbrg", "sp2r"],
+          ["spbrg", "sp2"],
+          ["spbrg", "sp2l"],
+          ["spbrg", "sp2ll"],
+
+          //strut ends: rigid with the wing's fixed structure; strut pivots: rigid with the body
+          ["spst_l", "sp3l", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spst_l", "sp3ll", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spst_l", "sp4l", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spst_l", "sp4ll", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spst_l", "sp5ll", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spst_l", "sp6ll", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spst_l", "sprg", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsx_l", "sp3l", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsx_l", "sp3ll", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsx_l", "sp4l", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsx_l", "sp4ll", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsx_l", "sp5ll", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsx_l", "sp6ll", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsx_l", "sprg", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spst_l", "spsx_l", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_l", "tb1l", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_l", "tb2l", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_l", "tb1ll", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_l", "tbrg1", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_l", "tb1r", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_l", "rsm1l", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_l", "p10ll", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsq_l", "tb1l", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsq_l", "tb2l", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsq_l", "tb1ll", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsq_l", "tbrg1", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsq_l", "tb1r", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsq_l", "rsm1l", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsq_l", "p10ll", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_l", "spsq_l", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spst_r", "sp3r", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spst_r", "sp3rr", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spst_r", "sp4r", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spst_r", "sp4rr", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spst_r", "sp5rr", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spst_r", "sp6rr", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spst_r", "sprg", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsx_r", "sp3r", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsx_r", "sp3rr", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsx_r", "sp4r", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsx_r", "sp4rr", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsx_r", "sp5rr", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsx_r", "sp6rr", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsx_r", "sprg", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spst_r", "spsx_r", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_r", "tb1r", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_r", "tb2r", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_r", "tb1rr", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_r", "tbrg1", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_r", "tb1l", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_r", "rsm1r", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_r", "p10rr", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsq_r", "tb1r", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsq_r", "tb2r", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsq_r", "tb1rr", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsq_r", "tbrg1", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsq_r", "tb1l", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsq_r", "rsm1r", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsq_r", "p10rr", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["spsp_r", "spsq_r", {"beamSpring":200000,"beamDamp":20,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+
+          //attach: the spoiler is not bolted to the lid. It stands on its four fin feet, each
+          //held by four lift hydros to the body (see "hydros"), so it can sink inside the trunk
+          //while the reverse-hinged lid is open. These spring-free dampers only calm it; they
+          //never resist the lift.
+          ["sp5rr", "q3r", {"beamSpring":0,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","deformGroup":"","breakGroup":"spoiler_attach_r"}],
+          ["sp5rr", "q7r", {"beamSpring":0,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","deformGroup":"","breakGroup":"spoiler_attach_r"}],
+          ["sp6rr", "q4r", {"beamSpring":0,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","deformGroup":"","breakGroup":"spoiler_attach_r"}],
+          ["sp6rr", "q7r", {"beamSpring":0,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","deformGroup":"","breakGroup":"spoiler_attach_r"}],
+          ["sp5ll", "q3l", {"beamSpring":0,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","deformGroup":"","breakGroup":"spoiler_attach_l"}],
+          ["sp5ll", "q7l", {"beamSpring":0,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","deformGroup":"","breakGroup":"spoiler_attach_l"}],
+          ["sp6ll", "q4l", {"beamSpring":0,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","deformGroup":"","breakGroup":"spoiler_attach_l"}],
+          ["sp6ll", "q7l", {"beamSpring":0,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","deformGroup":"","breakGroup":"spoiler_attach_l"}],
+
+          //blade dampers: no spring, so they never fight the hydros, but they soak up any
+          //swing of the hinged blade (same idea as the stock pop-up headlights)
+          ["sp2rr", "sp6rr", {"beamSpring":0,"beamDamp":150,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["sp2ll", "sp6ll", {"beamSpring":0,"beamDamp":150,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["sp2", "sprg", {"beamSpring":0,"beamDamp":150,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+          ["sp1", "sprg", {"beamSpring":0,"beamDamp":150,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"beamType":"|NORMAL","breakGroup":"","deformGroup":""}],
+
+          {"deformLimitExpansion":1.1},
+    ],
+    "hydros": [
+        ["id1:", "id2:"],
+        //  Every option is inline on purpose: hydros sections of all parts are merged, and
+        //  modifier rows here would carry over into the steering hydros that follow.
+        //  Length ratios from the hinge geometry (-6 deg / stock / +25 deg); the stock nodes are
+        //  not quite symmetric, so each side has its own limits to keep the blade untwisted.
+        ["sp2rr", "sp4rr", {"beamSpring":350000, "beamDamp":200, "beamDeform":"FLT_MAX", "beamStrength":"FLT_MAX",
+                            "beamPrecompression":1, "breakGroup":"spoiler_attach_r", "deformGroup":"",
+                            "factor":"", "extentFactor":"",
+                            "inputSource":"craptech_aero_wing", "inputFactor":1, "inputCenter":0,
+                            "inputInLimit":-1, "inputOutLimit":1, "inLimit":0.9292, "outLimit":1.2668,
+                            "inRate":0.7, "outRate":0.7, "autoCenterRate":0.7}],
+        ["sp2ll", "sp4ll", {"beamSpring":350000, "beamDamp":200, "beamDeform":"FLT_MAX", "beamStrength":"FLT_MAX",
+                            "beamPrecompression":1, "breakGroup":"spoiler_attach_l", "deformGroup":"",
+                            "factor":"", "extentFactor":"",
+                            "inputSource":"craptech_aero_wing", "inputFactor":1, "inputCenter":0,
+                            "inputInLimit":-1, "inputOutLimit":1, "inLimit":0.9267, "outLimit":1.2749,
+                            "inRate":0.7, "outRate":0.7, "autoCenterRate":0.7}],
+        //  inner trailing-edge hydros on the same input: with only the two end ones the middle of the
+        //  blade lagged (twisted) and the sliding tip sleeves showed a gap at the joint
+        ["sp2r", "sp4r", {"beamSpring":200000, "beamDamp":150, "beamDeform":"FLT_MAX", "beamStrength":"FLT_MAX",
+                            "beamPrecompression":1, "breakGroup":"", "deformGroup":"",
+                            "factor":"", "extentFactor":"",
+                            "inputSource":"craptech_aero_wing", "inputFactor":1, "inputCenter":0,
+                            "inputInLimit":-1, "inputOutLimit":1, "inLimit":0.9125, "outLimit":1.3813,
+                            "inRate":0.7, "outRate":0.7, "autoCenterRate":0.7}],
+        ["sp2l", "sp4l", {"beamSpring":200000, "beamDamp":150, "beamDeform":"FLT_MAX", "beamStrength":"FLT_MAX",
+                            "beamPrecompression":1, "breakGroup":"", "deformGroup":"",
+                            "factor":"", "extentFactor":"",
+                            "inputSource":"craptech_aero_wing", "inputFactor":1, "inputCenter":0,
+                            "inputInLimit":-1, "inputOutLimit":1, "inLimit":0.9125, "outLimit":1.3813,
+                            "inRate":0.7, "outRate":0.7, "autoCenterRate":0.7}],
+        //  Pop-up lift: four hydros per fin foot to the body (trunk rails, sides, floor and rear
+        //  deck), chosen for the stiffest hold along the whole path. Each has its own input
+        //  (craptech_lift_N), which craptechActiveAero.lua sets to the exact length for the
+        //  current wing position, so the 16 hydros agree all the way (input 0.5 = stock place).
+        ["q3r", "sp5rr", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_1","inLimit":0.998,"outLimit":2.62436,"breakGroup":"spoiler_attach_r"}],
+        ["q7r", "sp5rr", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_2","inLimit":0.69028,"outLimit":1.57489,"breakGroup":"spoiler_attach_r"}],
+        ["r3", "sp5rr", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_3","inLimit":0.83366,"outLimit":1.43694,"breakGroup":"spoiler_attach_r"}],
+        ["tb2r", "sp5rr", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_4","inLimit":0.82035,"outLimit":1.32129,"breakGroup":"spoiler_attach_r"}],
+        ["q4r", "sp6rr", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_5","inLimit":0.998,"outLimit":3.33362,"breakGroup":"spoiler_attach_r"}],
+        ["q7r", "sp6rr", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_6","inLimit":0.81359,"outLimit":1.27531,"breakGroup":"spoiler_attach_r"}],
+        ["r3", "sp6rr", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_7","inLimit":0.71356,"outLimit":1.54006,"breakGroup":"spoiler_attach_r"}],
+        ["tb1r", "sp6rr", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_8","inLimit":0.8053,"outLimit":1.23026,"breakGroup":"spoiler_attach_r"}],
+        ["q3l", "sp5ll", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_9","inLimit":0.998,"outLimit":2.61555,"breakGroup":"spoiler_attach_l"}],
+        ["q7l", "sp5ll", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_10","inLimit":0.69028,"outLimit":1.57489,"breakGroup":"spoiler_attach_l"}],
+        ["r3", "sp5ll", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_11","inLimit":0.83366,"outLimit":1.43694,"breakGroup":"spoiler_attach_l"}],
+        ["tb2l", "sp5ll", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_12","inLimit":0.82035,"outLimit":1.32129,"breakGroup":"spoiler_attach_l"}],
+        ["q4l", "sp6ll", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_13","inLimit":0.998,"outLimit":2.92346,"breakGroup":"spoiler_attach_l"}],
+        ["q7l", "sp6ll", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_14","inLimit":0.82031,"outLimit":1.26726,"breakGroup":"spoiler_attach_l"}],
+        ["r3", "sp6ll", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_15","inLimit":0.69959,"outLimit":1.55795,"breakGroup":"spoiler_attach_l"}],
+        ["tb1l", "sp6ll", {"beamSpring":400000,"beamDamp":60,"beamDeform":"FLT_MAX","beamStrength":80000,"beamPrecompression":1,"deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0.5,"inputInLimit":0,"inputOutLimit":1,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_lift_16","inLimit":0.79532,"outLimit":1.23975,"breakGroup":"spoiler_attach_l"}],
+    ],
+    "triangles": [
+        ["id1:",  "id2:",  "id3:"],
+        //  Options inline (no modifier rows, which would carry into later parts' triangles).
+        //  liftCoef and dragCoef are raised by 1/0.8 so the narrower wing still makes the same
+        //  downforce and drag as the full-width one.
+        ["sp4rr", "sp3rr", "sp1rr", {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+        ["sp1rr", "sp2rr", "sp4rr", {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+        ["sp1ll", "sp3ll", "sp4ll", {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+        ["sp2ll", "sp1ll", "sp4ll", {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+        ["sp4rr", "sp6rr", "sp3rr", {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+        ["sp3rr", "sp6rr", "sp5rr", {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+        ["sp3ll", "sp6ll", "sp4ll", {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+        ["sp3ll", "sp5ll", "sp6ll", {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+
+        ["sp2rr", "sp1rr", "sp2r",  {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+        ["sp2l",  "sp1ll", "sp2ll", {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+        ["sp2r",  "sp1rr", "sp1r",  {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+        ["sp2l",  "sp1l",  "sp1ll", {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+        ["sp2",   "sp2r",  "sp1r",  {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+        ["sp2",   "sp1l",  "sp2l",  {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+        ["sp1r",  "sp1",   "sp2",   {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+        ["sp2",   "sp1",   "sp1l",  {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75, "stallAngle":0.3}],
+
+        ["sp3ll", "sp4ll", "sp4l",  {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75}],
+        ["sp4l",  "sp3l",  "sp3ll", {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75}],
+        ["sp4r",  "sp4rr", "sp3rr", {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75}],
+        ["sp3rr", "sp3r",  "sp4r",  {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75}],
+        ["sp4r",  "sp3r",  "sp3l",  {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75}],
+        ["sp3l",  "sp4l",  "sp4r",  {"triangleType":"NONCOLLIDABLE", "dragCoef":41, "groundModel":"plastic", "liftCoef":75}],
+    ],
+},
+}

@@ -1,0 +1,52 @@
+{
+  "craptech_info_screen": {
+    "name": "craptech_info_screen",
+    "mapTo": "craptech_info_screen",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [0.0901959985, 0.0901959985, 0.0901959985, 1],
+        "emissive": true,
+        "emissiveFactor": [1, 1, 1],
+        "emissiveIntensityNits": 500,
+        "emissiveMap": "@craptech_info",
+        "metallicFactor": 0.519999981,
+        "roughnessFactor": 0.109999999
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_info_screen_dim": {
+    "name": "craptech_info_screen_dim",
+    "mapTo": "craptech_info_screen_dim",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [0.0901959985, 0.0901959985, 0.0901959985, 1],
+        "emissive": true,
+        "emissiveFactor": [1, 1, 1],
+        "emissiveIntensityNits": 75,
+        "emissiveMap": "@craptech_info",
+        "metallicFactor": 0.519999981,
+        "roughnessFactor": 0.109999999
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  }
+}

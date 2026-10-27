@@ -1,0 +1,842 @@
+{
+  "craptech_seqsig_F_L_1": {
+    "name": "craptech_seqsig_F_L_1",
+    "mapTo": "craptech_seqsig_F_L_1",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_F_L_2": {
+    "name": "craptech_seqsig_F_L_2",
+    "mapTo": "craptech_seqsig_F_L_2",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_F_L_3": {
+    "name": "craptech_seqsig_F_L_3",
+    "mapTo": "craptech_seqsig_F_L_3",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_F_L_4": {
+    "name": "craptech_seqsig_F_L_4",
+    "mapTo": "craptech_seqsig_F_L_4",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_F_L_5": {
+    "name": "craptech_seqsig_F_L_5",
+    "mapTo": "craptech_seqsig_F_L_5",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_F_L_6": {
+    "name": "craptech_seqsig_F_L_6",
+    "mapTo": "craptech_seqsig_F_L_6",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_FG_L_1": {
+    "name": "craptech_seqsig_FG_L_1",
+    "mapTo": "craptech_seqsig_FG_L_1",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_FG_L_2": {
+    "name": "craptech_seqsig_FG_L_2",
+    "mapTo": "craptech_seqsig_FG_L_2",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_FG_L_3": {
+    "name": "craptech_seqsig_FG_L_3",
+    "mapTo": "craptech_seqsig_FG_L_3",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_FG_L_4": {
+    "name": "craptech_seqsig_FG_L_4",
+    "mapTo": "craptech_seqsig_FG_L_4",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_FG_L_5": {
+    "name": "craptech_seqsig_FG_L_5",
+    "mapTo": "craptech_seqsig_FG_L_5",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_FG_L_6": {
+    "name": "craptech_seqsig_FG_L_6",
+    "mapTo": "craptech_seqsig_FG_L_6",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_B_L_1": {
+    "name": "craptech_seqsig_B_L_1",
+    "mapTo": "craptech_seqsig_B_L_1",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_B_L_2": {
+    "name": "craptech_seqsig_B_L_2",
+    "mapTo": "craptech_seqsig_B_L_2",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_B_L_3": {
+    "name": "craptech_seqsig_B_L_3",
+    "mapTo": "craptech_seqsig_B_L_3",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_B_L_4": {
+    "name": "craptech_seqsig_B_L_4",
+    "mapTo": "craptech_seqsig_B_L_4",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_M_L_1": {
+    "name": "craptech_seqsig_M_L_1",
+    "mapTo": "craptech_seqsig_M_L_1",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_M_L_2": {
+    "name": "craptech_seqsig_M_L_2",
+    "mapTo": "craptech_seqsig_M_L_2",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_M_L_3": {
+    "name": "craptech_seqsig_M_L_3",
+    "mapTo": "craptech_seqsig_M_L_3",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_M_L_4": {
+    "name": "craptech_seqsig_M_L_4",
+    "mapTo": "craptech_seqsig_M_L_4",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_M_L_5": {
+    "name": "craptech_seqsig_M_L_5",
+    "mapTo": "craptech_seqsig_M_L_5",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_F_R_1": {
+    "name": "craptech_seqsig_F_R_1",
+    "mapTo": "craptech_seqsig_F_R_1",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_F_R_2": {
+    "name": "craptech_seqsig_F_R_2",
+    "mapTo": "craptech_seqsig_F_R_2",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_F_R_3": {
+    "name": "craptech_seqsig_F_R_3",
+    "mapTo": "craptech_seqsig_F_R_3",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_F_R_4": {
+    "name": "craptech_seqsig_F_R_4",
+    "mapTo": "craptech_seqsig_F_R_4",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_F_R_5": {
+    "name": "craptech_seqsig_F_R_5",
+    "mapTo": "craptech_seqsig_F_R_5",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_F_R_6": {
+    "name": "craptech_seqsig_F_R_6",
+    "mapTo": "craptech_seqsig_F_R_6",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_FG_R_1": {
+    "name": "craptech_seqsig_FG_R_1",
+    "mapTo": "craptech_seqsig_FG_R_1",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_FG_R_2": {
+    "name": "craptech_seqsig_FG_R_2",
+    "mapTo": "craptech_seqsig_FG_R_2",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_FG_R_3": {
+    "name": "craptech_seqsig_FG_R_3",
+    "mapTo": "craptech_seqsig_FG_R_3",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_FG_R_4": {
+    "name": "craptech_seqsig_FG_R_4",
+    "mapTo": "craptech_seqsig_FG_R_4",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_FG_R_5": {
+    "name": "craptech_seqsig_FG_R_5",
+    "mapTo": "craptech_seqsig_FG_R_5",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_FG_R_6": {
+    "name": "craptech_seqsig_FG_R_6",
+    "mapTo": "craptech_seqsig_FG_R_6",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_B_R_1": {
+    "name": "craptech_seqsig_B_R_1",
+    "mapTo": "craptech_seqsig_B_R_1",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_B_R_2": {
+    "name": "craptech_seqsig_B_R_2",
+    "mapTo": "craptech_seqsig_B_R_2",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_B_R_3": {
+    "name": "craptech_seqsig_B_R_3",
+    "mapTo": "craptech_seqsig_B_R_3",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_B_R_4": {
+    "name": "craptech_seqsig_B_R_4",
+    "mapTo": "craptech_seqsig_B_R_4",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_M_R_1": {
+    "name": "craptech_seqsig_M_R_1",
+    "mapTo": "craptech_seqsig_M_R_1",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_M_R_2": {
+    "name": "craptech_seqsig_M_R_2",
+    "mapTo": "craptech_seqsig_M_R_2",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_M_R_3": {
+    "name": "craptech_seqsig_M_R_3",
+    "mapTo": "craptech_seqsig_M_R_3",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_M_R_4": {
+    "name": "craptech_seqsig_M_R_4",
+    "mapTo": "craptech_seqsig_M_R_4",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  },
+  "craptech_seqsig_M_R_5": {
+    "name": "craptech_seqsig_M_R_5",
+    "mapTo": "craptech_seqsig_M_R_5",
+    "class": "Material",
+    "Stages": [
+      {
+        "diffuseColor": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {},
+      {},
+      {}
+    ],
+    "castShadows": false,
+    "translucent": true
+  }
+}

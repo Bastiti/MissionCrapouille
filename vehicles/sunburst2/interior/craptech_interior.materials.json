@@ -1,0 +1,40 @@
+{
+  "sunburst2_interior.skin_interior.craptech_orange_rs": {
+    "name": "sunburst2_interior.skin_interior.craptech_orange_rs",
+    "mapTo": "sunburst2_interior.skin_interior.craptech_orange_rs",
+    "class": "Material",
+    "Stages": [
+      {
+        "ambientOcclusionMap": "/vehicles/sunburst2/sunburst2_interior_rs_ao.data.png",
+        "baseColorMap": "vehicles/sunburst2/interior/craptech_interior_orange_rs_b.color.dds",
+        "clearCoatRoughnessFactor": 0,
+        "metallicFactor": 1,
+        "metallicMap": "vehicles/sunburst2/interior/craptech_interior_m.data.png",
+        "normalMap": "vehicles/sunburst2/interior/craptech_interior_nm.normal.png",
+        "opacityFactor": 0,
+        "pixelSpecular": true,
+        "roughnessMap": "vehicles/sunburst2/sunburst2_interior_rs_r.data.png"
+      },
+      {
+        "clearCoatRoughnessFactor": null,
+        "metallicFactor": null,
+        "opacityFactor": null,
+        "pixelSpecular": null
+      },
+      {
+        "clearCoatRoughnessFactor": null,
+        "metallicFactor": null,
+        "opacityFactor": null,
+        "pixelSpecular": null
+      },
+      {
+        "clearCoatRoughnessFactor": null,
+        "metallicFactor": null,
+        "opacityFactor": null,
+        "pixelSpecular": null
+      }
+    ],
+    "dynamicCubemap": true,
+    "version": 1.5
+  }
+}
