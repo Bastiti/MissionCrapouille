@@ -70,10 +70,11 @@
     //  Hinged at the bottom of the rear panel (axis y 2.170 z 0.570): the front edge lifts, the
     //  lid swings up and back like the Taxi 2 406, letting the spoiler sink into / rise out of
     //  the trunk. No latch and no trunk button: lid hydros, driven by craptechReverseLid.lua,
-    //  hold it shut. Each hydro has its own input set from the exact lid angle.
+    //  hold it shut. Each hydro has its own input set from the exact lid angle. It swings in 2 s, eased, at the
+    //  pace of a powered lid.
     "controller": [
         ["fileName"],
-        ["craptechReverseLid", {"openAngle": 70, "openTime": 0.9, "axisY": 2.17, "axisZ": 0.57, "hydros": [["craptech_lid_1", -0.835, 1.4, 0.661, -0.647, 1.483, 0.984, 0.38283, 0.999, 3.06171], ["craptech_lid_2", -0.406, 1.4, 0.5, -0.647, 1.483, 0.984, 0.54702, 0.999, 2.3459], ["craptech_lid_3", -0.76, 1.18, 0.911, -0.647, 1.483, 0.984, 0.33152, 0.999, 3.71973], ["craptech_lid_4", -0.825, 1.571, 0.553, -0.593, 1.76, 0.949, 0.49635, 0.999, 2.01555], ["craptech_lid_5", 0.835, 1.4, 0.661, 0.647, 1.483, 0.984, 0.38283, 0.999, 3.06171], ["craptech_lid_6", 0.406, 1.4, 0.5, 0.647, 1.483, 0.984, 0.54702, 0.999, 2.3459], ["craptech_lid_7", 0.76, 1.18, 0.911, 0.647, 1.483, 0.984, 0.33152, 0.999, 3.71973], ["craptech_lid_8", 0.825, 1.571, 0.553, 0.593, 1.76, 0.949, 0.49635, 0.999, 2.01555]]}],
+        ["craptechReverseLid", {"openAngle": 70, "openTime": 2.0, "axisY": 2.17, "axisZ": 0.57, "hydros": [["craptech_lid_1", -0.835, 1.4, 0.661, -0.647, 1.483, 0.984, 0.38283, 0.999, 3.06171], ["craptech_lid_2", -0.406, 1.4, 0.5, -0.647, 1.483, 0.984, 0.54702, 0.999, 2.3459], ["craptech_lid_3", -0.76, 1.18, 0.911, -0.647, 1.483, 0.984, 0.33152, 0.999, 3.71973], ["craptech_lid_4", -0.825, 1.571, 0.553, -0.593, 1.76, 0.949, 0.49635, 0.999, 2.01555], ["craptech_lid_5", 0.835, 1.4, 0.661, 0.647, 1.483, 0.984, 0.38283, 0.999, 3.06171], ["craptech_lid_6", 0.406, 1.4, 0.5, 0.647, 1.483, 0.984, 0.54702, 0.999, 2.3459], ["craptech_lid_7", 0.76, 1.18, 0.911, 0.647, 1.483, 0.984, 0.33152, 0.999, 3.71973], ["craptech_lid_8", 0.825, 1.571, 0.553, 0.593, 1.76, 0.949, 0.49635, 0.999, 2.01555]]}],
     ],
     "nodes": [
          ["id",   "posX", "posY", "posZ"],

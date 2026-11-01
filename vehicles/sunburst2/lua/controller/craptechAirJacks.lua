@@ -10,14 +10,15 @@
 -- w further out (setBeamLengthRefRatio, the same call hydros use). Only done with the car
 -- up on the jacks.
 --
--- The race kit (craptechTransform) and the rear wing (craptechActiveAero) follow the wanted
--- track (wantsWide): out with the wide track, tucked away with the narrow one. Going wide, the
--- wheels wait up on the jacks until the fender flares are out over them; going narrow, the
--- flares tuck in once the wheels are back.
+-- The track and the other moving parts (race kit: craptechTransform, wing: craptechActiveAero) need
+-- the car up on the jacks: they only move while lifted(), waiting (or pausing) with the car down.
+-- Nothing raises the jacks but their own switch.
 --
--- Actions (Controls > Vehicle Specific, and the radial menu):
+-- Actions (Controls > Vehicle Specific, the radial menu, the dash switch panel):
 --   toggle()       jacks up / drop the car
---   toggleTrack()  jacks up -> wheels a few cm wider (or back) -> drop the car
+--   toggleTrack()  wheels a few cm wider (or back), with the car up on the jacks
+--   wantsWide(), isUp(), busy()   for the dash switches
+--   lifted()       for the other parts
 -- Needs power (ignition at least accessories). Above 10 mph (real ground speed, not wheel
 -- speed) the jacks neither start nor move: a running stroke holds until the car slows down.
 
@@ -39,10 +40,9 @@ local registered = false
 
 local trackBeams = {}
 local trackDelta = 0.03 -- wheel moves out this much per side when wide (m)
-local trackTime = 0.8
+local trackTime = 2.0    -- s, out (or back) at an even pace, as slow as the 406's wheels in the film "Taxi"
 local track = 0         -- current widening, 0 = stock, 1 = wide
 local trackTarget = 0
-local sequence = nil    -- nil, "raise", "track", "drop"
 
 local function hydroInput(h, d)
   local dx, dy, dz = h.ax - h.fx, h.ay - h.fy, h.az - (h.fz - d)
@@ -67,9 +67,6 @@ local function canLift()
 end
 
 local function toggle()
-  if sequence then
-    return
-  end
   if not wantUp and not canLift() then
     return
   end
@@ -81,23 +78,33 @@ local function toggle()
   guihooks.message(wantUp and "Air jacks: UP" or "Air jacks: drop", 2, "craptech_airjacks")
 end
 
+-- the car fully up on the jacks
+local function lifted()
+  return drop >= stroke
+end
+
 local function toggleTrack()
-  if sequence or #trackBeams == 0 then
-    return
-  end
-  if not wantUp and not canLift() then
+  if #trackBeams == 0 then
     return
   end
   trackTarget = trackTarget > 0.5 and 0 or 1
-  wantUp = true
-  sequence = "raise"
-  guihooks.message(trackTarget > 0.5 and "Track: going wide" or "Track: going narrow", 2, "craptech_airjacks")
+  local where = trackTarget > 0.5 and "wide" or "narrow"
+  guihooks.message(lifted() and ("Track: going " .. where) or ("Track: " .. where .. " once the car is up on the air jacks"), 2, "craptech_airjacks")
 end
 
--- the track asked for (set as soon as the button is pressed): craptechTransform and
--- craptechActiveAero bring the race kit and the wing out with the wide one
+-- the track asked for
 local function wantsWide()
   return trackTarget > 0.5
+end
+
+-- the jacks' switch
+local function isUp()
+  return wantUp
+end
+
+-- the track is changing (or waiting for the car to be up to)
+local function busy()
+  return track ~= trackTarget
 end
 
 local function applyTrack()
@@ -118,22 +125,10 @@ local function updateGFX(dt)
       drop = max(drop - stroke / dropTime * dt, target)
     end
 
-    if sequence == "raise" and drop >= stroke then
-      sequence = "track"
-    elseif sequence == "track" and (trackTarget < track or (electrics.values.craptech_xf_state or 0) <= 0) then
-      -- going wide, the wheels wait for the fender flares to be out (craptechTransform)
+    if track ~= trackTarget and drop >= stroke then
       local step = dt / trackTime
-      local before = track
       track = track < trackTarget and min(track + step, trackTarget) or max(track - step, trackTarget)
-      if track ~= before then
-        applyTrack()
-      end
-      if track == trackTarget then
-        sequence = "drop"
-        wantUp = false
-      end
-    elseif sequence == "drop" and drop <= 0 then
-      sequence = nil
+      applyTrack()
     end
   end
   for _, h in ipairs(hydros) do
@@ -201,7 +196,6 @@ local function reset()
   -- a vehicle reset restores every beam, so the track is back to stock
   drop = 0
   wantUp = false
-  sequence = nil
   track = 0
   trackTarget = 0
   updateGFX(0)
@@ -232,5 +226,8 @@ M.updateGFX = updateGFX
 M.toggle = toggle
 M.toggleTrack = toggleTrack
 M.wantsWide = wantsWide
+M.isUp = isUp
+M.busy = busy
+M.lifted = lifted
 
 return M

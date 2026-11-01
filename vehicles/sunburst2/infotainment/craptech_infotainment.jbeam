@@ -12,7 +12,8 @@
         ["craptech_airjacks", ["craptech_airjacks"], [],          "craptech_airjacks", "Air Jacks"],
         ["craptech_jato",     ["craptech_jato"],     [],          "craptech_jato_bumper", "Twin Bumper JATO"],
         ["craptech_seqsignals", ["craptech_seqsignals"], [],      "craptech_seqsignals_led", "Sequential LED Indicators"],
-        ["craptech_transform", ["craptech_transform"], [],        "craptech_transform_kit", "Race Kit Out With the Wide Track"],
+        ["craptech_transform", ["craptech_transform"], [],        "craptech_transform_kit", "Race Kit Tuck-Away"],
+        ["craptech_switchpanel", ["craptech_switchpanel"], [],  "craptech_switchpanel_dash", "Dash Switch Panel"],
     ],
     //  Stock parts of this car (doors, hood, interior) declare "actionsEnabled", and then the
     //  game disables every vehicle action that no part lists. So our keys must be listed here,

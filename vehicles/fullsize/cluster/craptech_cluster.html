@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<!--
+  Crapouille digital cluster (fullsize): the page drawn into the cluster screen's texture (1280x364, the stock
+  face's outline). The controller (vehicles/fullsize/lua/controller/craptechCluster.lua) calls cluster.setup(cfg)
+  (units, scales, the page shown in the middle, the vehicle id) and cluster.update(d) (the car's state), one at a time:
+  the page acknowledges each (the controller's ack, through GE) and only then gets the next, so what it shows is never
+  queued up behind (the game's per-frame stream channel queued the states, minutes behind in the end). The game's
+  dashboard map comes once through cluster.initMap (extensions.ui_uiNavi). Seen from the driver's
+  seat, the steering wheel's rim hides the screen's top corners: nothing that matters sits there.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: 'Kanit'; font-weight: 300; src: url('/ui/common/Kanit-Light.ttf'); }
+  @font-face { font-family: 'Kanit'; font-weight: 400; src: url('/ui/common/Kanit-Regular.ttf'); }
+  @font-face { font-family: 'Kanit'; font-weight: 600; src: url('/ui/common/Kanit-SemiBold.ttf'); }
+  html, body { margin: 0; width: 1280px; height: 364px; overflow: hidden; background: #000; }
+  #screen { position: absolute; left: 0; top: 0; width: 1280px; height: 364px; opacity: 0; }
+  #mapwrap { position: absolute; left: 492px; top: 74px; width: 296px; height: 222px; overflow: hidden;
+             -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 34%, #000 82%, transparent 100%);
+             visibility: hidden; }
+  #mapfade { position: absolute; left: 0; top: 0; width: 296px; height: 222px;
+             -webkit-mask-image: linear-gradient(to right, transparent 0, #000 16%, #000 84%, transparent 100%); }
+  #map { position: absolute; left: -132px; top: -224px; width: 560px; height: 560px;
+         transform-origin: 280px 420px; transform: perspective(420px) rotateX(45deg); }
+  canvas#ui { position: absolute; left: 0; top: 0; }
+</style>
+</head>
+<body>
+<div id="screen">
+  <div id="mapwrap"><div id="mapfade"><canvas id="map" width="560" height="560"></canvas></div></div>
+  <canvas id="ui" width="1280" height="364"></canvas>
+</div>
+<script>
+'use strict';
+var cluster = (function () {
+  var W = 1280, H = 364;
+  var screenEl = document.getElementById('screen'), mapWrap = document.getElementById('mapwrap');
+  var cv = document.getElementById('ui'), ctx = cv.getContext('2d');
+  var mapCv = document.getElementById('map'), mctx = mapCv.getContext('2d');
+  var stat = document.createElement('canvas'), sctx = stat.getContext('2d');   // what doesn't move: dials, scales
+  stat.width = W;
+  stat.height = H;
+
+  var COL = { accent: '#3fd0ff', accentGlow: 'rgba(63,208,255,0.55)', needle: '#ff5a36', red: '#ff2d3d',
+              amber: '#ffb020', green: '#3ddc84', blue: '#4d8dff', text: '#eef3f8', dim: '#7d8996',
+              faint: '#26303a', panel: '#0b1016' };
+  var SPD = { x: 330, y: 194, r: 148 }, TAC = { x: 950, y: 194, r: 148 };
+  var A0 = 150, A1 = 390;              // the dials' sweep, canvas degrees (clockwise from 3 o'clock)
+  var TEMP_A = [158, 206], FUEL_A = [22, -26];   // the coolant and fuel arcs, outside the dials (empty -> full)
+  var TEMP_RANGE = [50, 130], TEMP_HOT = 115;
+  var GEARS = ['P', 'R', 'N', 'D', '2', '1'];
+  var PAGES = ['MAP', 'TRIP', 'ENGINE'];
+
+  var cfg = { maxRPM: 6000, idleRPM: 700, uiUnitLength: 'metric', uiUnitTemperature: 'c', uiUnitVolume: 'l',
+              uiUnitConsumptionRate: 'metric', uiUnitDate: 'ger', page: 1, vid: null, webView: '@craptech_cluster' };
+  var scale = {};                      // speed and rpm scales from cfg
+  var d = null;                        // the car's last state
+  var show = { spd: 0, rpm: 0, fuel: 0, wt: 0, ot: 0, v: 0, zoom: 1.4 };   // what the needles show (eased)
+  var speedText = '0', speedTextAt = 0;
+  var phase = 'off', phaseAt = 0, seen = false, shown = 'acc', alpha = 0;
+  var map = null, mapAsked = 0;
+  var last = performance.now();
+
+  // ---------- units ----------
+  function metric() { return cfg.uiUnitLength !== 'imperial'; }
+  function speedOf(ms) { return ms * (metric() ? 3.6 : 2.23694); }
+  function distOf(m) { return m / (metric() ? 1000 : 1609.344); }
+  function distUnit() { return metric() ? 'km' : 'mi'; }
+  function tempOf(c) { return cfg.uiUnitTemperature === 'f' ? c * 1.8 + 32 : cfg.uiUnitTemperature === 'k' ? c + 273.15 : c; }
+  function tempUnit() { return cfg.uiUnitTemperature === 'f' ? '°F' : cfg.uiUnitTemperature === 'k' ? 'K' : '°C'; }
+  function volOf(l) { return cfg.uiUnitVolume === 'gal' ? l / 3.78541 : l; }
+  function volUnit() { return cfg.uiUnitVolume === 'gal' ? 'gal' : 'L'; }
+  function consumption(l, m) {       // fuel burnt over a distance, in the user's unit
+    if (m < 500 || l <= 0.01) return null;
+    if (cfg.uiUnitConsumptionRate === 'imperial') return { v: (m / 1609.344) / (l / 3.78541), u: 'mpg' };
+    return { v: l / (m / 100000), u: 'L/100km' };
+  }
+  function clock(t) {
+    if (cfg.uiUnitDate !== 'us' || !t) return t || '';
+    var h = +t.slice(0, 2), m = t.slice(3, 5);
+    return ((h + 11) % 12 + 1) + ':' + m + (h < 12 ? ' AM' : ' PM');
+  }
+
+  // ---------- drawing helpers ----------
+  function rad(a) { return a * Math.PI / 180; }
+  function pt(c, r, a) { return [c.x + r * Math.cos(rad(a)), c.y + r * Math.sin(rad(a))]; }
+  function ang(f) { return A0 + (A1 - A0) * Math.max(0, Math.min(1, f)); }
+  function ease(t) { t = Math.max(0, Math.min(1, t)); return t * t * (3 - 2 * t); }
+  function arc(g, c, r, a, b, w, col) {
+    g.beginPath();
+    g.arc(c.x, c.y, r, rad(Math.min(a, b)), rad(Math.max(a, b)));
+    g.lineWidth = w;
+    g.strokeStyle = col;
+    g.stroke();
+  }
+  function text(g, s, x, y, font, col, align, base) {
+    g.font = font;
+    g.fillStyle = col;
+    g.textAlign = align || 'center';
+    g.textBaseline = base || 'middle';
+    g.fillText(s, x, y);
+  }
+  function spaced(g, s, x, y, font, col, sp) {   // letter-spaced, centred
+    g.font = font;
+    var w = 0, i;
+    for (i = 0; i < s.length; i++) w += g.measureText(s[i]).width + (i ? sp : 0);
+    var cx = x - w / 2;
+    g.fillStyle = col;
+    g.textAlign = 'left';
+    g.textBaseline = 'middle';
+    for (i = 0; i < s.length; i++) {
+      g.fillText(s[i], cx, y);
+      cx += g.measureText(s[i]).width + sp;
+    }
+  }
+
+  // ---------- scales ----------
+  function rebuild() {
+    var m = metric();
+    scale.spd = m ? { max: 200, major: 20, minor: 10 } : { max: 120, major: 20, minor: 5 };
+    var top = Math.ceil((cfg.maxRPM + 150) / 1000) * 1000;
+    scale.rpm = { max: top, major: 1000, minor: 250, red: Math.floor((cfg.maxRPM - 400) / 100) * 100 };
+    var g = sctx;
+    g.clearRect(0, 0, W, H);
+    dial(g, SPD, scale.spd, null, function (v) { return String(v); });
+    dial(g, TAC, scale.rpm, scale.rpm.red, function (v) { return String(v / 1000); });
+    side(g, SPD, TEMP_A, 'C', 'H', -1);
+    side(g, TAC, FUEL_A, 'E', 'F', 1);
+  }
+
+  function dial(g, c, s, red, label) {
+    // the face: a dark well with a faint ring
+    var grd = g.createRadialGradient(c.x, c.y, c.r * 0.2, c.x, c.y, c.r + 6);
+    grd.addColorStop(0, 'rgba(18,28,40,0.9)');
+    grd.addColorStop(0.85, 'rgba(8,12,18,0.9)');
+    grd.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = grd;
+    g.beginPath();
+    g.arc(c.x, c.y, c.r + 6, 0, Math.PI * 2);
+    g.fill();
+    arc(g, c, c.r + 1, A0, A1, 1.5, COL.faint);
+    arc(g, c, c.r - 46, A0, A1, 1, 'rgba(255,255,255,0.06)');
+    if (red) arc(g, c, c.r - 3, ang(red / s.max), A1, 5, 'rgba(255,45,61,0.85)');
+    for (var v = 0; v <= s.max + 1e-6; v += s.minor) {
+      var major = Math.abs(v / s.major - Math.round(v / s.major)) < 1e-6;
+      var a = ang(v / s.max), p1 = pt(c, c.r - 6, a), p2 = pt(c, c.r - (major ? 22 : 13), a);
+      g.beginPath();
+      g.moveTo(p1[0], p1[1]);
+      g.lineTo(p2[0], p2[1]);
+      g.lineWidth = major ? 3 : 1.5;
+      g.strokeStyle = red && v >= red ? COL.red : major ? COL.text : COL.dim;
+      g.stroke();
+      if (major) {
+        var q = pt(c, c.r - 40, a);
+        text(g, label(v), q[0], q[1] + 1, '400 21px Kanit', red && v >= red ? COL.red : COL.text);
+      }
+    }
+  }
+
+  function side(g, c, A, lo, hi, dir) {
+    var r = c.r + 24;
+    arc(g, c, r, A[0], A[1], 6, COL.faint);
+    var p = pt(c, r + 16, A[0]);
+    text(g, lo, p[0], p[1], '400 15px Kanit', COL.dim);
+    p = pt(c, r + 16, A[1]);
+    text(g, hi, p[0], p[1], '400 15px Kanit', COL.dim);
+  }
+
+  // ---------- warning lamps: little vector icons, 30 px, drawn lit or not at all ----------
+  var icons = {
+    lowbeam: function (g) { lamp(g, false); },
+    highbeam: function (g) { lamp(g, true); },
+    fog: function (g) {
+      lamp(g, false);
+      g.beginPath(); g.moveTo(-1, -12); g.bezierCurveTo(-5, -4, 3, 4, -1, 12); g.stroke();
+    },
+    cruise: function (g) {
+      g.beginPath(); g.arc(0, 3, 11, rad(150), rad(390)); g.stroke();
+      g.beginPath(); g.moveTo(0, 3); g.lineTo(7, -4); g.stroke();
+      g.beginPath(); g.arc(0, 3, 2.5, 0, Math.PI * 2); g.fill();
+    },
+    brake: function (g) {
+      g.beginPath(); g.arc(0, 0, 9, 0, Math.PI * 2); g.stroke();
+      g.beginPath(); g.arc(0, 0, 13, rad(140), rad(220)); g.stroke();
+      g.beginPath(); g.arc(0, 0, 13, rad(-40), rad(40)); g.stroke();
+      text(g, 'P', 0, 1, '600 13px Kanit', g.strokeStyle);
+    },
+    abs: function (g) {
+      g.beginPath(); g.arc(0, 0, 10, 0, Math.PI * 2); g.stroke();
+      g.beginPath(); g.arc(0, 0, 14, rad(140), rad(220)); g.stroke();
+      g.beginPath(); g.arc(0, 0, 14, rad(-40), rad(40)); g.stroke();
+      text(g, 'ABS', 0, 1, '600 8px Kanit', g.strokeStyle);
+    },
+    engine: function (g) {
+      g.beginPath();
+      g.moveTo(-12, -2); g.lineTo(-9, -2); g.lineTo(-9, -6); g.lineTo(-4, -6); g.lineTo(-4, -9); g.lineTo(4, -9);
+      g.lineTo(4, -6); g.lineTo(8, -6); g.lineTo(10, -3); g.lineTo(13, -3); g.lineTo(13, 6); g.lineTo(10, 6);
+      g.lineTo(8, 9); g.lineTo(-5, 9); g.lineTo(-9, 5); g.lineTo(-9, 2); g.lineTo(-12, 2); g.closePath();
+      g.stroke();
+      g.beginPath(); g.moveTo(-12, -5); g.lineTo(-12, 5); g.stroke();
+    },
+    battery: function (g) {
+      g.strokeRect(-12, -6, 24, 15);
+      g.fillRect(-9, -9, 5, 3); g.fillRect(4, -9, 5, 3);
+      g.beginPath(); g.moveTo(-8, 1.5); g.lineTo(-2, 1.5); g.moveTo(-5, -1.5); g.lineTo(-5, 4.5);
+      g.moveTo(3, 1.5); g.lineTo(9, 1.5); g.stroke();
+    },
+    oil: function (g) {
+      g.beginPath();
+      g.moveTo(-13, -3); g.lineTo(-7, -1); g.lineTo(-5, -4); g.lineTo(3, -4); g.lineTo(13, -8); g.lineTo(6, 5);
+      g.lineTo(-7, 5); g.lineTo(-7, -1);
+      g.stroke();
+      g.beginPath(); g.moveTo(-1, -4); g.lineTo(-1, -8); g.moveTo(-4, -8); g.lineTo(2, -8); g.stroke();
+      g.beginPath(); g.arc(13, 3, 1.8, 0, Math.PI * 2); g.fill();
+    },
+    tire: function (g) {
+      g.beginPath();
+      g.moveTo(-10, -10); g.bezierCurveTo(-15, -2, -15, 5, -9, 10); g.lineTo(9, 10);
+      g.bezierCurveTo(15, 5, 15, -2, 10, -10);
+      g.stroke();
+      g.beginPath(); g.moveTo(-11, 13); g.lineTo(11, 13); g.stroke();
+      text(g, '!', 0, 1, '600 14px Kanit', g.strokeStyle);
+    },
+    fuel: function (g) {
+      g.strokeRect(-9, -9, 11, 18);
+      g.fillRect(-7, -7, 7, 5);
+      g.beginPath(); g.moveTo(2, -4); g.lineTo(7, -1); g.lineTo(7, 6); g.arc(8.5, 6, 1.5, Math.PI, 0, true);
+      g.lineTo(10, -5); g.lineTo(7, -9); g.stroke();
+    },
+    temp: function (g) {
+      g.beginPath(); g.moveTo(-2, 4); g.lineTo(-2, -11); g.arc(0, -11, 2, Math.PI, 0); g.lineTo(2, 4); g.stroke();
+      g.beginPath(); g.arc(0, 7, 4, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.moveTo(3, -7); g.lineTo(7, -7); g.moveTo(3, -3); g.lineTo(7, -3); g.stroke();
+      g.beginPath(); g.moveTo(-12, 12); g.bezierCurveTo(-8, 9, -4, 15, 0, 12); g.bezierCurveTo(4, 9, 8, 15, 12, 12); g.stroke();
+    },
+    arrowL: function (g) {
+      g.beginPath(); g.moveTo(-13, 0); g.lineTo(-2, -10); g.lineTo(-2, -4); g.lineTo(12, -4); g.lineTo(12, 4);
+      g.lineTo(-2, 4); g.lineTo(-2, 10); g.closePath(); g.fill();
+    },
+    arrowR: function (g) {
+      g.beginPath(); g.moveTo(13, 0); g.lineTo(2, -10); g.lineTo(2, -4); g.lineTo(-12, -4); g.lineTo(-12, 4);
+      g.lineTo(2, 4); g.lineTo(2, 10); g.closePath(); g.fill();
+    }
+  };
+  function lamp(g, high) {
+    g.beginPath(); g.moveTo(4, -9); g.bezierCurveTo(14, -9, 14, 9, 4, 9); g.closePath(); g.stroke();
+    for (var i = -1; i <= 1; i++) {
+      g.beginPath();
+      g.moveTo(-1, i * 6);
+      g.lineTo(-12, i * 6 + (high ? 0 : 4));
+      g.stroke();
+    }
+  }
+  function icon(name, x, y, col, glow) {
+    var g = ctx;
+    g.save();
+    g.translate(x, y);
+    g.strokeStyle = col;
+    g.fillStyle = col;
+    g.lineWidth = 2;
+    g.lineJoin = 'round';
+    g.lineCap = 'round';
+    if (glow) { g.shadowColor = col; g.shadowBlur = 8; }
+    icons[name](g);
+    g.restore();
+  }
+
+  // ---------- the moving parts ----------
+  function needle(c, f, col) {
+    var a = rad(ang(f)), ca = Math.cos(a), sa = Math.sin(a), nx = -sa, ny = ca;
+    var r0 = c.r - 62, r1 = c.r + 3;
+    ctx.save();
+    ctx.shadowColor = col;
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.moveTo(c.x + ca * r0 + nx * 3.2, c.y + sa * r0 + ny * 3.2);
+    ctx.lineTo(c.x + ca * r1 + nx * 1.2, c.y + sa * r1 + ny * 1.2);
+    ctx.lineTo(c.x + ca * r1 - nx * 1.2, c.y + sa * r1 - ny * 1.2);
+    ctx.lineTo(c.x + ca * r0 - nx * 3.2, c.y + sa * r0 - ny * 3.2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+  function sweep(c, f, col, glow) {     // the lit band behind the needle
+    if (!(f > 0.002)) return;
+    var g = ctx;
+    g.save();
+    var grd = g.createConicGradient ? g.createConicGradient(rad(A0), c.x, c.y) : null;
+    if (grd) {
+      grd.addColorStop(0, 'rgba(0,0,0,0)');
+      grd.addColorStop(Math.max(0.001, (ang(f) - A0) / 360), col);
+      grd.addColorStop(Math.min(1, (ang(f) - A0) / 360 + 0.001), 'rgba(0,0,0,0)');
+    }
+    g.beginPath();
+    g.arc(c.x, c.y, c.r - 9, rad(A0), rad(ang(f)));
+    g.lineWidth = 7;
+    g.strokeStyle = grd || col;
+    g.shadowColor = glow;
+    g.shadowBlur = 10;
+    g.stroke();
+    g.restore();
+  }
+  function sideFill(c, A, f, col) {
+    if (!(f > 0)) return;
+    var a = A[0] + (A[1] - A[0]) * Math.min(1, f);
+    ctx.save();
+    ctx.shadowColor = col;
+    ctx.shadowBlur = 6;
+    arc(ctx, c, c.r + 24, A[0], a, 6, col);
+    ctx.restore();
+  }
+
+  // ---------- the map: the game's road network, heading up, tilted ----------
+  function initMap(data) {
+    var nodes = data && data.nodes, segs = [], cells = {}, CELL = 80;
+    if (!nodes) return;
+    Object.keys(nodes).forEach(function (k) {
+      var n = nodes[k];
+      Object.keys(n.links || {}).forEach(function (j) {
+        var m = nodes[j];
+        if (!m || k > j && nodes[j].links && nodes[j].links[k]) return;   // each road once
+        segs.push([n.pos[0], n.pos[1], m.pos[0], m.pos[1], Math.max(1.5, (n.radius + m.radius))]);
+      });
+    });
+    segs.forEach(function (s, i) {
+      var x0 = Math.floor(Math.min(s[0], s[2]) / CELL), x1 = Math.floor(Math.max(s[0], s[2]) / CELL);
+      var y0 = Math.floor(Math.min(s[1], s[3]) / CELL), y1 = Math.floor(Math.max(s[1], s[3]) / CELL);
+      for (var x = x0; x <= x1; x++) for (var y = y0; y <= y1; y++) (cells[x + ',' + y] = cells[x + ',' + y] || []).push(i);
+    });
+    map = { segs: segs, cells: cells, CELL: CELL, stamp: new Int32Array(segs.length), frame: 0 };
+  }
+
+  function drawMap(dt) {
+    var g = mctx, S = 560, cx = 280, cy = 420;
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    g.clearRect(0, 0, S, S);
+    if (!map || !d) return;
+    var kmh = d.spd * 3.6;
+    var zoom = Math.max(0.45, Math.min(1.1, 1.1 - kmh / 150));
+    show.zoom += (zoom - show.zoom) * (1 - Math.exp(-dt / 1.5));
+    var s = show.zoom, fl = Math.hypot(d.dx, d.dy) || 1, fx = d.dx / fl, fy = d.dy / fl;
+    // world (x east, y north) -> canvas, forward up: x' = s (fy x - fx y), y' = -s (fx x + fy y)
+    var a = s * fy, b = -s * fx, c = -s * fx, e = -s * fy;
+    g.setTransform(a, b, c, e, cx - (a * d.x + c * d.y), cy - (b * d.x + e * d.y));
+    var reach = 470 / s, CELL = map.CELL, x0 = Math.floor((d.x - reach) / CELL), x1 = Math.floor((d.x + reach) / CELL);
+    var y0 = Math.floor((d.y - reach) / CELL), y1 = Math.floor((d.y + reach) / CELL);
+    var stamp = ++map.frame, list = [];
+    for (var x = x0; x <= x1; x++) {
+      for (var y = y0; y <= y1; y++) {
+        var cell = map.cells[x + ',' + y];
+        if (!cell) continue;
+        for (var i = 0; i < cell.length; i++) {
+          if (map.stamp[cell[i]] === stamp) continue;
+          map.stamp[cell[i]] = stamp;
+          list.push(map.segs[cell[i]]);
+        }
+      }
+    }
+    g.lineCap = 'round';
+    g.lineJoin = 'round';
+    [[2.5 / s, 'rgba(78,96,116,0.7)'], [0, 'rgba(20,26,34,1)']].forEach(function (pass) {
+      g.strokeStyle = pass[1];
+      var groups = {};
+      list.forEach(function (sg) { (groups[Math.round(sg[4])] = groups[Math.round(sg[4])] || []).push(sg); });
+      Object.keys(groups).forEach(function (wk) {
+        g.lineWidth = Math.max(+wk + pass[0], 2.2 / s);
+        g.beginPath();
+        groups[wk].forEach(function (sg) { g.moveTo(sg[0], sg[1]); g.lineTo(sg[2], sg[3]); });
+        g.stroke();
+      });
+    });
+  }
+
+  function heading() {
+    if (!d) return '';
+    var h = (Math.atan2(d.dx, d.dy) * 180 / Math.PI + 360) % 360;
+    return ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(h / 45) % 8];
+  }
+
+  // ---------- the middle ----------
+  function middle(t) {
+    var p = cfg.page || 1;
+    mapWrap.style.visibility = p === 1 && map ? 'visible' : 'hidden';
+    if (p === 1) {
+      if (map) {
+        // the car, where the map is pinned
+        ctx.save();
+        ctx.translate(640, 270);
+        ctx.shadowColor = COL.accent;
+        ctx.shadowBlur = 10;
+        ctx.fillStyle = COL.accent;
+        ctx.beginPath(); ctx.moveTo(0, -13); ctx.lineTo(9, 9); ctx.lineTo(0, 4); ctx.lineTo(-9, 9); ctx.closePath(); ctx.fill();
+        ctx.restore();
+        text(ctx, heading(), 640, 92, '600 15px Kanit', COL.dim);
+      } else {
+        text(ctx, heading(), 640, 175, '600 46px Kanit', COL.text);
+        text(ctx, 'HEADING', 640, 212, '300 13px Kanit', COL.dim);
+      }
+    } else if (p === 2) {
+      var m = d.trip, avg = d.tt > 20 ? speedOf(m / d.tt) : null, cons = consumption(d.tf, m);
+      var lPerM = d.tf > 0.05 && m > 1000 ? d.tf / m : 0.16 / 1000;         // else a Grand Marshal's 16 L/100 km
+      var range = d.fv / lPerM;
+      spaced(ctx, 'TRIP', 640, 96, '400 13px Kanit', COL.accent, 4);
+      readout(570, 140, distOf(m).toFixed(1), distUnit(), 'DISTANCE');
+      readout(710, 140, avg === null ? '--' : avg.toFixed(0), metric() ? 'km/h' : 'mph', 'AVG SPEED');
+      readout(570, 214, cons ? cons.v.toFixed(1) : '--', cons ? cons.u : (cfg.uiUnitConsumptionRate === 'imperial' ? 'mpg' : 'L/100km'), 'AVG FUEL');
+      readout(710, 214, distOf(range).toFixed(0), distUnit(), 'RANGE');
+      var mins = Math.floor(d.tt / 60);
+      text(ctx, 'DRIVING ' + Math.floor(mins / 60) + ':' + ('0' + mins % 60).slice(-2), 640, 270, '300 14px Kanit', COL.dim);
+    } else {
+      spaced(ctx, 'ENGINE', 640, 96, '400 13px Kanit', COL.accent, 4);
+      bar(126, 'OIL', tempOf(d.ot).toFixed(0) + ' ' + tempUnit(), (d.ot - 50) / 90, d.ot > 130 ? COL.red : COL.accent);
+      bar(166, 'COOLANT', tempOf(d.wt).toFixed(0) + ' ' + tempUnit(), (d.wt - 50) / 80, d.wt > TEMP_HOT ? COL.red : COL.accent);
+      bar(206, 'BATTERY', d.v.toFixed(1) + ' V', (d.v - 10) / 6, d.v < 11.8 ? COL.amber : COL.accent);
+      bar(246, 'FUEL', volOf(d.fv).toFixed(cfg.uiUnitVolume === 'gal' ? 1 : 0) + ' ' + volUnit(), d.fuel, d.lf ? COL.amber : COL.accent);
+    }
+    // which page: three dots
+    for (var i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.arc(628 + i * 12, 296, 2.6, 0, Math.PI * 2);
+      ctx.fillStyle = i === p - 1 ? COL.text : COL.faint;
+      ctx.fill();
+    }
+  }
+  function readout(x, y, v, u, label) {     // a value and its unit, centred together under a label
+    text(ctx, label, x, y - 24, '300 12px Kanit', COL.dim);
+    ctx.font = '600 30px Kanit';
+    var w = ctx.measureText(v).width;
+    ctx.font = '300 13px Kanit';
+    var x0 = x - (w + 4 + ctx.measureText(u).width) / 2;
+    text(ctx, v, x0, y + 4, '600 30px Kanit', COL.text, 'left', 'alphabetic');
+    text(ctx, u, x0 + w + 4, y + 4, '300 13px Kanit', COL.dim, 'left', 'alphabetic');
+  }
+  function bar(y, label, value, f, col) {
+    text(ctx, label, 512, y, '300 13px Kanit', COL.dim, 'left');
+    text(ctx, value, 768, y, '600 18px Kanit', COL.text, 'right');
+    ctx.fillStyle = COL.faint;
+    ctx.fillRect(512, y + 13, 256, 4);
+    f = Math.max(0, Math.min(1, f));
+    ctx.save();
+    ctx.shadowColor = col;
+    ctx.shadowBlur = 6;
+    ctx.fillStyle = col;
+    ctx.fillRect(512, y + 13, 256 * f, 4);
+    ctx.restore();
+  }
+
+  // ---------- frames ----------
+  function ignition() { return d ? d.ign : 0; }
+
+  // an error is logged in the game's log (once a minute each) and the next frame goes on: an error used to end the
+  // drawing for good, the screen frozen while the data kept coming
+  var reported = {};
+  function report(e) {
+    var msg = String(e && e.stack || e).replace(/[^\x20-\x7e]/g, ' ').slice(0, 400), now = Date.now();
+    if (reported[msg] && now - reported[msg] < 60000) return;
+    reported[msg] = now;
+    if (typeof beamng !== 'undefined') beamng.sendEngineLua("log('E', 'craptechCluster.page', " + JSON.stringify(msg) + ")");
+  }
+
+  var perf = { frames: 0, ms: 0 };      // frames drawn and the average time one takes (state())
+  function frame(now) {
+    requestAnimationFrame(frame);
+    var t0 = performance.now();
+    try {
+      draw(now);
+    } catch (e) {
+      report(e);
+    }
+    perf.frames++;
+    perf.ms += (performance.now() - t0 - perf.ms) * 0.05;
+  }
+
+  function draw(now) {
+    var dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
+    last = now;
+    var ign = ignition(), want = ign >= 2 ? 'on' : ign >= 1 ? 'acc' : 'off';
+    if (want !== phase) {
+      // switched on from off or accessory: the greeting and needle sweep (not when the page finds the car running)
+      var greet = want === 'on' && seen;
+      phase = want;
+      phaseAt = now - (want === 'on' && !greet ? 1e5 : 0);
+    }
+    if (d) seen = true;
+    var t = (now - phaseAt) / 1000;
+    var target = phase === 'off' ? 0 : 1;
+    alpha += (target - alpha) * (1 - Math.exp(-dt / (target ? 0.12 : 0.25)));
+    if (alpha < 0.003) alpha = 0;
+    screenEl.style.opacity = alpha.toFixed(3);   // dimmed at night by the screen's material, not here
+
+    if (d) {
+      var ease1 = function (key, to, tau) {
+        show[key] = isFinite(show[key]) ? show[key] + (to - show[key]) * (1 - Math.exp(-dt / tau)) : to;
+      };
+      ease1('spd', speedOf(d.spd), 0.09);
+      ease1('rpm', d.rpm, 0.06);
+      ease1('fuel', d.fuel, 0.8);
+      ease1('wt', d.wt, 0.8);
+      ease1('ot', d.ot, 0.8);
+      if (now - speedTextAt > 250) {
+        speedText = String(Math.round(show.spd < 0.6 ? 0 : show.spd));
+        speedTextAt = now;
+      }
+    }
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.clearRect(0, 0, W, H);
+    if (phase !== 'off') shown = phase;
+    if (alpha > 0 && d) {
+      if (shown === 'acc') standby();    // fading out: what was shown
+      else live(t, dt);
+    } else {
+      mapWrap.style.visibility = 'hidden';
+    }
+  }
+
+  function standby() {
+    mapWrap.style.visibility = 'hidden';
+    spaced(ctx, 'GAVRIL', 640, 120, '300 22px Kanit', COL.dim, 10);
+    text(ctx, clock(d.time), 640, 178, '300 44px Kanit', COL.text);
+    text(ctx, tempOf(d.env).toFixed(0) + tempUnit(), 640, 220, '300 16px Kanit', COL.dim);
+    text(ctx, 'ODO  ' + Math.floor(distOf(d.odo)) + ' ' + distUnit(), 640, 326, '300 15px Kanit', COL.dim);
+  }
+
+  // switched on: greeting (0 - 0.9 s), dials appearing (0.6 - 1.3 s), needle sweep and lamp check (1.3 - 2.3 s)
+  function live(t, dt) {
+    if (t < 0.95) {
+      var la = Math.min(ease(t / 0.3), 1 - ease((t - 0.6) / 0.35));
+      ctx.globalAlpha = la;
+      spaced(ctx, 'GAVRIL', 640, 150, '300 30px Kanit', COL.text, 16);
+      ctx.fillStyle = COL.accent;
+      var lw = 260 * ease(t / 0.6);
+      ctx.fillRect(640 - lw / 2, 178, lw, 2);
+      spaced(ctx, 'GRAND MARSHAL', 640, 206, '400 15px Kanit', COL.dim, 7);
+      spaced(ctx, 'CRAPOUILLE TECHNOLOGIES', 640, 320, '300 10px Kanit', COL.faint, 4);
+      ctx.globalAlpha = 1;
+    }
+    var appear = ease((t - 0.6) / 0.7);
+    if (appear <= 0) return;
+    var sw = t < 1.3 ? 0 : t < 1.8 ? ease((t - 1.3) / 0.5) : t < 2.3 ? 1 - ease((t - 1.8) / 0.5) : -1;
+    var check = t > 0.6 && t < 2.3;
+    ctx.globalAlpha = appear;
+    ctx.drawImage(stat, 0, 0);
+
+    // speedometer
+    var fs = sw >= 0 ? Math.max(sw, show.spd / scale.spd.max * (1 - sw)) : show.spd / scale.spd.max;
+    sweep(SPD, fs, 'rgba(63,208,255,0.85)', COL.accentGlow);
+    needle(SPD, fs, COL.needle);
+    text(ctx, sw >= 0 ? '0' : speedText, SPD.x, SPD.y + 4, '600 70px Kanit', COL.text);
+    text(ctx, metric() ? 'km/h' : 'mph', SPD.x, SPD.y + 48, '300 17px Kanit', COL.dim);
+
+    // tachometer
+    var fr = sw >= 0 ? Math.max(sw, show.rpm / scale.rpm.max * (1 - sw)) : show.rpm / scale.rpm.max;
+    var hot = show.rpm >= scale.rpm.red;
+    sweep(TAC, fr, hot ? 'rgba(255,45,61,0.9)' : 'rgba(63,208,255,0.85)', hot ? 'rgba(255,45,61,0.6)' : COL.accentGlow);
+    needle(TAC, fr, hot ? COL.red : COL.needle);
+    gear();
+    text(ctx, '×1000 rpm', TAC.x, TAC.y + 48, '300 15px Kanit', COL.dim);
+
+    // coolant and fuel
+    var wf = (show.wt - TEMP_RANGE[0]) / (TEMP_RANGE[1] - TEMP_RANGE[0]);
+    var whot = d.wt > TEMP_HOT;
+    sideFill(SPD, TEMP_A, sw >= 0 ? Math.max(sw, wf) : wf, whot ? COL.red : COL.accent);
+    var tp = pt(SPD, SPD.r + 46, (TEMP_A[0] + TEMP_A[1]) / 2);
+    icon('temp', tp[0], tp[1], whot || check ? COL.red : COL.dim, whot);
+    sideFill(TAC, FUEL_A, sw >= 0 ? Math.max(sw, show.fuel) : show.fuel, d.lf ? COL.amber : COL.accent);
+    var fp = pt(TAC, TAC.r + 46, (FUEL_A[0] + FUEL_A[1]) / 2);
+    icon('fuel', fp[0], fp[1], d.lf || check ? COL.amber : COL.dim, d.lf);
+
+    // the lamps: left under the speedometer, right under the tachometer
+    var noEngine = d.ign >= 2 && !d.run;
+    var L = [['lowbeam', d.lb && !d.hb, COL.green], ['highbeam', d.hb, COL.blue], ['fog', d.fog, COL.green],
+             ['cruise', d.cc, COL.green], ['brake', d.pb, COL.red]];
+    var R = [['engine', d.ce, COL.amber], ['battery', noEngine, COL.red], ['oil', noEngine, COL.red],
+             ['abs', d.abs, COL.amber], ['tire', d.tp, COL.amber]];
+    lamps(L, SPD.x, check);
+    lamps(R, TAC.x, check);
+    if (d.sl || check) icon('arrowL', 524, 52, COL.green, true);
+    if (d.sr || check) icon('arrowR', 756, 52, COL.green, true);
+
+    // the top line and the bottom: clock, outside temperature, odometer, trip, gear strip
+    text(ctx, clock(d.time), 640, 50, '400 20px Kanit', COL.text);
+    text(ctx, tempOf(d.env).toFixed(0) + tempUnit(), 700, 50, '300 15px Kanit', COL.dim, 'left');
+    text(ctx, 'ODO', SPD.x - 52, 340, '300 12px Kanit', COL.dim, 'right');
+    text(ctx, Math.floor(distOf(d.odo)) + ' ' + distUnit(), SPD.x - 44, 340, '400 15px Kanit', COL.text, 'left');
+    text(ctx, 'TRIP', TAC.x - 40, 340, '300 12px Kanit', COL.dim, 'right');
+    text(ctx, distOf(d.trip).toFixed(1) + ' ' + distUnit(), TAC.x - 32, 340, '400 15px Kanit', COL.text, 'left');
+    strip();
+    middle(t);
+    if (cfg.page === 1 && map) drawMap(dt);
+    ctx.globalAlpha = 1;
+  }
+
+  function lamps(list, x, check) {
+    for (var i = 0; i < list.length; i++) {
+      var on = check || list[i][1];
+      if (on) icon(list[i][0], x + (i - 2) * 44, 292, list[i][2], true);
+    }
+  }
+
+  function gearName() {
+    var g = d.gear || '';
+    if (g === '0') return 'N';
+    if (g === '-1') return 'R';
+    return g;
+  }
+  function gear() {
+    var g = gearName(), sub = '';
+    if (g.length > 1 && /^[MDS]/.test(g)) { sub = g.slice(1); g = g[0]; }
+    else if (g === 'D' && d.gi > 0) sub = String(d.gi);
+    text(ctx, g, TAC.x - (sub ? 8 : 0), TAC.y + 4, '600 70px Kanit', COL.text);
+    if (sub) text(ctx, sub, TAC.x + 22, TAC.y - 14, '600 26px Kanit', COL.accent, 'left');
+  }
+  function strip() {
+    var g = gearName()[0] || '';
+    if (GEARS.indexOf(g) < 0) return;
+    for (var i = 0; i < GEARS.length; i++) {
+      var x = 640 + (i - 2.5) * 30, on = GEARS[i] === g;
+      text(ctx, GEARS[i], x, 324, on ? '600 22px Kanit' : '400 18px Kanit', on ? COL.text : '#4a5562');
+      if (on) {
+        ctx.fillStyle = COL.accent;
+        ctx.fillRect(x - 9, 338, 18, 2.5);
+      }
+    }
+  }
+
+  function askMap() {
+    if (map || !cfg.vid || typeof beamng === 'undefined' || performance.now() - mapAsked < 15000) return;
+    mapAsked = performance.now();
+    beamng.sendEngineLua("if not extensions.ui_uiNavi then extensions.load('ui_uiNavi') end " +
+      "if extensions.ui_uiNavi then extensions.ui_uiNavi.requestVehicleDashboardMap('" + cfg.webView +
+      "', 'cluster.initMap', " + cfg.vid + ") end");
+  }
+
+  rebuild();
+  if (document.fonts) document.fonts.ready.then(rebuild);
+  ['300', '400', '600'].forEach(function (w) {
+    if (document.fonts) document.fonts.load(w + ' 20px Kanit').then(rebuild);
+  });
+  requestAnimationFrame(frame);
+  setInterval(askMap, 1000);
+
+  return {
+    setup: function (c) {
+      var units = c.uiUnitLength !== cfg.uiUnitLength || c.maxRPM !== cfg.maxRPM;
+      Object.keys(c || {}).forEach(function (k) { cfg[k] = c[k]; });
+      if (units) rebuild();
+    },
+    update: function (data) {            // a number the game sent as infinity (its NaN) keeps the last good value
+      var old = d;
+      Object.keys(data).forEach(function (k) {
+        if (typeof data[k] === 'number' && !isFinite(data[k])) data[k] = old && isFinite(old[k]) ? old[k] : 0;
+      });
+      d = data;
+      if (typeof beamng !== 'undefined' && data.vid !== undefined) {   // ready for the next
+        beamng.sendEngineLua("local v = be:getObjectByID(" + data.vid + ") if v then v:queueLuaCommand(" +
+          "\"local c = controller.getController('craptechCluster') if c then c.ack() end\") end");
+      }
+    },
+    initMap: initMap,
+    state: function () {
+      return { phase: phase, alpha: alpha, cfg: cfg, map: map ? map.segs.length : 0, d: d, show: show, perf: perf };
+    }
+  };
+})();
+</script>
+</body>
+</html>

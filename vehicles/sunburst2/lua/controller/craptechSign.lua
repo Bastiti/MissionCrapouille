@@ -19,13 +19,21 @@ local electricKeys = {"lightbar", "ignitionLevel", "signal_left_input", "signal_
                       "craptech_jato_out", "craptech_jato_burning", "jatofuel", "craptech_airjacks"}
 local signData = {}
 
+local signOn = false     -- the switch: board folded down (shown)
+
+local function toggle()
+  signOn = not signOn
+end
+
+local function isOn()
+  return signOn
+end
+
 local function updateGFX(dt)
-  -- the board hydros (craptech_flashers_sign.jbeam) fold it down while the lightbar is on.
-  -- The lightbar switch keeps its state with the ignition off, so also require power,
-  -- otherwise the board stays down after the lights have gone dark.
-  local lightbarOn = (electrics.values.lightbar or 0) > 0
+  -- the board hydros (craptech_flashers_sign.jbeam) fold it down while its switch is on (toggle(),
+  -- the glove box panel) and there is power
   local powered = (electrics.values.ignitionLevel or 0) >= 1
-  electrics.values.craptech_sign_deploy = (lightbarOn and powered) and 1 or 0
+  electrics.values.craptech_sign_deploy = (signOn and powered) and 1 or 0
 
   if not signTexture then
     return
@@ -54,5 +62,7 @@ end
 
 M.init = init
 M.updateGFX = updateGFX
+M.toggle = toggle
+M.isOn = isOn
 
 return M

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Crapouille limo TV</title>
+<!--
+  The limo bar's TV (craptechLimoTV.lua draws this page into the texture @craptech_limotv, 640x480 = the
+  tube's 4:3). Nine channels, each the WebM files of its folder (vehicles/fullsize/limotv/channels/ch1 ..
+  ch9), played one after another and looping. All channels run "live" on one clock, so coming back to a
+  channel finds it further on (when their lengths are known). A channel without any playable file shows the
+  set's blue "No video input" screen.
+
+  A channel can also show a live stream (craptech_limotv_live.py, which writes it as one-second WebM pieces in the
+  game's user folder, temp/craptech_limotv/ch<n>/, with live.json listing them): while that keeps being written,
+  the channel plays the pieces through a MediaSource, over its own files.
+
+  The sound, of a file or a stream, can't play here (the game's browser plays no sound in a page nobody clicked,
+  and no click reaches a texture): the video plays muted, and its sound plays in the game's UI
+  (craptech_limotv_audio.js, through the GE extension craptech_limoTVAudio), which this page tells what it shows
+  and where its picture is, four times a second and on each change, so that the sound follows it.
+
+  Called by the controller:
+      tv.setChannels({channels: [[path, ...] x 9], unsupported: [count x 9]})   paths from the game's file system
+      tv.setState({mode: "off" | "blank" | "on", channel: 1..9, osd: bool, volume: 0..volumeSteps, volumeSteps: n,
+                   volumeOsd: bool})
+      tv.setLive({channel: n, folder: "/temp/craptech_limotv/ch<n>/", text: live.json's text or "", vid: the car's id})
+  All are sent again every 2 s; repeats change nothing.
+-->
+<style>
+  html, body { margin: 0; width: 640px; height: 480px; overflow: hidden; background: #000; }
+  #v { position: absolute; left: 0; top: 0; width: 640px; height: 480px; object-fit: contain; background: #000;
+       visibility: hidden; }
+  #nosig { position: absolute; left: 0; top: 0; width: 640px; height: 480px; background: #1d3bb8; display: none;
+           color: #eef1ff; font: bold 36px "Lucida Console", "Courier New", monospace; text-align: center; }
+  #nosig .msg { position: absolute; left: 0; right: 0; top: 205px; letter-spacing: 1px; }
+  #nosig .hint { position: absolute; left: 60px; right: 60px; top: 268px; font-size: 17px; font-weight: normal; }
+  #osd { position: absolute; top: 40px; right: 56px; color: #46ff5a; display: none;
+         font: bold 40px "Lucida Console", "Courier New", monospace; text-shadow: 3px 3px 0 #000, 2px 3px 0 #000; }
+  /* the volume, along the bottom while VL is pressed: label, a bar of segments, the step */
+  #vol { position: absolute; left: 60px; right: 60px; bottom: 64px; height: 40px; display: none; color: #46ff5a;
+         font: bold 30px "Lucida Console", "Courier New", monospace; text-shadow: 3px 3px 0 #000, 2px 3px 0 #000; }
+  #vol .lbl { position: absolute; left: 0; top: 4px; }
+  #vol .bar { position: absolute; left: 92px; right: 64px; top: 6px; height: 26px;
+              box-shadow: 3px 3px 0 #000; background: rgba(0, 0, 0, 0.35); }
+  #volfill { height: 100%; width: 0;
+             background: repeating-linear-gradient(to right, #46ff5a 0, #46ff5a 14px, transparent 14px, transparent 19px); }
+  #volnum { position: absolute; right: 0; top: 4px; }
+  /* the tube: rounded corners, a dark rim and darker edges, scan lines */
+  #scan { position: absolute; left: 0; top: 0; width: 640px; height: 480px;
+          background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0, rgba(0, 0, 0, 0.2) 1px, transparent 1px, transparent 3px); }
+  #tube { position: absolute; left: 10px; top: 10px; right: 10px; bottom: 10px; border-radius: 42px / 46px;
+          box-shadow: 0 0 0 40px #040505, inset 0 0 60px 14px rgba(0, 0, 0, 0.7); }
+</style>
+</head>
+<body>
+<video id="v" muted playsinline preload="auto"></video>
+<div id="nosig"><div class="msg">No video input</div><div class="hint" id="hint"></div></div>
+<div id="osd"></div>
+<div id="vol"><span class="lbl">VOL</span><div class="bar"><div id="volfill"></div></div><span id="volnum"></span></div>
+<div id="scan"></div>
+<div id="tube"></div>
+<script>
+var tv = (function () {
+  var v = document.getElementById('v');
+  var nosig = document.getElementById('nosig');
+  var hint = document.getElementById('hint');
+  var osd = document.getElementById('osd');
+  var vol = document.getElementById('vol');
+  var volFill = document.getElementById('volfill');
+  var volNum = document.getElementById('volnum');
+
+  var lists = [];          // per channel: file paths
+  var unsupported = [];    // per channel: count of videos the browser can't play (MP4 ...)
+  var listKeys = [];       // per channel: its list as text, to see what changed
+  var lastChannelsKey = '';
+  var durations = {};      // path -> s (null while unknown)
+  var failed = {};         // path -> true once it failed to play
+  var t0 = Date.now();     // the channels' common clock
+  var mode = 'off', channel = 1, osdOn = false;
+  var volume = 0, volumeSteps = 20, volumeOsd = false;
+  var playing = 0;         // the channel whose file the video element holds (0: none)
+  var playingIdx = -1;     // that file: its place in the channel's playable files, its path
+  var playingPath = '';
+  var fileUrl = null;      // that file, held whole in memory: seeking in a big file from its local:// address never
+                           // ends (the game's file server ignores byte ranges)
+  var loads = 0;           // counts the files asked for, to drop one that arrives too late
+
+  var LIVE_STALE = 6;      // s since live.json was written: past that the stream is off the air
+  var liveFeed = null;     // the current channel's live.json, from the controller: {channel, folder, info}
+  var live = null;         // the stream playing: {channel, gen, folder, init, codec, ms, sb, objUrl, next, busy, initDone}
+  var liveRetry = 0;       // Date.now() before which a failed stream isn't started again
+  var vid = 0;             // the car's id (for the sound)
+  var soundOn = false;     // the UI was told of a sound to play (and is to be told when it ends)
+
+  v.muted = true;
+
+  function arr(a) { return Array.isArray(a) ? a : []; }
+  function url(p) { return 'local://local' + p.split('/').map(encodeURIComponent).join('/'); }
+  function playable(ch) { return arr(lists[ch - 1]).filter(function (p) { return !failed[p]; }); }
+
+  // its length, to place a channel "live" (a throwaway element only reads the header)
+  function probe(p) {
+    if (p in durations) return;
+    durations[p] = null;
+    var el = document.createElement('video');
+    el.preload = 'metadata';
+    el.muted = true;
+    el.onloadedmetadata = function () {
+      durations[p] = isFinite(el.duration) && el.duration > 0 ? el.duration : null;
+      el.removeAttribute('src');
+      el.load();
+    };
+    el.onerror = function () { el.removeAttribute('src'); };
+    el.src = url(p);
+  }
+
+  // where the channel's broadcast is now: file and time in it (the start if a length is unknown)
+  function livePos(files) {
+    var total = 0, i;
+    for (i = 0; i < files.length; i++) {
+      if (!durations[files[i]]) return { idx: 0, at: 0 };
+      total += durations[files[i]];
+    }
+    var t = ((Date.now() - t0) / 1000) % total;
+    for (i = 0; i < files.length; i++) {
+      if (t < durations[files[i]]) return { idx: i, at: t };
+      t -= durations[files[i]];
+    }
+    return { idx: 0, at: 0 };
+  }
+
+  function load(files, idx, at) {
+    var mine = ++loads, asked = Date.now();
+    playingIdx = idx;
+    playingPath = files[idx];
+    fetch(url(files[idx])).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.blob();
+    }).then(function (b) {
+      if (mine !== loads) return;
+      var old = fileUrl;
+      if (at > 0) at += (Date.now() - asked) / 1000;   // the broadcast went on meanwhile
+      v.onloadedmetadata = function () {
+        if (at > 0.5 && at < v.duration - 0.5) {
+          try { v.currentTime = at; } catch (e) { /* not seekable: from the start */ }
+        }
+      };
+      fileUrl = URL.createObjectURL(b);
+      v.src = fileUrl;
+      if (old) URL.revokeObjectURL(old);
+      var pr = v.play();
+      if (pr && pr.catch) pr.catch(function () {});
+    }).catch(function () {
+      if (mine === loads) fileFailed();
+    });
+  }
+
+  function dropFile() {
+    loads++;
+    if (!fileUrl) return;
+    v.removeAttribute('src');
+    v.load();
+    URL.revokeObjectURL(fileUrl);
+    fileUrl = null;
+  }
+
+  function stop() {
+    v.pause();
+    v.style.visibility = 'hidden';
+    playing = 0;
+    dropFile();
+  }
+
+  // a file that can't be played: the channel goes on without it
+  function fileFailed() {
+    if (!playing) return;
+    if (playingPath) failed[playingPath] = true;
+    playing = 0;
+    render();
+  }
+
+  // --- live: the current channel's stream while live.json keeps being written
+
+  function liveInfo() {
+    var f = liveFeed;
+    if (!f || f.channel !== channel || !f.info || !(f.info.last >= 1)) return null;
+    if (Date.now() / 1000 - f.info.time > LIVE_STALE) return null;
+    return f.info;
+  }
+
+  function startLive(info) {
+    var ms = new MediaSource();
+    var L = { channel: channel, gen: info.gen, folder: liveFeed.folder, init: info.init, codec: info.codec || 'vp8',
+              ms: ms, sb: null, objUrl: URL.createObjectURL(ms), next: Math.max(info.first, info.last - 2),
+              busy: false, initDone: false };
+    live = L;
+    playing = 0;
+    dropFile();
+    v.onloadedmetadata = null;
+    v.src = L.objUrl;
+    ms.addEventListener('sourceopen', function () {
+      if (live !== L) return;
+      try {
+        L.sb = ms.addSourceBuffer('video/webm; codecs="' + L.codec + '"');
+      } catch (e) {
+        liveFailed(L);
+        return;
+      }
+      L.sb.addEventListener('updateend', function () {
+        L.busy = false;
+        if (live !== L) return;
+        if (L.initDone) catchUp(L);
+        pump();
+      });
+      L.sb.addEventListener('error', function () { liveFailed(L); });
+      pump();
+    });
+  }
+
+  function stopLive() {
+    var L = live;
+    if (!L) return;
+    live = null;
+    try { if (L.ms.readyState === 'open') L.ms.endOfStream(); } catch (e) { /* closing anyway */ }
+    v.removeAttribute('src');
+    v.load();
+    URL.revokeObjectURL(L.objUrl);
+    playing = 0;
+    report();
+  }
+
+  // tells the game's UI what plays and where its picture is (t, in the stream or file, at Date.now()), so that its
+  // sound follows
+  function report() {
+    if (!vid || !window.beamng) return;
+    var info = live && liveInfo(), msg = null, moving = !v.paused && !v.seeking && v.readyState >= 3;
+    if (info && info.audio && info.gen === live.gen && live.initDone) {
+      msg = { feed: { folder: live.folder, gen: info.gen, audio: info.audio, first: info.first, last: info.last } };
+    } else if (!live && mode === 'on' && playing === channel && playingPath) {
+      msg = { file: playingPath };
+    }
+    if (msg) {
+      msg.t = v.currentTime;
+      msg.at = Date.now();
+      msg.playing = moving;
+      soundOn = true;
+    } else if (soundOn) {
+      msg = { stop: true };
+      soundOn = false;
+    } else {
+      return;
+    }
+    beamng.sendEngineLua('if craptech_limoTVAudio then craptech_limoTVAudio.sync(' + vid + ', ' +
+                         JSON.stringify(JSON.stringify(msg)) + ') end');
+  }
+  setInterval(report, 250);
+  ['playing', 'pause', 'waiting', 'seeked'].forEach(function (e) { v.addEventListener(e, report); });
+
+  function liveFailed(L) {
+    if (live !== L) return;
+    stopLive();
+    liveRetry = Date.now() + 2000;
+    render();
+  }
+
+  // fetches and appends the stream's next piece (the header first), one at a time
+  function pump() {
+    var L = live, info = liveInfo();
+    if (!L || !L.sb || L.busy || L.sb.updating || !info || info.gen !== L.gen) return;
+    var name = L.init;
+    if (L.initDone) {
+      if (L.next < info.first) L.next = Math.max(info.first, info.last - 2);   // fell behind: back to the edge
+      if (L.next > info.last) return;                                          // all in: wait for the next
+      name = L.gen + '_' + L.next + '.chunk';
+    }
+    L.busy = true;
+    fetch(url(L.folder + name), { cache: 'no-store' }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.arrayBuffer();
+    }).then(function (buf) {
+      if (live !== L) return;
+      if (L.initDone) L.next++; else L.initDone = true;
+      L.sb.appendBuffer(buf);   // its updateend fetches the next
+    }).catch(function () {
+      if (live !== L) return;
+      L.busy = false;
+      if (L.initDone) L.next++;   // already deleted: skip it
+    });
+  }
+
+  // keeps the picture about two seconds behind the newest piece (the feeder writes one a second), across gaps,
+  // and the buffer short
+  function catchUp(L) {
+    var b = v.buffered;
+    if (!b.length) return;
+    var t = v.currentTime, start = b.start(0), end = b.end(b.length - 1), i, inside = false;
+    for (i = 0; i < b.length; i++) {
+      if (t >= b.start(i) && t < b.end(i) - 0.05) inside = true;
+    }
+    if (end - t > 5 || !inside) {
+      t = Math.max(start, end - 2.2);
+      for (i = 0; i < b.length; i++) {
+        if (t < b.start(i)) { t = b.start(i); break; }
+        if (t < b.end(i)) break;
+      }
+      v.currentTime = t;
+    }
+    if (v.paused) {
+      var pr = v.play();
+      if (pr && pr.catch) pr.catch(function () {});
+    }
+    if (!L.sb.updating && t - start > 30) {
+      L.busy = true;
+      L.sb.remove(start, t - 10);
+    }
+  }
+
+  setInterval(function () {
+    if (mode !== 'on') return;
+    var info = liveInfo();
+    if (!info !== !live || (live && (live.channel !== channel || live.gen !== info.gen))) render();
+    else pump();
+  }, 500);
+
+  function render() {
+    osd.textContent = 'CH ' + channel;
+    osd.style.display = mode === 'on' && osdOn ? 'block' : 'none';
+    vol.style.display = mode === 'on' && volumeOsd ? 'block' : 'none';
+    volFill.style.width = Math.round(volume / volumeSteps * 100) + '%';
+    volNum.textContent = volume;
+    if (mode !== 'on') {
+      stopLive();
+      stop();
+      nosig.style.display = 'none';
+      return;
+    }
+    var info = liveInfo();
+    if (live && (!info || live.channel !== channel || live.gen !== info.gen)) stopLive();
+    if (info && !live && Date.now() >= liveRetry) startLive(info);
+    if (live) {
+      nosig.style.display = 'none';
+      v.style.visibility = 'visible';
+      return;
+    }
+    var files = playable(channel);
+    if (!files.length) {
+      stop();
+      v.removeAttribute('src');
+      if (arr(lists[channel - 1]).length) {
+        hint.textContent = "These videos can't be played here (WebM: VP8, VP9 or AV1)";
+      } else if (unsupported[channel - 1] > 0) {
+        hint.textContent = 'MP4 and the like do not play here: convert them to WebM';
+      } else {
+        hint.textContent = '';
+      }
+      nosig.style.display = 'block';
+      return;
+    }
+    nosig.style.display = 'none';
+    v.style.visibility = 'visible';
+    if (playing !== channel) {
+      playing = channel;
+      var at = livePos(files);
+      load(files, at.idx, at.at);
+    } else if (v.paused) {
+      var pr = v.play();
+      if (pr && pr.catch) pr.catch(function () {});
+    }
+  }
+
+  // the next file of the channel when one ends, or fails
+  function advance() {
+    var files = playable(channel);
+    if (mode !== 'on' || !files.length) { render(); return; }
+    load(files, (playingIdx + 1) % files.length, 0);
+  }
+
+  v.addEventListener('ended', function () { if (!live) advance(); });
+  v.addEventListener('error', function () {
+    if (live) {
+      liveFailed(live);
+      return;
+    }
+    fileFailed();
+  });
+
+  return {
+    setChannels: function (d) {
+      var key = JSON.stringify(d);
+      if (key === lastChannelsKey) return;
+      lastChannelsKey = key;
+      lists = arr(d && d.channels).map(arr);
+      unsupported = arr(d && d.unsupported);
+      for (var i = 0; i < lists.length; i++) {
+        var k = JSON.stringify(lists[i]);
+        if (k !== listKeys[i] && playing === i + 1) playing = 0;   // the playing channel's files changed
+        listKeys[i] = k;
+        lists[i].forEach(probe);
+      }
+      failed = {};
+      render();
+    },
+    setState: function (s) {
+      if (!s) return;
+      var vs = s.volumeSteps || volumeSteps, vl = typeof s.volume === 'number' ? s.volume : volume;
+      if (s.mode === mode && s.channel === channel && !!s.osd === osdOn && vl === volume && vs === volumeSteps &&
+          !!s.volumeOsd === volumeOsd) return;
+      mode = s.mode;
+      channel = s.channel;
+      osdOn = !!s.osd;
+      volume = vl;
+      volumeSteps = vs;
+      volumeOsd = !!s.volumeOsd;
+      render();
+    },
+    setLive: function (d) {
+      var info = null;
+      try { info = d && d.text ? JSON.parse(d.text) : null; } catch (e) { info = null; }
+      liveFeed = d ? { channel: d.channel, folder: d.folder, info: info } : null;
+      if (d && d.vid) vid = d.vid;
+      if (mode === 'on') {
+        render();
+        pump();
+      }
+    }
+  };
+})();
+</script>
+</body>
+</html>

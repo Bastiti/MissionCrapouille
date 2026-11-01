@@ -7,7 +7,7 @@
 -- Interface (electrics):
 --   craptech_lid_request  written by others (craptechActiveAero): 1 = open, 0 = closed
 --   craptech_lid_open     written here: 0 = shut .. 1 = fully open
---   craptech_lid_hold     written by others: 1 = do not move (car too fast)
+--   craptech_lid_hold     written by others: 1 = do not move (car too fast, or not up on the air jacks yet)
 -- Nothing moves without power (ignition at least accessories).
 
 local M = {}
@@ -43,7 +43,7 @@ local function write()
 end
 
 local function updateGFX(dt)
-  -- craptech_lid_hold (craptechActiveAero, car above 10 mph): the lid stays where it is
+  -- craptech_lid_hold (craptechActiveAero: car above 10 mph or not up on the jacks yet): the lid stays where it is
   if (electrics.values.ignitionLevel or 0) >= 1 and (electrics.values.craptech_lid_hold or 0) < 0.5 then
     local target = (electrics.values.craptech_lid_request or 0) > 0.5 and 1 or 0
     if pos < target then

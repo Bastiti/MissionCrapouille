@@ -1,0 +1,60 @@
+{
+  "fileversion": 2,
+  "actions": {
+    "craptech_swpanel": {
+      "order": 5,
+      "icon": "lockToggle",
+      "onDown": "local c = controller.getController('craptechSwitchPanel') if c then c.toggle() end",
+      "title": "Switch panel: out / in",
+      "desc": "Turns the dash switch panel out of the dashboard (or back in)"
+    },
+    "craptech_gsw_1": {
+      "order": 6,
+      "onDown": "local c = controller.getController('craptechSwitchPanel') if c then c.press(1) end",
+      "title": "Switch: air jacks: up / drop",
+      "desc": "Dash switch 1 (JACKS)"
+    },
+    "craptech_gsw_2": {
+      "order": 7,
+      "onDown": "local c = controller.getController('craptechSwitchPanel') if c then c.press(2) end",
+      "title": "Switch: wheels: wide / narrow track",
+      "desc": "Dash switch 2 (WHEELS)"
+    },
+    "craptech_gsw_3": {
+      "order": 8,
+      "onDown": "local c = controller.getController('craptechSwitchPanel') if c then c.press(3) end",
+      "title": "Switch: race kit: out / tucked away",
+      "desc": "Dash switch 3 (KIT)"
+    },
+    "craptech_gsw_4": {
+      "order": 9,
+      "onDown": "local c = controller.getController('craptechSwitchPanel') if c then c.press(4) end",
+      "title": "Switch: wing: out / stowed",
+      "desc": "Dash switch 4 (WING)"
+    },
+    "craptech_gsw_5": {
+      "order": 10,
+      "onDown": "local c = controller.getController('craptechSwitchPanel') if c then c.press(5) end",
+      "title": "Switch: JATO: deploy / stow",
+      "desc": "Dash switch 5 (JATO)"
+    },
+    "craptech_gsw_6": {
+      "order": 11,
+      "onDown": "local c = controller.getController('craptechSwitchPanel') if c then c.press(6) end",
+      "title": "Switch: hidden flashers",
+      "desc": "Dash switch 6 (FLASH)"
+    },
+    "craptech_gsw_7": {
+      "order": 12,
+      "onDown": "local c = controller.getController('craptechSwitchPanel') if c then c.press(7) end",
+      "title": "Switch: rear sign",
+      "desc": "Dash switch 7 (SIGN)"
+    },
+    "craptech_firebtn": {
+      "order": 13,
+      "onDown": "local c = controller.getController('craptechSwitchPanel') if c then c.fire() end",
+      "title": "JATO: fire / stop (red button)",
+      "desc": "The big red button behind the shifter: lights or stops the bumper rockets (they must be deployed)"
+    }
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "craptech_dcl_face": {
+    "name": "craptech_dcl_face",
+    "mapTo": "craptech_dcl_face",
+    "class": "Material",
+    "Stages": [
+      {},
+      {},
+      {},
+      {}
+    ],
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "version": 1.5,
+    "alphaRef": 0,
+    "translucent": true,
+    "translucentBlendOp": "None"
+  },
+  "craptech_dcl_glass": {
+    "name": "craptech_dcl_glass",
+    "mapTo": "craptech_dcl_glass",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.02,
+          0.022,
+          0.026,
+          1
+        ],
+        "metallicFactor": 0.5,
+        "roughnessFactor": 0.11
+      },
+      {},
+      {},
+      {}
+    ],
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "version": 1.5
+  },
+  "craptech_dcl_night": {
+    "name": "craptech_dcl_night",
+    "mapTo": "craptech_dcl_night",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.02,
+          0.022,
+          0.026,
+          1
+        ],
+        "metallicFactor": 0.5,
+        "roughnessFactor": 0.11,
+        "emissive": true,
+        "emissiveFactor": [
+          1,
+          1,
+          1
+        ],
+        "emissiveIntensityNits": 180,
+        "emissiveMap": "@craptech_cluster"
+      },
+      {},
+      {},
+      {}
+    ],
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "version": 1.5
+  },
+  "craptech_dcl_day": {
+    "name": "craptech_dcl_day",
+    "mapTo": "craptech_dcl_day",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.02,
+          0.022,
+          0.026,
+          1
+        ],
+        "metallicFactor": 0.5,
+        "roughnessFactor": 0.11,
+        "emissive": true,
+        "emissiveFactor": [
+          1,
+          1,
+          1
+        ],
+        "emissiveIntensityNits": 1000,
+        "emissiveMap": "@craptech_cluster"
+      },
+      {},
+      {},
+      {}
+    ],
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "version": 1.5
+  }
+}

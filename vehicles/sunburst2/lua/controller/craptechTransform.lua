@@ -1,35 +1,33 @@
 -- Crapouille Technologies transform (vehicles/sunburst2/transform/craptech_transform.jbeam).
 --
--- With the narrow track the race add-ons tuck away, mechanically: the fender flares sink into
+-- On its own switch (toggle(), the glove box panel) the race add-ons tuck away, mechanically: the fender flares sink into
 -- the body (a ring of tiles round each arch, all together), turn over out of sight inside it and
 -- rise back out, flush, as the plain panel each tile carries on its back; the side skirts fold in
 -- about their top edge until they hang straight like the stock skirt (their lower half swings up
 -- under the sill); the splitter slides into the bumper in pieces and rises out of sight (its centre
 -- piece stays, flush, as the bumper's lower edge, and a lower lip hidden inside the splitter closes
 -- the bumper round the corners); and the diffuser fins fold up into the diffuser, sliding doors
--- closing the slots behind them. The wide track brings them back out. Nothing is swapped for
--- another part.
+-- closing the slots behind them. The switch again brings them back out. Nothing is swapped for
+-- another part. The kit spawns tucked away (the stock look); a reset keeps what the switch says.
 --
--- The track is the air jacks' (craptechAirJacks): the kit follows the track asked for as soon as
--- the button is pressed; the air jacks hold the wheels until the flares are out, and tucking away
--- waits for the wheels to be back in (the flares come in over the tyres). Without the air jacks
--- the kit stays out. Like the wing and the air jacks it only moves with power on and below 10 mph
--- (it waits otherwise). Before tucking away it stows the JATO if it is out.
+-- It needs the car up on the air jacks (craptechAirJacks.lifted(), raised by their own switch only):
+-- with the car down it waits, and a move pauses if the car drops. Like the wing and the air jacks
+-- it only moves with power on and below 10 mph (it waits otherwise). Before tucking away it stows
+-- the JATO if it is out.
 --
--- How: each add-on has a moving copy (prop). In the race look the fitted mesh (flexbody, which
--- deforms with the car) shows; as soon as the move starts it is faded out with setMeshAlpha (GE)
--- and the prop, identical at that point, takes over (one fitted mesh may hand over to several props,
--- like the splitter's pieces or the diffuser's fins and doors). A move in two directions would be
--- two props, the second starting where the first ends. Props are shown / hidden with their "hidden"
--- flag (setMeshAlpha does not reach props).
+-- How: each add-on is a prop (a rigid mesh riding on three of the nodes it sits on), in the race look
+-- too: a replay records props but not meshes faded with setMeshAlpha, so nothing is faded. The config
+-- fits copies of the stock parts that leave out the add-ons' own meshes and the panels cut open for
+-- them (stockparts/craptech_stockparts.jbeam). A flare, the splitter or the diffuser fins come as
+-- several pieces, and a move in two directions is two props, the second starting where the first
+-- ends: each piece shows one stage, shown / hidden with the props' "hidden" flag.
 --
 -- Electrics written: craptech_xf_state (0 = race look .. 1 = tucked away), and one 0..1 travel per
 -- group of props, each moving in its own part of the transform time.
 --
 -- jbeam: ["craptechTransform", {"name":"transform", "time":3.0, "pumpNode":"...",
 --          "groups":[["craptech_xf_flares", 0, 0.5], ...],     electric, start, end
---          "pieces":[["<fitted mesh>", [["<prop mesh>", "<its electric>"], <later stages>]], ...],   (a fitted mesh may head several pieces)
---          "hidden":["<mesh hidden for good>", ...]}]
+--          "pieces":[[["<prop mesh>", "<its electric>"], <later stages>], ...]}]
 
 local M = {}
 M.type = "auxiliary"
@@ -39,8 +37,7 @@ local min, max, abs = math.min, math.max, math.abs
 local MAX_MOVE_SPEED = 10 * 0.44704   -- m/s
 
 local transformTime = 3.0
-local groups, pieces, hidden = {}, {}, {}
-local alpha = {}           -- flexbody mesh -> alpha last sent
+local groups, pieces = {}, {}
 local propsByMesh = {}     -- prop mesh -> list of prop entries of v.data.props
 local propShown = {}       -- prop mesh -> visibility last set
 local p = 0                -- 0 race look .. 1 tucked away
@@ -59,9 +56,21 @@ local function ease(x)
   return x * x * (3 - 2 * x)
 end
 
-local function narrowTrack()
+local kitOut = false       -- the switch: race kit out (spawns tucked away)
+
+local function jacksUp()
   local jacks = controller.getController("craptechAirJacks")
-  return jacks ~= nil and jacks.wantsWide ~= nil and not jacks.wantsWide()
+  return not jacks or jacks.lifted()
+end
+
+local function toggle()
+  kitOut = not kitOut
+  guihooks.message((kitOut and "Crapouille: race kit out" or "Crapouille: race kit tucks away") ..
+    (jacksUp() and "" or " once the car is up on the air jacks"), 2, "craptech_transform")
+end
+
+local function wantsOut()
+  return kitOut
 end
 
 local function indexProps()
@@ -75,22 +84,9 @@ local function indexProps()
 end
 
 local function apply(force)
-  local cmds = {}
-  local function setAlpha(mesh, a)
-    if force or alpha[mesh] ~= a then
-      alpha[mesh] = a
-      cmds[#cmds + 1] = string.format("v:setMeshAlpha(%d,%q,false)", a, mesh)
-    end
-  end
-  for _, mesh in ipairs(hidden) do
-    setAlpha(mesh, 0)
-  end
-  local moved = p > 0
   local ev = electrics.values
-  for _, pc in ipairs(pieces) do
-    setAlpha(pc[1], moved and 0 or 1)
-    -- stage props: a later stage takes over once its own move has started
-    local stages = pc[2]
+  for _, stages in ipairs(pieces) do
+    -- a later stage takes over once its own move has started
     local active = 1
     for i = 2, #stages do
       if (ev[stages[i][2]] or 0) > 0 then
@@ -98,7 +94,7 @@ local function apply(force)
       end
     end
     for i, st in ipairs(stages) do
-      local show = moved and i == active
+      local show = i == active
       if force or propShown[st[1]] ~= show then
         propShown[st[1]] = show
         for _, prop in ipairs(propsByMesh[st[1]] or {}) do
@@ -108,9 +104,6 @@ local function apply(force)
         end
       end
     end
-  end
-  if #cmds > 0 then
-    obj:queueGameEngineLua(string.format("local v = be:getObjectByID(%d) if v then %s end", obj:getId(), table.concat(cmds, " ")))
   end
 end
 
@@ -139,7 +132,7 @@ end
 
 local function updateGFX(dt)
   local ev = electrics.values
-  local target = narrowTrack() and 1 or 0
+  local target = kitOut and 0 or 1
 
   if snapNext then
     snapNext = false
@@ -158,15 +151,12 @@ local function updateGFX(dt)
         jato.retract()
       end
       target = p
-    elseif (ev.craptech_track_wide or 0) > 0 then
-      -- the wheels are still on their way in: the flares wait for them
-      target = p
     end
   end
 
   local moving = false
   if p ~= target then
-    local canMove = (ev.ignitionLevel or 0) >= 1 and (ev.airspeed or 0) <= MAX_MOVE_SPEED
+    local canMove = (ev.ignitionLevel or 0) >= 1 and (ev.airspeed or 0) <= MAX_MOVE_SPEED and jacksUp()
     if canMove then
       warnedSpeed = false
       local step = dt / transformTime
@@ -183,7 +173,6 @@ local function updateGFX(dt)
 end
 
 local function reset()
-  alpha = {}
   propShown = {}
   snapNext = true
   warnedSpeed = false
@@ -212,7 +201,7 @@ local function init(jbeamData)
   pumpNode = jbeamData.pumpNode
   groups = jbeamData.groups or {}
   pieces = jbeamData.pieces or {}
-  hidden = jbeamData.hidden or {}
+  kitOut = false
   p = 0
   reset()
 end
@@ -222,5 +211,7 @@ M.reset = reset
 M.updateGFX = updateGFX
 M.initSounds = initSounds
 M.resetSounds = resetSounds
+M.toggle = toggle
+M.wantsOut = wantsOut
 
 return M

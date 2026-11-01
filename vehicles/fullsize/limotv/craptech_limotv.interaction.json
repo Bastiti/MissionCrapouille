@@ -1,0 +1,41 @@
+{
+  "fileversion": 2,
+  "actions": {
+    "craptech_limotv_power": {
+      "order": 1,
+      "onDown": "local c = controller.getController('craptechLimoTV') if c then c.power() end",
+      "title": "TV: on / off",
+      "desc": "The limo bar's TV: on or off (its round POWER button)"
+    },
+    "craptech_limotv_next": {
+      "order": 2,
+      "onDown": "local c = controller.getController('craptechLimoTV') if c then c.nextChannel() end",
+      "title": "TV: next channel",
+      "desc": "The limo bar's TV: next channel, switching it on if it is off (CH up, or the screen)"
+    },
+    "craptech_limotv_prev": {
+      "order": 3,
+      "onDown": "local c = controller.getController('craptechLimoTV') if c then c.prevChannel() end",
+      "title": "TV: previous channel",
+      "desc": "The limo bar's TV: previous channel, switching it on if it is off (CH down)"
+    },
+    "craptech_limotv_disp": {
+      "order": 4,
+      "onDown": "local c = controller.getController('craptechLimoTV') if c then c.display() end",
+      "title": "TV: show the channel",
+      "desc": "The limo bar's TV: shows the channel number a few seconds (DISP)"
+    },
+    "craptech_limotv_volup": {
+      "order": 5,
+      "onDown": "local c = controller.getController('craptechLimoTV') if c then c.volumeUp() end",
+      "title": "TV: volume up",
+      "desc": "The limo bar's TV: louder (VL up)"
+    },
+    "craptech_limotv_voldown": {
+      "order": 6,
+      "onDown": "local c = controller.getController('craptechLimoTV') if c then c.volumeDown() end",
+      "title": "TV: volume down",
+      "desc": "The limo bar's TV: quieter (VL down)"
+    }
+  }
+}

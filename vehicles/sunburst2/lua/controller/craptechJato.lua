@@ -3,8 +3,10 @@
 -- Deploying and firing are separate:
 --   M.toggleDeploy()  deploy: the painted panels slide down behind the bumper lip, then the two
 --                     rockets come out on their rails. Retract: the reverse (a burn is stopped
---                     first). Needs power (ignition at least accessories). Refused while the
---                     race kit is not fully out (narrow track, craptechTransform).
+--                     first). Needs power (ignition at least accessories) and the whole race
+--                     setup there: wide track (craptechAirJacks), race kit (craptechTransform)
+--                     and wing (craptechActiveAero) out. Switching one of them away stows the
+--                     rockets.
 --   M.toggleFire()    fire / stop. Also driven by electrics.values.jatoInput, the electric of the
 --                     stock JATO key, the simple powertrain app button, drag races and AI.
 --                     Only burns with the rockets fully out; otherwise it says so.
@@ -59,14 +61,28 @@ local function updateButton(ratio)
   end
 end
 
+-- the race setup the rockets need, asked for (a part missing from the car counts as there)
+local function raceWanted()
+  local jacks, kit, wing = controller.getController("craptechAirJacks"), controller.getController("transform"),
+    controller.getController("craptechActiveAero")
+  return (not jacks or jacks.wantsWide()) and (not kit or kit.wantsOut()) and (not wing or wing.wantsOut())
+end
+
+-- ... and there, not moving
+local function raceReady()
+  local e = electrics.values
+  local jacks = controller.getController("craptechAirJacks")
+  return raceWanted() and (not jacks or (not jacks.busy() and (e.craptech_track_wide or 0) >= 0.999))
+    and (e.craptech_xf_state or 0) <= 0.001 and (e.craptech_spoiler_lift or 2) >= 1.999
+end
+
 local function toggleDeploy()
   if (electrics.values.ignitionLevel or 0) < 1 then
     msg("no power")
     return
   end
-  -- no rockets unless the race kit is out (craptechTransform: wide track)
-  if not deployed and (electrics.values.craptech_xf_state or 0) > 0 then
-    msg("race kit tucked away (wide track brings it out)")
+  if not deployed and not raceReady() then
+    msg("needs the wide wheels, the race kit and the wing out")
     return
   end
   deployed = not deployed
@@ -74,6 +90,11 @@ local function toggleDeploy()
     electrics.values.jatoInput = 0
   end
   msg(deployed and "deploying" or "retracting")
+end
+
+-- the wanted state (the glove box switch shows it)
+local function isDeployed()
+  return deployed
 end
 
 -- stow the rockets (used by craptechTransform before it turns the car stock-looking)
@@ -112,6 +133,12 @@ local function setSound(on)
 end
 
 local function updateGFX(dt)
+  -- the wheels, the kit or the wing switched away: the rockets go back in
+  if deployed and not raceWanted() then
+    deployed = false
+    electrics.values.jatoInput = 0
+    msg("retracting (race setup switched off)")
+  end
   local request = (electrics.values.jatoInput or 0) > 0.5
   if request and fuel <= 0 then
     electrics.values.jatoInput = 0
@@ -253,6 +280,7 @@ M.resetSounds = resetSounds
 M.toggleDeploy = toggleDeploy
 M.retract = retract
 M.toggleFire = toggleFire
+M.isDeployed = isDeployed
 M.toggle = toggleFire
 
 return M

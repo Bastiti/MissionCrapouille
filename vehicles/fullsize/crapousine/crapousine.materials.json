@@ -1,0 +1,245 @@
+{
+  "craptech_crapousine_badges": {
+    "name": "craptech_crapousine_badges",
+    "mapTo": "craptech_crapousine_badges",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorMap": "/vehicles/fullsize/crapousine/crapousine_badges.color.png",
+        "opacityMap": "/vehicles/fullsize/crapousine/crapousine_badges_o.data.png",
+        "normalMap": "/vehicles/fullsize/crapousine/crapousine_badges_n.normal.png",
+        "metallicFactor": 1,
+        "roughnessFactor": 0.2,
+        "pixelSpecular": true
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 127,
+    "alphaTest": true,
+    "castShadows": false,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "materialTag2": "decal",
+    "version": 1.5
+  },
+  "fullsize_interior.skin_interior.crapousine": {
+    "name": "fullsize_interior.skin_interior.crapousine",
+    "mapTo": "fullsize_interior.skin_interior.crapousine",
+    "class": "Material",
+    "Stages": [
+      {
+        "ambientOcclusionMap": "/vehicles/fullsize/fullsize_interior_ao.data.png",
+        "baseColorFactor": null,
+        "baseColorMap": "/vehicles/fullsize/fullsize_interior_b.color.png",
+        "metallicFactor": 1,
+        "metallicMap": "/vehicles/fullsize/fullsize_interior_m.data.png",
+        "normalMap": "/vehicles/fullsize/fullsize_interior_nm.normal.png",
+        "paletteBaseColor": false,
+        "paletteClearCoat": false,
+        "paletteClearCoatRoughness": false,
+        "paletteMetallic": false,
+        "paletteRoughness": false,
+        "roughnessMap": "/vehicles/fullsize/fullsize_interior_r.data.png"
+      },
+      {
+        "baseColorFactor": [
+          0.32,
+          0.13,
+          0.36,
+          1
+        ],
+        "baseColorMap": "/vehicles/fullsize/fullsize_interior_b.color.png",
+        "metallicFactor": 1,
+        "metallicMap": "/vehicles/fullsize/fullsize_interior_m.data.png",
+        "normalMap": "/vehicles/fullsize/fullsize_interior_nm.normal.png",
+        "opacityMap": "/vehicles/fullsize/fullsize_interior_c.data.png",
+        "paletteBaseColor": null,
+        "paletteClearCoat": null,
+        "paletteClearCoatRoughness": null,
+        "paletteMetallic": null,
+        "paletteRoughness": null,
+        "roughnessMap": "/vehicles/fullsize/fullsize_interior_r.data.png"
+      },
+      {
+        "baseColorFactor": null,
+        "metallicFactor": null,
+        "paletteBaseColor": null,
+        "paletteClearCoat": null,
+        "paletteClearCoatRoughness": null,
+        "paletteMetallic": null
+      },
+      {
+        "baseColorFactor": null,
+        "metallicFactor": null,
+        "paletteBaseColor": null,
+        "paletteClearCoat": null,
+        "paletteClearCoatRoughness": null,
+        "paletteMetallic": null,
+        "paletteRoughness": null
+      }
+    ],
+    "activeLayers": 2,
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "fullsize_intcarpet.skin_interior.crapousine": {
+    "name": "fullsize_intcarpet.skin_interior.crapousine",
+    "mapTo": "fullsize_intcarpet.skin_interior.crapousine",
+    "class": "Material",
+    "Stages": [
+      {
+        "ambientOcclusionMap": "/vehicles/fullsize/fullsize_intcarpet_ao.data.png",
+        "baseColorFactor": [
+          0.32,
+          0.13,
+          0.36,
+          1
+        ],
+        "baseColorMap": "/vehicles/fullsize/fullsize_intcarpet_b.color.png",
+        "metallicFactor": 1,
+        "metallicMap": "/vehicles/fullsize/fullsize_intcarpet_m.data.png",
+        "normalMap": "/vehicles/fullsize/fullsize_intcarpet_nm.normal.png",
+        "roughnessMap": "/vehicles/fullsize/fullsize_intcarpet_r.data.png"
+      },
+      {
+        "baseColorFactor": null,
+        "metallicFactor": null
+      },
+      {
+        "baseColorFactor": null,
+        "metallicFactor": null
+      },
+      {
+        "baseColorFactor": null,
+        "metallicFactor": null
+      }
+    ],
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "version": 1.5
+  },
+  "limo_interior.skin_interior.crapousine": {
+    "name": "limo_interior.skin_interior.crapousine",
+    "mapTo": "limo_interior.skin_interior.crapousine",
+    "class": "Material",
+    "Stages": [
+      {
+        "ambientOcclusionMap": "/vehicles/common/limo/limo_interior_ao.data.png",
+        "baseColorFactor": null,
+        "baseColorMap": "/vehicles/common/limo/limo_interior_b.color.png",
+        "metallicFactor": 1,
+        "metallicMap": "/vehicles/common/limo/limo_interior_m.data.png",
+        "normalMap": "/vehicles/common/limo/limo_interior_nm.normal.png",
+        "pixelSpecular": true,
+        "roughnessMap": "/vehicles/common/limo/limo_interior_r.data.png"
+      },
+      {
+        "ambientOcclusionMap": "/vehicles/common/limo/limo_interior_ao.data.png",
+        "baseColorFactor": [
+          0.32,
+          0.13,
+          0.36,
+          1
+        ],
+        "baseColorMap": "/vehicles/common/limo/limo_interior_b.color.png",
+        "metallicFactor": null,
+        "metallicMap": "/vehicles/common/limo/limo_interior_m.data.png",
+        "normalMap": "/vehicles/common/limo/limo_interior_nm.normal.png",
+        "opacityMap": "/vehicles/common/limo/limo_interior_c.data.png",
+        "pixelSpecular": null,
+        "roughnessMap": "/vehicles/common/limo/limo_interior_r.data.png"
+      },
+      {
+        "baseColorFactor": null,
+        "metallicFactor": null,
+        "pixelSpecular": null
+      },
+      {
+        "baseColorFactor": null,
+        "metallicFactor": null,
+        "pixelSpecular": null
+      }
+    ],
+    "activeLayers": 2,
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucent": true,
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "limo_interior_on.skin_interior.crapousine": {
+    "name": "limo_interior_on.skin_interior.crapousine",
+    "mapTo": "limo_interior_on.skin_interior.crapousine",
+    "class": "Material",
+    "Stages": [
+      {
+        "ambientOcclusionMap": "/vehicles/common/limo/limo_interior_ao.data.png",
+        "baseColorFactor": null,
+        "baseColorMap": "/vehicles/common/limo/limo_interior_b.color.png",
+        "emissiveFactor": [
+          1,
+          1,
+          1
+        ],
+        "emissiveIntensityNits": 2000,
+        "emissiveMap": "/vehicles/common/limo/limo_interior_g.color.png",
+        "metallicFactor": 1,
+        "metallicMap": "/vehicles/common/limo/limo_interior_m.data.png",
+        "normalMap": "/vehicles/common/limo/limo_interior_nm.normal.png",
+        "pixelSpecular": true,
+        "roughnessMap": "/vehicles/common/limo/limo_interior_r.data.png"
+      },
+      {
+        "ambientOcclusionMap": "/vehicles/common/limo/limo_interior_ao.data.png",
+        "baseColorFactor": [
+          0.32,
+          0.13,
+          0.36,
+          1
+        ],
+        "baseColorMap": "/vehicles/common/limo/limo_interior_b.color.png",
+        "emissiveFactor": null,
+        "emissiveIntensityNits": null,
+        "emissiveMap": "/vehicles/common/limo/limo_interior_g.color.png",
+        "metallicFactor": null,
+        "metallicMap": "/vehicles/common/limo/limo_interior_m.data.png",
+        "normalMap": "/vehicles/common/limo/limo_interior_nm.normal.png",
+        "opacityMap": "/vehicles/common/limo/limo_interior_c.data.png",
+        "pixelSpecular": null,
+        "roughnessMap": "/vehicles/common/limo/limo_interior_r.data.png"
+      },
+      {
+        "baseColorFactor": null,
+        "emissiveFactor": null,
+        "emissiveIntensityNits": null,
+        "metallicFactor": null,
+        "pixelSpecular": null
+      },
+      {
+        "baseColorFactor": null,
+        "emissiveFactor": null,
+        "emissiveIntensityNits": null,
+        "metallicFactor": null,
+        "pixelSpecular": null
+      }
+    ],
+    "activeLayers": 2,
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucent": true,
+    "translucentBlendOp": "None",
+    "version": 1.5
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "Body Style": "Limousine",
+  "Drivetrain": "RWD",
+  "Fuel Type": "Gasoline",
+  "Induction Type": "NA",
+  "InsuranceClass": "commercial",
+  "Propulsion": "ICE",
+  "Transmission": "Automatic",
+  "Power": 222,
+  "Torque": 430,
+  "Weight": 2886,
+  "defaultPaintName1": "Night Blue",
+  "defaultPaintName2": "chrome",
+  "defaultPaintName3": "Night Blue",
+  "vehicleSelectorSubGroup": "vehiclesData.fullsize.limo_base.vehicleSelectorSubGroup",
+  "Configuration": "Crapousine",
+  "Config Type": "Custom",
+  "Value": 172000,
+  "Population": 0,
+  "Description": "The Crapouille limousine: the official limousine with its own badges and interior colour, the Miel flags, a bar TV that plays your own videos and live streams with sound, and a full digital instrument cluster."
+}

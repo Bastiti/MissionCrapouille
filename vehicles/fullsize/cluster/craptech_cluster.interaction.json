@@ -1,0 +1,17 @@
+{
+  "fileversion": 2,
+  "actions": {
+    "craptech_cluster_page": {
+      "order": 1,
+      "onDown": "local c = controller.getController('craptechCluster') if c then c.nextPage() end",
+      "title": "Cluster: next page",
+      "desc": "The digital cluster's middle: map, trip computer or engine readings (a click on the screen)"
+    },
+    "craptech_cluster_trip": {
+      "order": 2,
+      "onDown": "local c = controller.getController('craptechCluster') if c then c.resetTrip() end",
+      "title": "Cluster: reset the trip",
+      "desc": "The digital cluster's trip computer starts again (a middle click on the screen)"
+    }
+  }
+}

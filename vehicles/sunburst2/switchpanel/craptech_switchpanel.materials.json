@@ -1,0 +1,534 @@
+{
+  "craptech_swpanel_well": {
+    "name": "craptech_swpanel_well",
+    "mapTo": "craptech_swpanel_well",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.02,
+          0.02,
+          0.02,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.85
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_swpanel_side": {
+    "name": "craptech_swpanel_side",
+    "mapTo": "craptech_swpanel_side",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.03,
+          0.03,
+          0.03,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.6
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_swpanel_plate": {
+    "name": "craptech_swpanel_plate",
+    "mapTo": "craptech_swpanel_plate",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorMap": "/vehicles/sunburst2/switchpanel/craptech_switchpanel_plate.color.png",
+        "metallicFactor": 0,
+        "roughnessFactor": 0.45
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_swpanel_plate_lit": {
+    "name": "craptech_swpanel_plate_lit",
+    "mapTo": "craptech_swpanel_plate_lit",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorMap": "/vehicles/sunburst2/switchpanel/craptech_switchpanel_plate.color.png",
+        "emissive": true,
+        "emissiveFactor": [
+          1,
+          1,
+          1
+        ],
+        "emissiveMap": "/vehicles/sunburst2/switchpanel/craptech_switchpanel_plate.color.png",
+        "emissiveIntensityNits": 80,
+        "metallicFactor": 0,
+        "roughnessFactor": 0.45
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_gsw_base": {
+    "name": "craptech_gsw_base",
+    "mapTo": "craptech_gsw_base",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.02,
+          0.02,
+          0.02,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.35
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_gsw_chrome": {
+    "name": "craptech_gsw_chrome",
+    "mapTo": "craptech_gsw_chrome",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.92,
+          0.92,
+          0.94,
+          1
+        ],
+        "metallicFactor": 1,
+        "roughnessFactor": 0.08
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_firebtn": {
+    "name": "craptech_firebtn",
+    "mapTo": "craptech_firebtn",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.78,
+          0.02,
+          0.015,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.18,
+        "clearCoatFactor": 1,
+        "clearCoatRoughnessFactor": 0.05
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_firebtn_lit": {
+    "name": "craptech_firebtn_lit",
+    "mapTo": "craptech_firebtn_lit",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          1.0,
+          0.06,
+          0.03,
+          1
+        ],
+        "emissive": true,
+        "emissiveFactor": [
+          1.0,
+          0.05,
+          0.02
+        ],
+        "emissiveIntensityNits": 1500,
+        "metallicFactor": 0,
+        "roughnessFactor": 0.18
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_firebtn_collar": {
+    "name": "craptech_firebtn_collar",
+    "mapTo": "craptech_firebtn_collar",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.025,
+          0.025,
+          0.027,
+          1
+        ],
+        "metallicFactor": 0.3,
+        "roughnessFactor": 0.4
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_gsw_led_on": {
+    "name": "craptech_gsw_led_on",
+    "mapTo": "craptech_gsw_led_on",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          1.0,
+          0.08,
+          0.05,
+          1
+        ],
+        "emissive": true,
+        "emissiveFactor": [
+          1.0,
+          0.08,
+          0.05
+        ],
+        "emissiveIntensityNits": 3000,
+        "metallicFactor": 0,
+        "roughnessFactor": 0.1
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_swbtn": {
+    "name": "craptech_swbtn",
+    "mapTo": "craptech_swbtn",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorMap": "/vehicles/sunburst2/switchpanel/craptech_switchpanel_button.color.png",
+        "metallicFactor": 0,
+        "roughnessFactor": 0.5
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_swbtn_lit": {
+    "name": "craptech_swbtn_lit",
+    "mapTo": "craptech_swbtn_lit",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorMap": "/vehicles/sunburst2/switchpanel/craptech_switchpanel_button.color.png",
+        "emissive": true,
+        "emissiveFactor": [
+          1.0,
+          0.42,
+          0.0
+        ],
+        "emissiveMap": "/vehicles/sunburst2/switchpanel/craptech_switchpanel_button.color.png",
+        "emissiveIntensityNits": 300,
+        "metallicFactor": 0,
+        "roughnessFactor": 0.5
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_swbtn_side": {
+    "name": "craptech_swbtn_side",
+    "mapTo": "craptech_swbtn_side",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.03,
+          0.03,
+          0.035,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.5
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_gsw_led_1": {
+    "name": "craptech_gsw_led_1",
+    "mapTo": "craptech_gsw_led_1",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.22,
+          0.02,
+          0.02,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.1
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_gsw_led_2": {
+    "name": "craptech_gsw_led_2",
+    "mapTo": "craptech_gsw_led_2",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.22,
+          0.02,
+          0.02,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.1
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_gsw_led_3": {
+    "name": "craptech_gsw_led_3",
+    "mapTo": "craptech_gsw_led_3",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.22,
+          0.02,
+          0.02,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.1
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_gsw_led_4": {
+    "name": "craptech_gsw_led_4",
+    "mapTo": "craptech_gsw_led_4",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.22,
+          0.02,
+          0.02,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.1
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_gsw_led_5": {
+    "name": "craptech_gsw_led_5",
+    "mapTo": "craptech_gsw_led_5",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.22,
+          0.02,
+          0.02,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.1
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_gsw_led_6": {
+    "name": "craptech_gsw_led_6",
+    "mapTo": "craptech_gsw_led_6",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.22,
+          0.02,
+          0.02,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.1
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_gsw_led_7": {
+    "name": "craptech_gsw_led_7",
+    "mapTo": "craptech_gsw_led_7",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.22,
+          0.02,
+          0.02,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.1
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  }
+}

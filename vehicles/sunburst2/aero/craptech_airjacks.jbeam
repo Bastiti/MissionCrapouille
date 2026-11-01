@@ -72,9 +72,10 @@
         ["f4rr", "aj_rr", {"beamSpring":1500000,"beamDamp":400,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"breakGroup":"","deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0,"inputInLimit":0,"inputOutLimit":1,"inLimit":1.0,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_aj_15","outLimit":1.57899}],
         ["r1rr", "aj_rr", {"beamSpring":1500000,"beamDamp":400,"beamDeform":"FLT_MAX","beamStrength":"FLT_MAX","beamPrecompression":1,"breakGroup":"","deformGroup":"","factor":"","extentFactor":"","inputFactor":1,"inputCenter":0,"inputInLimit":0,"inputOutLimit":1,"inLimit":1.0,"inRate":40,"outRate":40,"autoCenterRate":40,"inputSource":"craptech_aj_16","outLimit":1.40949}],
     ],
+    //  raised in 0.7 s like the 406's jacks in the film "Taxi" (1998)
     "controller": [
         ["fileName"],
-        ["craptechAirJacks", {"stroke":0.250, "travelTime":1.5,
+        ["craptechAirJacks", {"stroke":0.250, "travelTime":0.7,
                               "hydros":[["craptech_aj_1", 0.365, -1.015, 0.229, 0.365, -1.015, 0.17, 0.059, 8.11864], ["craptech_aj_2", 0.323, -0.373, 0.182, 0.365, -1.015, 0.17, 0.64348, 1.20431], ["craptech_aj_3", 0.76, -0.804, 0.182, 0.365, -1.015, 0.17, 0.44798, 1.38895], ["craptech_aj_4", 0.409, -1.5, 0.31, 0.365, -1.015, 0.17, 0.50672, 1.46459], ["craptech_aj_5", -0.365, -1.015, 0.229, -0.365, -1.015, 0.17, 0.059, 8.11864], ["craptech_aj_6", -0.323, -0.373, 0.182, -0.365, -1.015, 0.17, 0.64348, 1.20431], ["craptech_aj_7", -0.76, -0.804, 0.182, -0.365, -1.015, 0.17, 0.44798, 1.38895], ["craptech_aj_8", -0.409, -1.5, 0.31, -0.365, -1.015, 0.17, 0.50672, 1.46459], ["craptech_aj_9", 0.375, 0.918, 0.23, 0.375, 0.918, 0.17, 0.06, 8.0], ["craptech_aj_10", 0.323, 0.298, 0.182, 0.375, 0.918, 0.17, 0.62229, 1.21719], ["craptech_aj_11", 0.76, 0.91, 0.23, 0.375, 0.918, 0.17, 0.38973, 1.57899], ["craptech_aj_12", 0.406, 1.45, 0.32, 0.375, 0.918, 0.17, 0.55361, 1.40949], ["craptech_aj_13", -0.375, 0.918, 0.23, -0.375, 0.918, 0.17, 0.06, 8.0], ["craptech_aj_14", -0.323, 0.298, 0.182, -0.375, 0.918, 0.17, 0.62229, 1.21719], ["craptech_aj_15", -0.76, 0.91, 0.23, -0.375, 0.918, 0.17, 0.38973, 1.57899], ["craptech_aj_16", -0.406, 1.45, 0.32, -0.375, 0.918, 0.17, 0.55361, 1.40949]]}],
     ],
 },

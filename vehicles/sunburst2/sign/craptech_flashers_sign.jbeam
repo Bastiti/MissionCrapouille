@@ -119,7 +119,7 @@
     ],
     //  Fold-down board. It hangs from a hinge along its top edge just under the headliner
     //  (sgn_hl/sgn_hr, clamped to the roof nodes) and two hydros from rf3 pull its bottom
-    //  edge forward. craptech_sign_deploy (set by craptechSign.lua when the lightbar is on):
+    //  edge forward. craptech_sign_deploy (set by craptechSign.lua while its switch is on):
     //      0 -> folded ~75 deg forward, flat under the headliner   1 -> hanging upright
     //  Hydro ratio 0.815 = folded, worked out from the hinge geometry (built upright = 1.0).
     //  Every row carries its own options: jbeam modifier rows would carry over into the

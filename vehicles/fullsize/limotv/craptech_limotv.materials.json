@@ -1,0 +1,75 @@
+{
+  "craptech_ltv_face": {
+    "name": "craptech_ltv_face",
+    "mapTo": "craptech_ltv_face",
+    "class": "Material",
+    "Stages": [
+      {},
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucent": true,
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_ltv_off": {
+    "name": "craptech_ltv_off",
+    "mapTo": "craptech_ltv_off",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.03,
+          0.036,
+          0.034,
+          1
+        ],
+        "pixelSpecular": true
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucent": true,
+    "translucentBlendOp": "None",
+    "version": 1.5
+  },
+  "craptech_ltv_on": {
+    "name": "craptech_ltv_on",
+    "mapTo": "craptech_ltv_on",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorMap": "@craptech_limotv",
+        "diffuseMapUseUV": 1,
+        "emissiveFactor": [
+          1,
+          1,
+          1
+        ],
+        "emissiveMap": "@craptech_limotv",
+        "emissiveMapUseUV": 1,
+        "pixelSpecular": true
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 0,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucent": true,
+    "translucentBlendOp": "None",
+    "version": 1.5
+  }
+}
