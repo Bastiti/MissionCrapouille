@@ -15,12 +15,14 @@ One picture holds every sign of the car, each in its own box (2048 x 1024 pixels
 car). crapousine_badges_guide.png shows the boxes, their size on the car and where each one goes:
 
   REAR LETTERS   trunk lid, right side seen from behind      (stock: GRAND MARSHAL)   228 x 17 mm
-  REAR LOGO      trunk lid, left side seen from behind       (stock: GAVRIL)          117 x 28 mm
+  REAR LOGO      trunk lid, left side seen from behind       (stock: GAVRIL)           48 x 64 mm
   REAR BADGE     low on the trunk lid, left side             (stock: V8)               61 x 28 mm
-  FRONT LOGO     grille, right side seen from the front      (stock: GAVRIL)           97 x 15 mm
+  FRONT LOGO     grille, right side seen from the front      (stock: GAVRIL)           43 x 57 mm
   FRONT BADGE    grille, left side seen from the front       (stock: V8)               47 x 15 mm
 
-It comes filled with CRAPOUSINE / CRAPOUILLE / V8. To change them, open it in an editor that keeps
+It comes filled with CRAPOUSINE and V8, and the brand logo is the Crapouille fox of the Sunburst's lettering.
+The two logo badges are cut to the fox's shape: an upright emblem in place of the stock GAVRIL word, on the
+trunk lid's rear edge and in the grille's corner. To change them, open the picture in an editor that keeps
 transparency (Paint.NET, GIMP, Photoshop, Krita...); the guide can go in a layer underneath, as a stencil.
 
   - Paint inside the boxes, upright, as you'd read them on the car. Anything outside a box never shows.
