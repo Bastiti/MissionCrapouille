@@ -1,0 +1,8 @@
+# Videos stay on this PC, out of git: the limo TV plays the ones in vehicles/fullsize/limotv/channels/ch1..ch9,
+# and GitHub refuses files over 100 MB.
+*.mp4
+*.webm
+*.mkv
+*.mov
+*.avi
+*.m4v
