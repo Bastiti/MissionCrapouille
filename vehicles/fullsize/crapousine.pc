@@ -97,7 +97,7 @@
     "fullsize_spotlight_R": "",
     "fullsize_spring_F": "fullsize_spring_F_limo",
     "fullsize_spring_R": "fullsize_spring_R_limo",
-    "fullsize_steer": "fullsize_steer",
+    "fullsize_steer": "craptech_fullsize_steer_bastion",
     "fullsize_steering": "fullsize_steering",
     "fullsize_suspension_F": "fullsize_suspension_F",
     "fullsize_suspension_R": "fullsize_suspension_R",

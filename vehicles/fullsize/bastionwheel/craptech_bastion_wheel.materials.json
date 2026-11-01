@@ -1,0 +1,31 @@
+{
+  "craptech_bastion_wheel": {
+    "name": "craptech_bastion_wheel",
+    "mapTo": "craptech_bastion_wheel",
+    "class": "Material",
+    "Stages": [
+      {
+        "ambientOcclusionMap": "/vehicles/bastion/bastion_interior_ao.data.png",
+        "baseColorFactor": [
+          1,
+          0.999989986,
+          0.999989986,
+          1
+        ],
+        "baseColorMap": "/vehicles/bastion/bastion_interior_b.color.png",
+        "metallicFactor": 1,
+        "metallicMap": "/vehicles/bastion/bastion_interior_m.data.png",
+        "normalMap": "/vehicles/bastion/bastion_interior_nm.normal.png",
+        "roughnessMap": "/vehicles/bastion/bastion_interior_r.data.png"
+      },
+      {},
+      {},
+      {}
+    ],
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "translucentBlendOp": "None",
+    "version": 1.5
+  }
+}

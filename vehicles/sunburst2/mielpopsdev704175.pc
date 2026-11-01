@@ -227,7 +227,7 @@
     "sunburst2_skidplate_R": "",
     "sunburst2_skidplate_rally_M": "",
     "sunburst2_spoiler_sedan": "craptech_spoiler_sedan_rs_active",
-    "sunburst2_steer": "sunburst2_steer_sport",
+    "sunburst2_steer": "craptech_sunburst2_steer_bastion",
     "sunburst2_steering": "sunburst2_steering",
     "sunburst2_stiffening": "",
     "sunburst2_strut_F": "sunburst2_strut_F_race",
