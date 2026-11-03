@@ -1,0 +1,27 @@
+{
+  "craptech_hood_fox_chrome": {
+    "name": "craptech_hood_fox_chrome",
+    "mapTo": "craptech_hood_fox_chrome",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          0.92,
+          0.92,
+          0.93,
+          1
+        ],
+        "metallicFactor": 1,
+        "roughnessFactor": 0.12,
+        "pixelSpecular": true
+      },
+      {},
+      {},
+      {}
+    ],
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "version": 1.5
+  }
+}

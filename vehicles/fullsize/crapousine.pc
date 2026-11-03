@@ -59,6 +59,7 @@
     "fullsize_headlight_L": "fullsize_headlight_L",
     "fullsize_headlight_R": "fullsize_headlight_R",
     "fullsize_hood": "fullsize_hood",
+    "fullsize_hood_accessory": "craptech_hood_fox",
     "fullsize_hydraulics": "",
     "fullsize_innerfender_L": "fullsize_innerfender_L",
     "fullsize_innerfender_R": "fullsize_innerfender_R",
@@ -121,17 +122,17 @@
     "licenseplate_design_2_1": "",
     "linelock": "",
     "n2o_system": "",
+    "paint_design": "fullsize_limo_skin_chrome",
     "pickup_engine_v8_ecu": "pickup_engine_v8_ecu_sport",
     "pickup_engine_v8_internals": "pickup_engine_v8_internals",
     "pickup_oilpan_v8": "pickup_oilpan_v8",
     "skin_interior": "craptech_crapousine_interior",
-    "paint_design": "fullsize_limo_skin_chrome",
     "soundscape_horn": "soundscape_horn_123",
     "soundscape_siren": "soundscape_siren_4",
-    "tire_F_15x7_alt": "tire_F_205_75_15_alt_standard_ww",
-    "tire_R_15x7_alt": "tire_R_205_75_15_alt_standard_ww",
-    "wheel_F_5": "wheel_15b_15x7_F_altb",
-    "wheel_R_5": "wheel_15b_15x7_R_altb"
+    "tire_F_16x8_altb": "craptech_tire_F_235_55_16_altb_cgrip",
+    "tire_R_16x8_altb": "craptech_tire_R_235_55_16_altb_cgrip",
+    "wheel_F_5": "wheel_03a_16x8_F",
+    "wheel_R_5": "wheel_03a_16x8_R"
   },
   "vars": {
     "$headlightPitchComp": 0.3
