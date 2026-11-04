@@ -59,7 +59,7 @@
     "fullsize_headlight_L": "fullsize_headlight_L",
     "fullsize_headlight_R": "fullsize_headlight_R",
     "fullsize_hood": "fullsize_hood",
-    "fullsize_hood_accessory": "craptech_hood_fox",
+    "fullsize_hood_accessory": "craptech_hood_hope",
     "fullsize_hydraulics": "",
     "fullsize_innerfender_L": "fullsize_innerfender_L",
     "fullsize_innerfender_R": "fullsize_innerfender_R",
@@ -131,8 +131,8 @@
     "soundscape_siren": "soundscape_siren_4",
     "tire_F_16x8_altb": "craptech_tire_F_235_55_16_altb_cgrip",
     "tire_R_16x8_altb": "craptech_tire_R_235_55_16_altb_cgrip",
-    "wheel_F_5": "wheel_03a_16x8_F",
-    "wheel_R_5": "wheel_03a_16x8_R"
+    "wheel_F_5": "craptech_wheel_03a_16x8_F_fox",
+    "wheel_R_5": "craptech_wheel_03a_16x8_R_fox"
   },
   "vars": {
     "$headlightPitchComp": 0.3

@@ -1,0 +1,7 @@
+{
+  "craptech_wheel_cap_silver": {
+    "name": "craptech_wheel_cap_silver", "mapTo": "craptech_wheel_cap_silver", "class": "Material",
+    "Stages": [{"baseColorFactor": [0.9, 0.9, 0.92, 1], "metallicFactor": 1, "roughnessFactor": 0.12, "pixelSpecular": true}, {}, {}, {}],
+    "dynamicCubemap": true, "materialTag0": "beamng", "materialTag1": "vehicle", "version": 1.5
+  }
+}

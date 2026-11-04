@@ -5,14 +5,14 @@
     "class": "Material",
     "Stages": [
       {
-        "baseColorMap": "/vehicles/sunburst2/lettering/miel_lettering_b.color.dds",
+        "baseColorMap": "/vehicles/sunburst2/lettering/miel_lettering_b2.color.png",
         "clearCoatRoughnessFactor": 0,
         "metallicFactor": 1,
-        "metallicMap": "/vehicles/sunburst2/lettering/miel_lettering_m.data.dds",
+        "metallicMap": "/vehicles/sunburst2/lettering/miel_lettering_m2.data.png",
         "normalMap": "/vehicles/sunburst2/lettering/miel_lettering_nm.normal.dds",
         "opacityMap": "/vehicles/sunburst2/lettering/miel_lettering_op.data.dds",
         "pixelSpecular": true,
-        "roughnessMap": "/vehicles/sunburst2/lettering/miel_lettering_r.data.dds"
+        "roughnessMap": "/vehicles/sunburst2/lettering/miel_lettering_r2.data.png"
       },
       {
         "clearCoatRoughnessFactor": null,

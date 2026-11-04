@@ -1,0 +1,50 @@
+{
+  "craptech_hope_paint": {
+    "name": "craptech_hope_paint",
+    "mapTo": "craptech_hope_paint",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "vertColor": true,
+        "metallicFactor": 0,
+        "roughnessFactor": 0.42
+      },
+      {},
+      {},
+      {}
+    ],
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "version": 1.5
+  },
+  "craptech_hope_face": {
+    "name": "craptech_hope_face",
+    "mapTo": "craptech_hope_face",
+    "class": "Material",
+    "Stages": [
+      {
+        "baseColorMap": "/vehicles/fullsize/hoodfox/craptech_hope_face.color.png",
+        "opacityMap": "/vehicles/fullsize/hoodfox/craptech_hope_face_o.data.png",
+        "metallicFactor": 0,
+        "roughnessFactor": 0.3
+      },
+      {},
+      {},
+      {}
+    ],
+    "alphaRef": 127,
+    "alphaTest": true,
+    "castShadows": false,
+    "dynamicCubemap": true,
+    "materialTag0": "beamng",
+    "materialTag1": "vehicle",
+    "version": 1.5
+  }
+}
