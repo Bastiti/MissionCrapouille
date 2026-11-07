@@ -46,9 +46,9 @@
       },
       {
         "baseColorFactor": [
-          0.32,
-          0.13,
-          0.36,
+          0.129399002,
+          0.129399002,
+          0.129399002,
           1
         ],
         "baseColorMap": "/vehicles/fullsize/fullsize_interior_b.color.png",
@@ -97,9 +97,9 @@
       {
         "ambientOcclusionMap": "/vehicles/fullsize/fullsize_intcarpet_ao.data.png",
         "baseColorFactor": [
-          0.32,
-          0.13,
-          0.36,
+          0.807843137,
+          0.270588235,
+          0,
           1
         ],
         "baseColorMap": "/vehicles/fullsize/fullsize_intcarpet_b.color.png",
@@ -144,9 +144,9 @@
       {
         "ambientOcclusionMap": "/vehicles/common/limo/limo_interior_ao.data.png",
         "baseColorFactor": [
-          0.32,
-          0.13,
-          0.36,
+          0.129399002,
+          0.129399002,
+          0.129399002,
           1
         ],
         "baseColorMap": "/vehicles/common/limo/limo_interior_b.color.png",
@@ -202,9 +202,9 @@
       {
         "ambientOcclusionMap": "/vehicles/common/limo/limo_interior_ao.data.png",
         "baseColorFactor": [
-          0.32,
-          0.13,
-          0.36,
+          0.129399002,
+          0.129399002,
+          0.129399002,
           1
         ],
         "baseColorMap": "/vehicles/common/limo/limo_interior_b.color.png",

@@ -59,7 +59,7 @@
     "fullsize_headlight_L": "fullsize_headlight_L",
     "fullsize_headlight_R": "fullsize_headlight_R",
     "fullsize_hood": "fullsize_hood",
-    "fullsize_hood_accessory": "craptech_hood_hope",
+    "fullsize_hood_accessory": "",
     "fullsize_hydraulics": "",
     "fullsize_innerfender_L": "fullsize_innerfender_L",
     "fullsize_innerfender_R": "fullsize_innerfender_R",
